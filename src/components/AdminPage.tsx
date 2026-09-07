@@ -29,16 +29,25 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
 
   // 초기 로드
   useEffect(() => {
-    loadData();
-  }, []);
+    loadData().catch(err => console.error('Initial load failed:', err));
+  }, [db]);
 
-  const loadData = () => {
-    const state = db.getState();
-    setSlots(state.slots);
-    setRequests(om.getAdminRequests());
-    setLogs(state.logs || []);
-    setError('');
-    setSuccess('');
+  const loadData = async () => {
+    try {
+      // Supabase 모드일 때 데이터 갱신
+      if (db instanceof SupabaseManager) {
+        await (db as SupabaseManager).initialize();
+      }
+      const state = db.getState();
+      setSlots(state.slots);
+      setRequests(om.getAdminRequests());
+      setLogs(state.logs || []);
+      setError('');
+      setSuccess('');
+    } catch (err) {
+      console.error('Failed to load data:', err);
+      setError('데이터 로드 실패');
+    }
   };
 
   const handleConfirm = async () => {
@@ -158,17 +167,18 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
                 <ul className="list">
                   {currentRequest.candidates.map((c, idx) => {
                     const slot = slots[c.slotId];
-                    const isAvailable = slot?.status === 'available';
+                    const isAvailable = slot && slot.status === 'available';
+                    const canSelect = isAvailable && currentRequest.request.status !== 'confirmed';
                     return (
                       <li
                         key={c.id}
                         onClick={() => {
-                          if (isAvailable && currentRequest.request.status !== 'confirmed') {
+                          if (canSelect) {
                             setSelectedSlotForConfirm(c.slotId);
                           }
                         }}
                         style={{
-                          cursor: isAvailable && currentRequest.request.status !== 'confirmed' ? 'pointer' : 'default',
+                          cursor: canSelect ? 'pointer' : 'not-allowed',
                           background:
                             selectedSlotForConfirm === c.slotId
                               ? '#d4edda'
@@ -176,6 +186,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
                                 ? 'white'
                                 : '#f8d7da',
                           borderColor: selectedSlotForConfirm === c.slotId ? '#28a745' : '#ddd',
+                          opacity: canSelect ? 1 : 0.6,
                         }}
                       >
                         <span>
