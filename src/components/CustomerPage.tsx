@@ -13,8 +13,9 @@ interface CustomerPageProps {
   userId?: string;
 }
 
-export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode: _mode, userId: _userId }) => {
-  const [customerId, setCustomerId] = useState<string>('C01');
+export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) => {
+  // Supabase 모드에서는 userId(이메일)를 사용, 로컬 모드에서는 'C01' 사용
+  const [customerId] = useState<string>(mode === 'supabase' && userId ? userId : 'C01');
   const [stage, setStage] = useState<'select' | 'confirm' | 'view' | 'reselect'>('select');
   const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
   const [slots, setSlots] = useState<Record<string, Slot>>({});
@@ -158,13 +159,13 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode: _mode, use
   return (
     <div className="customer-page">
       <div className="form-group">
-        <label>고객 코드</label>
+        <label>고객 코드 {mode === 'supabase' && '(로그인된 사용자)'}</label>
         <input
           type="text"
           value={customerId}
-          onChange={e => setCustomerId(e.target.value)}
+          onChange={() => {}}
           placeholder="C01"
-          disabled={stage === 'confirm'}
+          disabled
         />
       </div>
 
