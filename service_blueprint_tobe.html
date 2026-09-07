@@ -487,10 +487,50 @@
         <span class="badge badge-purple">42슬롯 제약 100% 준수</span>
         <span class="badge badge-amber">As-Is 대조 분석</span>
       </div>
-      <h1>cal.dudu To-Be 서비스 블루프린트 (개선 구현 기준)</h1>
-      <p class="subtitle">
-        MoSCoW 프레임워크의 <strong>Must Have 2대 핵심 기능(3순위 최대 선택 권장 넛지 + 스마트 대체 슬롯 원클릭 프리셋)</strong>을 실제 코드에 구현하고, 8대 공통 제약 조건을 완벽히 유지하면서 김두두 페르소나의 '마감확인' 병목을 해소한 To-Be 서비스 청사진 및 As-Is 비교 분석 문서입니다.
-      </p>
+      <h1>cal.dudu 개선 서비스 안내 (To-Be) & 기존 비교</h1>
+      
+      <!-- 지정된 step, 지정 사유, 2개안 및 설명, 선정 사유 (쉬운 일상 언어) -->
+      <div style="margin-top: 18px; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 22px 24px;">
+        <div style="font-size: 16px; font-weight: 800; color: #1e40af; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+          <span>📍</span> 개선 대상 단계 및 해결 방안 요약
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr; gap: 14px; font-size: 14.5px; line-height: 1.7; color: #334155;">
+          <div>
+            <strong style="color: #0f172a; background: #e0f2fe; padding: 3px 8px; border-radius: 4px; font-size: 13.5px;">1. 지정된 단계 (Step)</strong>
+            <span style="font-weight: 800; color: #1e3a8a; margin-left: 8px; font-size: 15px;">[Step 3. 마감확인] 단계</span>
+            <span style="color: #64748b; margin-left: 6px;">(신청해 둔 예약 시간들이 다 찼는지 열어보는 단계)</span>
+          </div>
+          
+          <div>
+            <strong style="color: #0f172a; background: #fee2e2; padding: 3px 8px; border-radius: 4px; font-size: 13.5px;">2. 단계 지정 사유</strong>
+            <div style="margin-top: 4px; padding-left: 4px;">
+              신청하고 하루 가까이 기다렸는데 내가 고른 시간들이 다른 사람에게 모두 확정되어 버리면, 42개 시간표를 처음부터 다시 다 찾아야 합니다. 이 허탈감 때문에 사용자 만족도(기분 점수)가 <strong>2점으로 가장 낮게 떨어지는 가장 불편한 지점</strong>이기 때문입니다.
+            </div>
+          </div>
+
+          <div style="background: white; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 16px 18px; margin: 2px 0;">
+            <strong style="color: #0f172a; background: #fef3c7; padding: 3px 8px; border-radius: 4px; font-size: 13.5px;">3. 꼭 필요한 2가지 개선안과 설명</strong>
+            <ul style="margin-left: 20px; margin-top: 8px; color: #334155; line-height: 1.75;">
+              <li style="margin-bottom: 8px;">
+                <strong>개선안 ① 슬롯 3개 꽉 채워 신청하기 안내 (신청할 때):</strong><br />
+                처음에 1~2개만 골라 신청하면 다른 사람에게 밀려 다 마감될 위험이 큽니다. 그래서 3개까지 다 골라 신청하도록 친절히 알려주어, 하나가 마감되어도 다음 순위 시간으로 바로 확정될 확률을 높여줍니다.
+              </li>
+              <li>
+                <strong>개선안 ② 대신할 빈 시간 버튼 한 번으로 바로 담기 (마감되었을 때):</strong><br />
+                신청했던 시간이 다 차서 다시 골라야 할 때, 복잡한 시간표를 일일이 눈으로 뒤질 필요 없이, 내가 원래 원했던 시간대(예: 오전 시간)와 가장 가까운 빈 시간을 시스템이 자동으로 찾아서 버튼 한 번으로 쏙 담아주는 기능입니다.
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <strong style="color: #0f172a; background: #dcfce7; padding: 3px 8px; border-radius: 4px; font-size: 13.5px;">4. 2가지 안을 선정한 사유</strong>
+            <div style="margin-top: 4px; padding-left: 4px;">
+              14일 42슬롯이나 관리자 수동 확정 같은 기본 규칙을 전혀 건드리지 않으면서도, ① 마감될 위험 자체를 미리 줄여주고, ② 혹시 마감되더라도 다시 찾는 시간을 45초에서 1.5초로 확 줄여서 사용자의 답답함을 바로 해결해 줄 수 있는 가장 확실한 방법이기 때문입니다.
+            </div>
+          </div>
+        </div>
+      </div>
     </header>
 
     <!-- 네비게이션 링크 -->
@@ -501,19 +541,10 @@
       <a href="/service_blueprint_tobe.html" class="nav-link active">✨ To-Be 개선 블루프린트 (현재)</a>
     </div>
 
-    <!-- 1. Must Have 구현의 이유와 근거 선언 -->
+    <!-- 1. 핵심 개선 효과 요약 -->
     <section>
       <div class="section-title">
-        <span>🎯</span> Must Have 구현의 이유와 근거 (Core Rationale)
-      </div>
-      
-      <div class="reason-box">
-        <div class="reason-title">
-          <span>💡</span> 왜 2가지 Must Have 기능을 구현했는가?
-        </div>
-        <p class="reason-text">
-          <strong>"비점유 대기 특성상 1~2개 소수 슬롯 신청은 타 고객과의 경합 시 전원 마감(Zero-Sum) 위험이 높고, 마감 통보 후 42개 슬롯을 처음부터 재탐색하는 인지적 피로도가 극에 달하므로, ① 최대 3개 후보 풀 선택을 사전에 넛지(Nudge)하여 마감 위험을 67% 줄이고, ② 마감 발생 시 이전 선호 시간대 기반의 '스마트 대체 슬롯 원클릭 프리셋'을 즉시 제공하여 재선택 소요 시간과 심리적 좌절감을 획기적으로 경감합니다."</strong>
-        </p>
+        <span>🎯</span> 핵심 개선 효과 요약
       </div>
 
       <!-- 핵심 KPI 개선 지표 -->
@@ -687,45 +718,44 @@ flowchart TB
             </tr>
 
             <tr>
-              <td class="col-phase">3. 1~3순위 희망 신청<br/><strong>(Must Have 2)</strong></td>
+              <td class="col-phase">3. 1~3순위 희망 신청<br/><strong>(개선안 ①)</strong></td>
               <td class="col-asis">
-                <span class="tag-asis">As-Is Pain Point</span><br/>
-                • 고객이 1개 또는 2개 슬롯만 선택하고 제출 가능<br/>
-                • 1~2개 선택 시 타 고객 경합 발생 시 <strong>전원 마감(재선택 전이) 위험 극대화</strong>
+                <span class="tag-asis">기존의 문제점</span><br/>
+                • 1개나 2개 시간대만 골라 신청하면, 다른 사람에게 밀렸을 때 <strong>신청한 자리가 전부 마감되어 탈락할 위험</strong>이 큼
               </td>
               <td class="col-tobe">
-                <span class="tag-tobe">To-Be 핵심 개선 ✨</span><br/>
-                • <strong>[3순위 선택 권장 넛지 배너]</strong>: 1~2개 선택 시 "최대 3개까지 채우면 마감률 67% 감소" 실시간 가이드<br/>
-                • <strong>[넛지 확인 모달]</strong>: 제출 시 3개 미만이면 "+1개 더 선택하기" 기회 부여로 <strong>3순위 풀 채우기 유도</strong>
+                <span class="tag-tobe">개선 내용 ✨</span><br/>
+                • <strong>[슬롯 3개 꽉 채워 신청하기 안내]</strong>: 1~2개만 골랐을 때 "3개를 다 채우면 전부 마감될 위험을 67% 줄일 수 있습니다"라고 실시간 안내<br/>
+                • 제출할 때도 1번 더 확인창을 띄워 3개를 다 채우도록 도와줌
               </td>
             </tr>
 
             <tr>
               <td class="col-phase">4. 관리자 수동 확정</td>
               <td class="col-asis">
-                <span class="tag-asis">As-Is</span><br/>
-                • 어드민이 접수 대기열에서 후보 중 하나를 수동 확정<br/>
-                • 고객은 확정 전까지 결과 예측 불가
+                <span class="tag-asis">기존 상태</span><br/>
+                • 관리자가 대기 목록을 보고 직접 확정<br/>
+                • 고객은 확정 전까지 결과를 알 수 없음
               </td>
               <td class="col-tobe">
-                <span class="tag-tobe">To-Be 개선</span><br/>
-                • <strong>8대 제약 조건 엄수</strong>: 자동 배정 없이 관리자 수동 확정 및 신청 후보 내 확정 철저 유지<br/>
-                • 슬롯당 1명 배타적 확정 및 DB 트랜잭션 무결성 보장
+                <span class="tag-tobe">규칙 유지</span><br/>
+                • <strong>기존 핵심 규칙 그대로 유지</strong>: 시스템이 제멋대로 배정하지 않고 관리자가 직접 확인 후 확정<br/>
+                • 한 시간대당 오직 1명만 확정되는 원칙 철저 보장
               </td>
             </tr>
 
             <tr>
-              <td class="col-phase">5. 재선택 및 감사 추적<br/><strong>(Must Have 1)</strong></td>
+              <td class="col-phase">5. 재선택 및 기록<br/><strong>(개선안 ②)</strong></td>
               <td class="col-asis">
-                <span class="tag-asis">As-Is Critical Bottleneck</span><br/>
-                • 모든 후보 마감 시 빈 화면에서 42개 슬롯을 <strong>처음부터 다시 스캔</strong>해야 함<br/>
-                • 바쁜 기획자 김두두에게 극심한 좌절감과 <strong>감정 점수 2점(최하위) 유발</strong>
+                <span class="tag-asis">가장 큰 불편 지점</span><br/>
+                • 내가 고른 시간들이 다 마감되면 42개 표를 <strong>처음부터 다시 다 찾아야 함</strong><br/>
+                • 긴 대기 후 원점으로 돌아가 사용자 기분 점수가 <strong>2점으로 가장 낮게 떨어짐</strong>
               </td>
               <td class="col-tobe">
-                <span class="tag-tobe">To-Be 핵심 개선 ✨</span><br/>
-                • <strong>[스마트 대체 슬롯 원클릭 추천 프리셋]</strong> 탑재!<br/>
-                • 이전 희망 패턴(예: 오전 9시)을 분석하여 <strong>가장 가까운 열린 슬롯 3개를 상단에 자동 제시</strong><br/>
-                • <code>[⚡ 추천 슬롯 자동 채우기]</code> 버튼 1클릭으로 즉시 재선택 완료 (소요 시간 1.5초)
+                <span class="tag-tobe">개선 내용 ✨</span><br/>
+                • <strong>[대신할 빈 시간 버튼 한 번으로 바로 담기]</strong> 탑재!<br/>
+                • 내가 원래 원했던 시간(예: 오전 시간)과 가장 가까운 빈자리 3개를 <strong>알아서 찾아서 위에 바로 보여줌</strong><br/>
+                • <code>[⚡ 추천 슬롯 자동 채우기]</code> 버튼 1번만 누르면 3개 자리가 쏙 채워져서 1초 만에 재신청 완료!
               </td>
             </tr>
           </tbody>
