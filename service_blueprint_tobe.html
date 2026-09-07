@@ -613,40 +613,40 @@
         <div id="mermaidWrapper" class="mermaid-scale-wrapper">
           <div class="mermaid">
 flowchart TB
-    subgraph Evidence ["🖥️ 1. 물리적 증거 (UI / Physical Evidence)"]
-        E1["<b>모드/역할 선택 바</b><br/><small>로컬(역할 전환) / Supabase 로그인</small>"]
-        E2["<b>42슬롯 매트릭스 표</b><br/><small>14일 × 3회 (열린 슬롯 배지)</small>"]
-        E3["<b>3순위 권장 넛지 배너/모달</b><br/><small>💡 3개 풀 선택 시 마감률 67% 감소 유도</small>"]
-        E4["<b>어드민 수동 확정 패널</b><br/><small>접수 순번 목록 & 후보 내 수동 확정</small>"]
-        E5["<b>✨ 스마트 대체 슬롯 원클릭 프리셋</b><br/><small>이전 패턴 기반 3개 슬롯 1클릭 채우기</small>"]
+    subgraph Evidence ["🖥️ 1. 물리적 증거 (Physical Evidence)"]
+        E1["<b>상담 예약 알림 & 로그인 화면</b><br/><small>상담 안내 배너 및 로그인 폼</small>"]
+        E2["<b>14일 42슬롯 일정표</b><br/><small>14일 × 3회 (열린 슬롯 배지)</small>"]
+        E3["<b>3순위 권장 넛지 배너/모달</b><br/><small>💡 3개 풀 선택 시 마감 탈락 위험 67% 감소 안내</small>"]
+        E4["<b>신청 접수 완료 화면</b><br/><small>정상 접수 배지 & 관리자 배정 대기 안내</small>"]
+        E5["<b>✨ 스마트 추천 재선택 화면</b><br/><small>⚡ [추천 슬롯 자동 채우기] 원클릭 프리셋 버튼</small>"]
     end
 
-    subgraph UserAction ["👤 2. 사용자 행동 (Customer & Admin Actions)"]
-        U1["<b>1. 접속 및 모드 선택</b><br/><small>로컬 or Supabase 진입</small>"]
-        U2["<b>2. 42개 슬롯 가용성 탐색</b><br/><small>희망 시간대(오전 등) 파악</small>"]
-        U3["<b>3. 3순위 풀 채우기 신청 제출</b><br/><small>💡 넛지 수용으로 3개 선택 완료</small>"]
-        U4["<b>4. 관리자 수동 확정 처리</b><br/><small>후보 내 검증 후 단일 확정</small>"]
-        U5["<b>5. ✨ 원클릭 스마트 재선택</b><br/><small>마감 통보 즉시 1초 만에 재접수</small>"]
+    subgraph UserAction ["👤 2. 고객 행동 (Customer Actions - 페르소나: 김두두)"]
+        U1["<b>1. 예약 접속 및 로그인</b><br/><small>상담 안내 링크 확인 후 본인 계정 로그인</small>"]
+        U2["<b>2. 42개 슬롯 일정 탐색</b><br/><small>프로젝트 일정 및 파트너사 미팅 시간 대조</small>"]
+        U3["<b>3. ✨ 3순위 풀 채우기 신청 제출</b><br/><small>💡 넛지 수용으로 3순위까지 안전하게 선택 완료</small>"]
+        U4["<b>4. 접수 확인 및 관리자 확정 대기</b><br/><small>정상 접수 확인 후 관리자 배정 결과 대기</small>"]
+        U5["<b>5. ✨ 스마트 원클릭 재선택 (or 확정)</b><br/><small>마감 통보 시 1클릭으로 선호시간 3개 자동 채워 1초 만에 재접수</small>"]
     end
 
-    subgraph FrontStage ["💻 3. 프론트엔드 접점 (Front-stage Interactions)"]
-        F1["<b>App.tsx</b><br/><small>모드 및 인증 세션 관리</small>"]
+    subgraph FrontStage ["💻 3. 전면 서비스 접점 (Front-stage Interfaces)"]
+        F1["<b>AuthModal.tsx & App.tsx</b><br/><small>로그인 폼 표출 및 인증 세션 관리</small>"]
         F2["<b>SlotTable.tsx</b><br/><small>42개 슬롯 가용성 렌더링</small>"]
-        F3["<b>CustomerPage.tsx (Nudge)</b><br/><small>handleProceedToConfirm 넛지 검사</small>"]
-        F4["<b>AdminPage.tsx</b><br/><small>후보 내 확정 & RPC 호출</small>"]
-        F5["<b>CustomerPage (Smart Preset)</b><br/><small>getSmartRecommendations() 원클릭 매칭</small>"]
+        F3["<b>CustomerPage.tsx (Nudge)</b><br/><small>handleProceedToConfirm 3순위 권장 넛지 모달 표출</small>"]
+        F4["<b>NotificationBanner & Status View</b><br/><small>신청 접수(received) 피드백 및 대기 상태 표출</small>"]
+        F5["<b>CustomerPage (Smart Preset)</b><br/><small>getSmartRecommendations() 1클릭 자동 매칭</small>"]
     end
 
-    subgraph BackStage ["⚙️ 4. 백스테이지 접점 (Back-stage Interactions)"]
-        B1["<b>Auth 세션 및 권한 판정</b><br/><small>isSupabaseConfigured / isAdmin</small>"]
+    subgraph BackStage ["⚙️ 4. 후면 운영 접점 (Back-stage & Admin Operations)"]
+        B1["<b>Auth 세션 및 고객 식별</b><br/><small>auth.uid() 고객 계정 세션 매핑</small>"]
         B2["<b>KST 시작 시각 유효성 필터</b><br/><small>isSlotStillAvailable 판정</small>"]
-        B3["<b>비점유(received) 대기열 등록</b><br/><small>고유 operationId 발급</small>"]
-        B4["<b>후보 포함 여부 & 점유 검증</b><br/><small>슬롯 기점유 검사 & confirmed 갱신</small>"]
+        B3["<b>비점유(received) 대기열 등록</b><br/><small>requests 및 candidates 1~3순위 저장</small>"]
+        B4["<b>관리자 접수 확인 및 수동 확정</b><br/><small>AdminPage 대기열 검토 후 고객 희망 슬롯 내에서 1개 배타적 점유 확정</small>"]
         B5["<b>needs_reselection 상태 전이</b><br/><small>이전 신청 이력 보존 & v2 순번 부여</small>"]
     end
 
     subgraph SupportDB ["🗄️ 5. 지원 시스템 & DB (Support Processes)"]
-        S1["<b>DatabaseManager / Supabase</b><br/><small>캐시 동기화 & 멱등성 검사</small>"]
+        S1["<b>GoTrue 인증 서버</b><br/><small>사용자 계정 인증 엔진</small>"]
         S2["<b>public.slots (42개 고정)</b><br/><small>14일 × 3회 고정 데이터</small>"]
         S3["<b>submit_request RPC</b><br/><small>1~3개 후보 비점유 삽입</small>"]
         S4["<b>confirm_request RPC</b><br/><small>배타적 점유 & 트랜잭션 마감</small>"]
@@ -690,21 +690,21 @@ flowchart TB
           </thead>
           <tbody>
             <tr>
-              <td class="col-phase">1. 접속 및 인증</td>
+              <td class="col-phase">1. 예약 접속 및 본인 로그인</td>
               <td class="col-asis">
                 <span class="tag-asis">As-Is</span><br/>
-                • Supabase 모드에서 비로그인 시 무한 초기화 루프 위험 존재<br/>
-                • 로컬 데모와 실제 Supabase 모드 간 전환 수단 부재
+                • 일정 조율 알림을 받고 접속했으나 예약 안내와 로그인 절차가 분리되어 탐색 지연 발생<br/>
+                • 안내 문구가 불명확함
               </td>
               <td class="col-tobe">
                 <span class="tag-tobe">To-Be 개선</span><br/>
-                • 세션 가드 조건 완화로 비로그인 시에도 즉시 로그인 모달 및 로컬 전환 버튼 표출<br/>
-                • 상단 [로컬 모드로 전환] / [Supabase 모드로 전환] 토글 지원
+                • <strong>직관적인 로그인 및 서비스 진입</strong>: 김두두가 브라우저에서 3초 만에 본인 계정으로 즉시 로그인<br/>
+                • 깔끔한 안내 배너와 함께 현재 예약 가능한 슬롯 화면으로 바로 진입
               </td>
             </tr>
 
             <tr>
-              <td class="col-phase">2. 슬롯 탐색</td>
+              <td class="col-phase">2. 42슬롯 일정 탐색</td>
               <td class="col-asis">
                 <span class="tag-asis">As-Is</span><br/>
                 • 42개 슬롯 매트릭스를 단순히 보고 임의로 선택<br/>
@@ -712,13 +712,13 @@ flowchart TB
               </td>
               <td class="col-tobe">
                 <span class="tag-tobe">To-Be 개선</span><br/>
-                • KST 기준 실시간 유효성 판정 표시 유지<br/>
-                • 14일 42슬롯 데이터 및 가용성 기준 완벽 보존
+                • 프로젝트 스프린트 및 업무 일정에 맞춰 14일 42슬롯 중 열려 있는 시간대를 직관적으로 파악<br/>
+                • KST 기준 실시간 유효성 판정 표시 및 14일 42슬롯 데이터 완벽 보존
               </td>
             </tr>
 
             <tr>
-              <td class="col-phase">3. 1~3순위 희망 신청<br/><strong>(개선안 ①)</strong></td>
+              <td class="col-phase">3. 1~3순위 희망 신청<br/><strong>(개선안 ① 3순위 채우기 권장)</strong></td>
               <td class="col-asis">
                 <span class="tag-asis">기존의 문제점</span><br/>
                 • 1개나 2개 시간대만 골라 신청하면, 다른 사람에게 밀렸을 때 <strong>신청한 자리가 전부 마감되어 탈락할 위험</strong>이 큼
@@ -731,21 +731,21 @@ flowchart TB
             </tr>
 
             <tr>
-              <td class="col-phase">4. 관리자 수동 확정</td>
+              <td class="col-phase">4. 접수 확인 및 관리자 확정 대기<br/><strong>(핵심 제약 준수)</strong></td>
               <td class="col-asis">
                 <span class="tag-asis">기존 상태</span><br/>
-                • 관리자가 대기 목록을 보고 직접 확정<br/>
+                • 신청서 접수 후 관리자가 확정하기 전까지 대기 상태 유지<br/>
                 • 고객은 확정 전까지 결과를 알 수 없음
               </td>
               <td class="col-tobe">
-                <span class="tag-tobe">규칙 유지</span><br/>
-                • <strong>기존 핵심 규칙 그대로 유지</strong>: 시스템이 제멋대로 배정하지 않고 관리자가 직접 확인 후 확정<br/>
-                • 한 시간대당 오직 1명만 확정되는 원칙 철저 보장
+                <span class="tag-tobe">규칙 엄격 유지</span><br/>
+                • <strong>신청 접수 상태('received') 명확한 안내</strong>: 대기 상태임을 시각적으로 확인<br/>
+                • <strong>기존 핵심 규칙 그대로 유지</strong>: 시스템이 제멋대로 배정하지 않고 관리자가 직접 고객의 후보 내에서만 1개 슬롯을 수동 확정 (슬롯당 1명 확정 원칙 보장)
               </td>
             </tr>
 
             <tr>
-              <td class="col-phase">5. 재선택 및 기록<br/><strong>(개선안 ②)</strong></td>
+              <td class="col-phase">5. 확정 확인 및 재선택<br/><strong>(개선안 ② 스마트 추천 프리셋)</strong></td>
               <td class="col-asis">
                 <span class="tag-asis">가장 큰 불편 지점</span><br/>
                 • 내가 고른 시간들이 다 마감되면 42개 표를 <strong>처음부터 다시 다 찾아야 함</strong><br/>

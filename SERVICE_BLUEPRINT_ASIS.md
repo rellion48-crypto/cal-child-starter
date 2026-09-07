@@ -1,9 +1,10 @@
 # Service Blueprint (As-Is): cal.dudu
 
-> **대상 서비스**: `cal.dudu` (수업용 예약 실습 앱)  
+> **대상 서비스**: `cal.dudu` (일정 예약 서비스)  
+> **단일 사용자 페르소나**: 김두두 (31세 · IT 서비스 기획자, INTP)  
 > **기술 스택**: React · Vite · TypeScript · Supabase PostgreSQL (RPC & RLS)  
-> **범위**: 42슬롯 탐색, 1~3순위 희망 접수, 어드민 수동 확정, 재선택 및 감사 로그 전 과정  
-> **목적**: 프론트엔드 접점, 백스테이지 로직, 데이터베이스 지원 프로세스 및 핵심 제약 조건의 상호작용 명세
+> **원칙**: 사용자 행동(Customer Actions)은 김두두 1인의 실제 이용 여정으로 고정하며, 관리자(어드민)의 수동 확정 작업은 후면 운영 접점(Back-stage)으로 명확히 분리하고 제작자·개발자 관점을 배제함  
+> **범위**: 42슬롯 탐색, 1~3순위 희망 접수, 접수 확인 및 관리자 확정 대기, 최종 확정 및 마감 시 재선택
 
 ---
 
@@ -28,36 +29,36 @@
 
 ```text
 [ 1. 물리적 증거 (Physical Evidence) ]
- 🖥️ 모드/역할 선택 바 ──> 42슬롯 매트릭스 표 ──> 희망 슬롯 선택 폼 ──> 어드민 수동 확정 패널 ──> 내 신청/운영 로그 표
+ 🖥️ 일정 예약 링크 & 로그인 화면 ──> 14일 42슬롯 일정표 ──> 희망 슬롯 선택 폼 ──> 신청 접수 확인 화면 ──> 최종 확정 카드 (or 재선택 폼)
 
 -------------------------------------------------------------------------------------------------
-[ 2. 사용자 행동 (Customer & Admin Actions) ]
- 👤 1. 접속 및 모드 선택 ──> 2. 42개 슬롯 가용성 확인 ──> 3. 1~3순위 희망 신청 제출 ──> 4. 어드민 수동 확정 ──> 5. 재선택 or 이력 확인
+[ 2. 고객 행동 (Customer Actions - 페르소나: 김두두) ]
+ 👤 1. 예약 접속 및 로그인 ──> 2. 42개 슬롯 일정 탐색 ──> 3. 1~3순위 희망 신청서 제출 ──> 4. 접수 확인 및 관리자 확정 대기 ──> 5. 최종 확정 확인 (마감 시 재선택)
 
 -------------------------------------------------------------------------------------------------
-[ 3. 프론트엔드 접점 (Front-stage Interactions) ]
- 💻 App.tsx (모드/인증 상태) ──> SlotTable.tsx (42슬롯 렌더링) ──> CustomerPage.tsx (희망 슬롯 선택) ──> AdminPage.tsx (신청 목록/확정) ──> Notification & Operation Log
+[ 3. 전면 서비스 접점 (Front-stage Interfaces) ]
+ 💻 App.tsx & AuthModal.tsx ──> SlotTable.tsx (42슬롯 렌더링) ──> CustomerPage.tsx (1~3개 선택) ──> NotificationBanner.tsx (접수 피드백) ──> CustomerPage.tsx (확정 카드/재선택)
 
 -------------------------------------------------------------------------------------------------
-[ 4. 백스테이지 접점 (Back-stage Interactions) ]
- ⚙️ Auth 세션 / 역할 검증 ──> KST 기준 시작 시각 필터링 ──> 멱등키(operationId) 생성 & 비점유 저장 ──> 후보 포함 검증 & 슬롯 점유 ──> needs_reselection 판정 & 로그 기록
+[ 4. 후면 운영 접점 (Back-stage & Admin Operations) ]
+ ⚙️ 세션 검증 & 고객 식별 ──> KST 유효 슬롯 필터링 ──> submit_request (비점유 대기 등록) ──> 관리자 대기열 검토 및 수동 확정 (배타적 점유 마감) ──> needs_reselection 자동 전이
 
 -------------------------------------------------------------------------------------------------
-[ 5. 지원 프로세스 & DB (Support Processes) ]
- 🗄️ DatabaseManager (로컬) / SupabaseManager (원격) ──> public.slots (42개 고정) ──> submit_request RPC ──> confirm_request RPC ──> public.operation_logs (감사 추적)
+[ 5. 지원 시스템 & DB (Support Processes) ]
+ 🛠️ Supabase Auth GoTrue ──> public.slots (42개 마스터) ──> public.requests & candidates ──> confirm_request RPC 트랜잭션 ──> public.operation_logs (감사 추적)
 ```
 
 ---
 
 ## 2. 단계별 서비스 블루프린트 상세 매트릭스 (As-Is)
 
-| 단계 (Phase) | 1. 접속 및 모드 설정 | 2. 슬롯 탐색 및 가용성 조회 | 3. 1~3순위 희망 신청 | 4. 관리자 수동 확정 | 5. 재선택 및 감사 추적 |
+| 구분 (Layers) | 1. 예약 접속 및 로그인 | 2. 42슬롯 일정 탐색 | 3. 1~3순위 희망 신청 | 4. 접수 확인 및 결과 대기 | 5. 최종 확정 및 (마감 시) 재선택 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **물리적 증거<br/>(Physical Evidence)** | • 모드 배지 (로컬 / Supabase)<br/>• 역할 전환 버튼 (고객/어드민)<br/>• Supabase 로그인 모달 | • 14일 × 3회 42슬롯 매트릭스 표<br/>• 시간대 라벨 (오전 9시/오후 1시/저녁 6시)<br/>• 가능/마감 상태 배지 | • 체크박스 선택 인터페이스<br/>• 1·2·3순위 칩 배지<br/>• [신청 제출] 버튼 & 알림 배너 | • 접수 순서 목록 테이블<br/>• 신청 고객별 1~3순위 후보 표<br/>• 슬롯별 [확정] 액션 버튼 | • "재선택 필요" 알림 및 재선택 폼<br/>• 이전 신청 이력 목록<br/>• Operation ID 감사 로그 테이블 |
-| **사용자 행동<br/>(Customer / Admin)** | • 로컬 실습 or Supabase 로그인 선택<br/>• 고객 또는 어드민 역할 진입 | • 42개 슬롯의 가능/마감 상태 탐색<br/>• KST 기준 지난 슬롯 비활성화 확인 | • 서로 다른 열린 슬롯 1~3개 선택<br/>• 선택 순서에 따른 우선순위 확인<br/>• 신청서 최종 확인 및 제출 | • **(어드민)** 접수된 대기열 확인<br/>• 고객의 후보 슬롯 중 1개 선택<br/>• [확정] 버튼 클릭하여 점유 확정 | • **(고객)** 전체 마감 시 새 후보 재선택<br/>• **(공통)** 작업 ID별 실행 결과 및 로그 확인 |
-| **프론트 접점<br/>(Front-stage)** | `App.tsx`<br/>`AuthModal.tsx` | `SlotTable.tsx`<br/>`CustomerPage.tsx` | `CustomerPage.tsx`<br/>`NotificationBanner.tsx` | `AdminPage.tsx` | `CustomerPage.tsx`<br/>`AdminPage.tsx` |
-| **백스테이지 로직<br/>(Back-stage)** | • Supabase Auth 세션 검증<br/>• app_metadata.role 어드민 권한 판정<br/>• 로컬 모드 DB 초기화 | • KST 기준 현재 시각 대비 유효 슬롯 계산<br/>• 개인식별정보 제외된 슬롯 상태 조회<br/>• 테스트 고정 시각 주입 지원 | • 1~3개 범위 검증<br/>• 멱등성 작업 ID 생성<br/>• **비점유(received)** 대기열 등록 | • **신청한 후보 내 슬롯 여부 검증**<br/>• 슬롯 기점유 여부 저장 직전 재검사<br/>• 슬롯 상태를 **점유(confirmed)**로 갱신 | • 타 고객 확정 시 영향받은 신청 재계산<br/>• 잔여 후보 0개 시 `needs_reselection` 전환<br/>• `operation_logs`에 성공/실패 기록 |
-| **지원 시스템 & DB<br/>(Support / Tech)** | • Supabase Auth GoTrue<br/>• localStorage (로컬 모드) | • `public.slots` (42슬롯 데이터)<br/>• `constants.ts` (KST 기준시각) | • `public.requests` (status='received')<br/>• `public.candidates` (1~3순위)<br/>• `submit_request` RPC | • `confirm_request` RPC<br/>• DB 배타적 트랜잭션<br/>• PostgreSQL RLS 정책 | • `resubmit_request` RPC<br/>• `public.operation_logs` 테이블<br/>• `decide.ts` 판정 엔진 |
+| **물리적 증거<br/>(Physical Evidence)** | • 일정 예약 링크<br/>• 로그인 모달/폼<br/>• 서비스 안내 배너 | • 14일 × 3회 42슬롯 일정표<br/>• 오전 9시/오후 1시/저녁 6시 라벨<br/>• '가능' / '마감' 상태 배지 | • 체크박스 선택 인터페이스<br/>• 1·2·3순위 칩 배지<br/>• [신청하기] 버튼 & 안내창 | • 신청서 접수 완료 화면<br/>• 대기 상태('received') 배지<br/>• "관리자 검토 중" 안내 배너 | • 최종 확정 카드 (확정 일시 표기)<br/>• (전원 마감 시) "재선택 필요" 배지<br/>• 새 대체 슬롯 선택 폼 |
+| **고객 행동<br/>(Customer Actions - 김두두 1인)** | • 일정 조율 링크를 통해 접속<br/>• 본인 이메일 계정으로 로그인 완료 | • 42개 슬롯의 잔여 시간대 탐색<br/>• 프로젝트 일정 및 미팅 캘린더 대조<br/>• 지난 시간대 비활성화 확인 | • 가장 선호하는 시간대 1~3개 선택<br/>• 선택 순서에 따른 우선순위 확인<br/>• 예약 신청서 최종 확인 및 제출 | • 신청서가 정상 접수됨을 확인<br/>• 관리자(어드민)의 일정 검토 및 배정 결과 대기 | • 관리자 확정 결과 확인 후 캘린더에 일정 등록<br/>• (전 후보 마감 시) 안내 확인 후 새 슬롯 재선택 제출 |
+| **프론트 접점<br/>(Front-stage)** | `App.tsx`<br/>`AuthModal.tsx` | `SlotTable.tsx`<br/>`CustomerPage.tsx` | `CustomerPage.tsx`<br/>`NotificationBanner.tsx` | `CustomerPage.tsx`<br/>`NotificationBanner.tsx` | `CustomerPage.tsx` (Status/Reselect) |
+| **후면 운영 접점<br/>(Back-stage & Admin)** | • Supabase Auth 세션 검증<br/>• `auth.uid()` 고객 계정 식별 및 매핑 | • 개인식별정보 제외된 slots 공개 조회<br/>• KST 기준 현재 시각 대비 유효 슬롯 계산 | • 1~3개 선택 유효성 검증<br/>• 멱등성 작업 ID 생성<br/>• **비점유(received)** 대기열 등록 | • **관리자 대기열 검토 및 수동 확정**<br/>• 신청 후보 슬롯 중 1개 선택<br/>• **배타적 점유(confirmed)** 마감 실행 | • 타 고객 확정으로 잔여 후보 0개 시 `needs_reselection` 자동 전이<br/>• 새 버전(v2) 재선택 접수 처리 |
+| **지원 시스템 & DB<br/>(Support / Tech)** | • Supabase Auth GoTrue<br/>• `auth.users` 세션 관리 | • `public.slots` (42개 고정 슬롯)<br/>• `constants.ts` (KST 기준시각) | • `public.requests` (status='received')<br/>• `public.candidates` (1~3순위)<br/>• `submit_request` RPC | • `confirm_request` RPC<br/>• DB 배타적 직렬화 트랜잭션<br/>• PostgreSQL RLS 정책 | • `resubmit_request` RPC<br/>• `public.operation_logs` (감사 로그)<br/>• `decide.ts` 판정 엔진 |
 
 ---
 

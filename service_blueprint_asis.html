@@ -541,11 +541,11 @@
         <span class="badge badge-blue">Service Blueprint</span>
         <span class="badge badge-green">현재 구현 기준 (As-Is)</span>
         <span class="badge badge-purple">42슬롯 (14일×3시간대)</span>
-        <span class="badge badge-amber">이중 모드 (Local / Supabase)</span>
+        <span class="badge badge-amber">단일 페르소나: 김두두</span>
       </div>
       <h1>cal.dudu 서비스 블루프린트 (현재 구현 기준 As-Is)</h1>
       <p class="subtitle">
-        현재 코드베이스(React·Vite·TypeScript 및 Supabase PostgreSQL)에 실제로 구현된 42개 고정 슬롯 가용성 확인, 1~3순위 희망 신청 접수(비점유), 어드민 수동 확정(점유), 후보 소진 시 재선택 및 멱등성 감사 로그의 전 과정을 물리적 증거, 프론트/백스테이지 접점 및 데이터베이스 지원 프로세스로 구성한 현행 서비스 청사진입니다.
+        본 서비스 청사진은 단일 고객 페르소나인 <strong>'김두두(31세 · IT 서비스 기획자)' 1인의 예약 신청 여정(Customer Actions)</strong>을 기준으로 사용자 행동을 고정하고, 운영자(어드민)의 수동 확정 작업은 후면 운영 접점(Back-stage)으로 명확히 분리하여 제작자·개발자 관점을 배제하고 순수한 서비스 고객 관점에서 분석한 현행 서비스 청사진입니다.
       </p>
     </header>
 
@@ -615,7 +615,7 @@
         <span>📊</span> 1. 계층별 상호작용 아키텍처 다이어그램 (현행 구현 기준)
       </div>
       <p class="section-desc">
-        사용자(고객 및 어드민)의 행동을 중심으로 화면 UI(물리적 증거), 프론트엔드 컴포넌트, 백스테이지 로직, 데이터베이스 지원 프로세스의 상호작용을 나타냅니다.
+        단일 고객 페르소나인 <strong>'김두두(31세 · IT 서비스 기획자)'</strong> 1인의 예약 신청 여정(Customer Actions)을 중심으로 물리적 증거, 전면 접점, 후면 운영(관리자 확정) 및 데이터베이스 지원 프로세스의 상호작용을 나타냅니다.
       </p>
 
       <!-- 확대/축소 툴바 -->
@@ -633,44 +633,44 @@
         <div id="mermaidWrapper" class="mermaid-scale-wrapper">
           <div class="mermaid">
 flowchart TB
-    subgraph Evidence ["🖥️ 1. 물리적 증거 (UI / Physical Evidence)"]
-        E1["<b>모드/역할 선택 바</b><br/><small>로컬(역할 전환) / Supabase 로그인</small>"]
-        E2["<b>42슬롯 매트릭스 표</b><br/><small>14일 × 3회 (가능/마감 상태 배지)</small>"]
-        E3["<b>희망 슬롯 선택 폼</b><br/><small>1~3개 체크박스 & 1·2·3순위 칩</small>"]
-        E4["<b>어드민 수동 확정 패널</b><br/><small>신청자 목록 테이블 & [확정] 버튼</small>"]
-        E5["<b>내 신청 조회 & 운영 로그 표</b><br/><small>재선택 버튼 / Operation ID 감사 표</small>"]
+    subgraph Evidence ["🖥️ 1. 물리적 증거 (Physical Evidence)"]
+        E1["<b>온라인 예약 접속 & 로그인 화면</b><br/><small>일정 예약 링크 및 로그인 폼</small>"]
+        E2["<b>14일 42슬롯 일정표</b><br/><small>오전·오후·저녁 42개 슬롯 (가능/마감 배지)</small>"]
+        E3["<b>희망 슬롯 선택 폼</b><br/><small>1~3순위 선택 칩 & [신청서 제출] 버튼</small>"]
+        E4["<b>신청 접수 완료 화면</b><br/><small>접수 상태(received) 배지 & 관리자 배정 대기 안내</small>"]
+        E5["<b>일정 확정 카드 / 재선택 화면</b><br/><small>확정 일시 표기 카드 / 마감 알림 & 새 슬롯 선택 폼</small>"]
     end
 
-    subgraph UserAction ["👤 2. 사용자 행동 (Customer & Admin Actions)"]
-        U1["<b>1. 접속 및 모드/인증</b><br/><small>로컬 역할 전환 or Supabase Auth</small>"]
-        U2["<b>2. 42개 슬롯 가용성 확인</b><br/><small>열린 슬롯 및 KST 시작 시각 점검</small>"]
-        U3["<b>3. 1~3순위 희망 신청 제출</b><br/><small>비점유 대기 신청 & 멱등키 발행</small>"]
-        U4["<b>4. 어드민 수동 확정 처리</b><br/><small>후보 검증 후 단일 확정 (점유 마감)</small>"]
-        U5["<b>5. 상태 확인 및 재선택/감사</b><br/><small>후보 소진 시 재선택 / 어드민 로그 감사</small>"]
+    subgraph UserAction ["👤 2. 고객 행동 (Customer Actions - 페르소나: 김두두)"]
+        U1["<b>1. 예약 접속 및 로그인</b><br/><small>일정 조율 링크 확인 후 본인 계정 로그인</small>"]
+        U2["<b>2. 42개 슬롯 일정 탐색</b><br/><small>프로젝트 일정 및 파트너사 미팅 시간 대조</small>"]
+        U3["<b>3. 1~3순위 희망 슬롯 신청</b><br/><small>선호 시간대 1~3개 선택 후 신청서 제출</small>"]
+        U4["<b>4. 접수 확인 및 결과 대기</b><br/><small>정상 접수 확인 후 관리자 배정 결과 대기</small>"]
+        U5["<b>5. 확정 일정 확인 / 마감 시 재선택</b><br/><small>확정 일정을 캘린더에 등록 (마감 시 재선택)</small>"]
     end
 
-    subgraph FrontStage ["🌐 3. 프론트엔드 접점 (Front-stage Components)"]
-        F1["<b>App.tsx & AuthModal.tsx</b><br/><small>isSupabaseConfigured / signOut</small>"]
-        F2["<b>SlotTable.tsx & constants.ts</b><br/><small>isSlotStillAvailable 시각 체크</small>"]
-        F3["<b>CustomerPage.tsx</b><br/><small>validateSubmission & 멱등 ID 생성</small>"]
-        F4["<b>AdminPage.tsx</b><br/><small>validateConfirmation & 확정 요청</small>"]
-        F5["<b>NotificationBanner & Status View</b><br/><small>getCustomerStatus / getAdminRequests</small>"]
+    subgraph FrontStage ["🌐 3. 전면 서비스 접점 (Front-stage Interfaces)"]
+        F1["<b>AuthModal.tsx & App.tsx</b><br/><small>로그인 폼 표출 및 사용자 인증 상태 관리</small>"]
+        F2["<b>SlotTable.tsx</b><br/><small>42개 슬롯 가용성 및 지난 슬롯 비활성화 표출</small>"]
+        F3["<b>CustomerPage.tsx</b><br/><small>1~3개 선택 유효성 검증 및 신청 접수 처리</small>"]
+        F4["<b>CustomerPage & NotificationBanner</b><br/><small>신청 접수(received) 피드백 및 대기 상태 표출</small>"]
+        F5["<b>CustomerPage.tsx (Status/Reselect)</b><br/><small>확정 결과 카드 표출 또는 재선택 폼 렌더링</small>"]
     end
 
-    subgraph BackStage ["⚙️ 4. 백스테이지 접점 (Back-stage Logic & RPC)"]
-        B1["<b>세션 검증 & 권한 판정</b><br/><small>auth.uid() / app_metadata.role</small>"]
+    subgraph BackStage ["⚙️ 4. 후면 운영 접점 (Back-stage & Admin Operations)"]
+        B1["<b>세션 검증 & 고객 계정 식별</b><br/><small>auth.uid() 고객 계정 세션 매핑</small>"]
         B2["<b>슬롯 가용성 조회</b><br/><small>개인정보 제외 slots 공개 쿼리</small>"]
         B3["<b>submit_request 실행</b><br/><small>requests & candidates 1~3 비점유 저장</small>"]
-        B4["<b>confirm_request 실행</b><br/><small>슬롯 마감 & needs_reselection 자동 전이</small>"]
-        B5["<b>resubmit_request & 감사 로깅</b><br/><small>버전 증가 (v2) & operation_logs 기록</small>"]
+        B4["<b>관리자 대기열 검토 및 수동 확정</b><br/><small>AdminPage 대기열 검토 후 후보 내 1개 확정(confirm_request)</small>"]
+        B5["<b>마감 처리 및 재선택 상태 전이</b><br/><small>타 고객 확정으로 전 후보 마감 시 needs_reselection 자동 갱신</small>"]
     end
 
     subgraph Support ["🛠️ 5. 지원 시스템 (Database & Infrastructure)"]
-        S1["<b>DatabaseManager / Supabase Auth</b><br/><small>localStorage or GoTrue 인증 서버</small>"]
-        S2["<b>PostgreSQL slots 테이블</b><br/><small>42개 고정 슬롯 (UNIQUE date, time_label)</small>"]
-        S3["<b>PostgreSQL requests & candidates</b><br/><small>RLS: 본인 소유만 조회/신청 허용</small>"]
-        S4["<b>PostgreSQL confirmations & RPC</b><br/><small>SECURITY DEFINER 원자적 트랜잭션</small>"]
-        S5["<b>PostgreSQL operation_logs</b><br/><small>작업 ID 중복 방지 (Idempotency) 캐시</small>"]
+        S1["<b>인증 서버 (Supabase GoTrue)</b><br/><small>사용자 계정 및 세션 토큰 관리</small>"]
+        S2["<b>PostgreSQL slots 테이블</b><br/><small>42개 고정 슬롯 마스터</small>"]
+        S3["<b>PostgreSQL requests & candidates</b><br/><small>신청서 및 1~3순위 후보 저장</small>"]
+        S4["<b>PostgreSQL confirm_request RPC</b><br/><small>배타적 슬롯 점유 마감 트랜잭션</small>"]
+        S5["<b>PostgreSQL operation_logs</b><br/><small>작업 멱등성 검증 및 변경 감사 로그</small>"]
     end
 
     %% 연결 관계 매핑
@@ -704,11 +704,11 @@ flowchart TB
           <thead>
             <tr>
               <th class="layer-header">구분 (Layers)</th>
-              <th class="col-phase"><span class="phase-num">1</span> 진입 및 모드/인증</th>
+              <th class="col-phase"><span class="phase-num">1</span> 예약 접속 및 로그인</th>
               <th class="col-phase"><span class="phase-num">2</span> 42슬롯 탐색</th>
-              <th class="col-phase"><span class="phase-num">3</span> 희망 신청 (접수)</th>
-              <th class="col-phase"><span class="phase-num">4</span> 어드민 수동 확정</th>
-              <th class="col-phase"><span class="phase-num">5</span> 재선택 및 감사 로그</th>
+              <th class="col-phase"><span class="phase-num">3</span> 희망 슬롯 신청</th>
+              <th class="col-phase"><span class="phase-num">4</span> 접수 확인 및 결과 대기</th>
+              <th class="col-phase"><span class="phase-num">5</span> 확정 완료 및 (마감 시) 재선택</th>
             </tr>
           </thead>
           <tbody>
@@ -719,52 +719,52 @@ flowchart TB
                 <div class="sub-label">Physical Evidence</div>
               </td>
               <td>
-                <span class="item-title">모드 배지 & 역할 전환 버튼</span>
-                <span class="item-desc">로컬/Supabase 모드 배지, 로컬 고객/어드민 토글, Supabase 로그인 모달, 테스트 시간 고정 바</span>
+                <span class="item-title">일정 예약 링크 & 로그인 화면</span>
+                <span class="item-desc">일정 조율 링크 접속, cal.dudu 로그인 화면(이메일/비밀번호 입력 폼, 서비스 안내 배너)</span>
               </td>
               <td>
-                <span class="item-title">42슬롯 표 (14행 × 3열)</span>
+                <span class="item-title">14일 42슬롯 일정표 (14행 × 3열)</span>
                 <span class="item-desc">2026-09-09~22 날짜행, 오전/오후/저녁 시간열, '가능' / '마감' 상태 배지</span>
               </td>
               <td>
-                <span class="item-title">체크박스 선택 & 1~3순위 목록</span>
-                <span class="item-desc">선택된 슬롯 순위 리스트, [신청하기] 버튼, 중복 방지 비활성화</span>
+                <span class="item-title">희망 슬롯 선택 폼 & 순위 칩</span>
+                <span class="item-desc">선택된 슬롯 순위 리스트(1·2·3순위 칩), [신청하기] 버튼, 중복 방지 비활성화</span>
               </td>
               <td>
-                <span class="item-title">어드민 신청 목록 & [확정] 버튼</span>
-                <span class="item-desc">접수 순 정렬된 고객별 신청서, 후보 슬롯 라디오 선택, [수동 확정] 버튼</span>
+                <span class="item-title">신청 접수 확인 화면 & 대기 배지</span>
+                <span class="item-desc">신청서 접수 상태('received') 배지, "관리자 확정 검토 중" 상태 안내 배너</span>
               </td>
               <td>
-                <span class="item-title">내 신청 카드 & 운영 기록 표</span>
-                <span class="item-desc">재선택 필요(needs_reselection) 배지 및 [재선택] 폼, 어드민의 operation_logs 감사 테이블</span>
+                <span class="item-title">최종 확정 카드 / 재선택 알림</span>
+                <span class="item-desc">확정된 일정 일시 표기 카드, 또는 전 후보 마감 시 '재선택 필요' 배지 및 새 슬롯 선택 폼</span>
               </td>
             </tr>
 
-            <!-- 2. 사용자 행동 -->
+            <!-- 2. 고객 행동 -->
             <tr class="layer-row">
               <td class="layer-header">
-                <div class="icon-label"><span>👤</span> 사용자 행동</div>
-                <div class="sub-label">Customer / Admin</div>
+                <div class="icon-label"><span>👤</span> 고객 행동</div>
+                <div class="sub-label">Customer Actions (김두두 1인)</div>
               </td>
               <td>
-                <span class="item-title">접속 및 인증/역할 지정</span>
-                <span class="item-desc">로컬 모드에서 고객(C01) 또는 어드민 선택, Supabase 모드에서는 이메일 로그인 수행</span>
+                <span class="item-title">예약 서비스 접속 및 본인 로그인</span>
+                <span class="item-desc">9월 집중 미팅/코칭 일정 조율 안내를 확인하고, 브라우저로 cal.dudu에 접속하여 본인 이메일 계정으로 로그인</span>
               </td>
               <td>
-                <span class="item-title">슬롯 가용성 및 일정 확인</span>
-                <span class="item-desc">현재 시각 기준으로 열려 있는 슬롯 확인 (시작 시각 경과 슬롯 선택 불가)</span>
+                <span class="item-title">14일 42슬롯 일정 탐색</span>
+                <span class="item-desc">프로젝트 스프린트 및 업무 일정을 고려하여 참석 가능한 날짜(9/9~22)와 시간대(오전/오후/저녁)의 열려 있는 잔여 슬롯 확인</span>
               </td>
               <td>
-                <span class="item-title">1~3개 슬롯 선택 후 제출</span>
-                <span class="item-desc">원하는 열린 슬롯을 1~3순위로 지정하여 신청 제출 (비점유 대기)</span>
+                <span class="item-title">1~3순위 희망 슬롯 선택 및 신청</span>
+                <span class="item-desc">가장 선호하는 시간대를 순서대로 1~3개 선택하고, 우선순위를 점검한 뒤 예약 신청서 제출 (비점유 대기)</span>
               </td>
               <td>
-                <span class="item-title">(어드민) 희망 후보 중 확정</span>
-                <span class="item-desc">고객의 신청 후보 중 1개를 선택하여 수동 확정 (슬롯 점유 마감)</span>
+                <span class="item-title">접수 확인 및 관리자 확정 대기</span>
+                <span class="item-desc">신청서가 대기열에 정상 접수되었음을 확인하고, 관리자(어드민)의 일정 검토 및 배정 결과를 대기</span>
               </td>
               <td>
-                <span class="item-title">결과 확인 및 재선택 / 감사</span>
-                <span class="item-desc">고객: 확정 확인 or 후보 소진 시 재선택 제출<br/>어드민: 실행 기록 및 오류 위치 확인</span>
+                <span class="item-title">최종 일정 확정 (또는 마감 시 재선택)</span>
+                <span class="item-desc">배정된 최종 일정을 확인하여 본인 캘린더에 등록하거나, 신청한 모든 후보가 마감되었을 경우 안내를 확인하고 새 슬롯을 재선택</span>
               </td>
             </tr>
 
@@ -776,7 +776,7 @@ flowchart TB
               </td>
               <td>
                 <span class="item-title">App.tsx / AuthModal.tsx</span>
-                <span class="item-desc">isSupabaseConfigured() 검사, DatabaseManager vs SupabaseManager 인스턴스 초기화</span>
+                <span class="item-desc">로그인 폼 표출 및 사용자 세션 상태 초기화</span>
                 <span class="code-tag">src/pages/App.tsx</span>
               </td>
               <td>
@@ -790,46 +790,46 @@ flowchart TB
                 <span class="code-tag">src/components/CustomerPage.tsx</span>
               </td>
               <td>
-                <span class="item-title">AdminPage.tsx</span>
-                <span class="item-desc">getAdminRequests() 접수순 정렬, validateConfirmation() 검증 후 confirmRequest() 호출</span>
-                <span class="code-tag">src/components/AdminPage.tsx</span>
+                <span class="item-title">CustomerPage & NotificationBanner</span>
+                <span class="item-desc">신청 접수 피드백(toast) 및 대기('received') 상태 화면 렌더링</span>
+                <span class="code-tag">src/components/CustomerPage.tsx</span>
               </td>
               <td>
-                <span class="item-title">CustomerPage / AdminPage</span>
-                <span class="item-desc">resubmitRequest() 새 버전 신청, NotificationBanner 토스트, OperationLog 표 렌더링</span>
-                <span class="code-tag">src/utils/operations.ts</span>
+                <span class="item-title">CustomerPage.tsx (Status / Reselect)</span>
+                <span class="item-desc">최종 확정 카드 렌더링 또는 needs_reselection 감지 시 재선택 폼 활성화</span>
+                <span class="code-tag">src/components/CustomerPage.tsx</span>
               </td>
             </tr>
 
             <!-- 4. 백스테이지 접점 -->
             <tr class="layer-row">
               <td class="layer-header">
-                <div class="icon-label"><span>⚙️</span> 백스테이지 접점</div>
-                <div class="sub-label">Back-stage Logic</div>
+                <div class="icon-label"><span>⚙️</span> 후면 운영 접점</div>
+                <div class="sub-label">Back-stage & Admin</div>
               </td>
               <td>
-                <span class="item-title">인증 세션 & 권한 검증</span>
-                <span class="item-desc">Supabase auth.uid() 식별, app_metadata.role='admin' 관리자 권한 확인</span>
+                <span class="item-title">인증 세션 & 고객 식별</span>
+                <span class="item-desc">Supabase auth.uid() 고객 계정 세션 매핑</span>
                 <span class="code-tag">src/utils/supabase.ts</span>
               </td>
               <td>
-                <span class="item-title">슬롯 상태 조회</span>
-                <span class="item-desc">개인정보를 배제한 slots 공개 조회, 현재 시각(KST)과 슬롯 시작 시각 비교</span>
+                <span class="item-title">슬롯 가용성 조회</span>
+                <span class="item-desc">개인식별정보를 배제한 slots 공개 조회, 현재 시각(KST)과 슬롯 시작 시각 비교</span>
                 <span class="code-tag">src/utils/decide.ts</span>
               </td>
               <td>
                 <span class="item-title">submit_request 실행</span>
-                <span class="item-desc">operationId 멱등성 검사, requests 레코드 생성 및 candidates(1~3순위) 비점유 등록</span>
+                <span class="item-desc">requests 레코드 생성 및 candidates(1~3순위) 비점유 대기열 등록</span>
                 <span class="code-tag">submitRequestRPC</span>
               </td>
               <td>
-                <span class="item-title">confirm_request 트랜잭션</span>
-                <span class="item-desc">slots 마감('confirmed'), 요청 확정, 타 신청자의 남은 후보 없을 시 'needs_reselection' 갱신</span>
+                <span class="item-title">관리자 대기열 검토 및 수동 확정</span>
+                <span class="item-desc">관리자가 AdminPage에서 접수된 고객 신청서를 확인하고, 고객의 신청 후보 중 1개 슬롯을 수동 확정(confirm_request)하여 배타적 점유 마감 처리</span>
                 <span class="code-tag">confirmRequestRPC</span>
               </td>
               <td>
-                <span class="item-title">resubmit_request & 감사 기록</span>
-                <span class="item-desc">버전 증가(version+1), 새 후보 등록, operation_logs에 액션·요청·슬롯·결과 기록</span>
+                <span class="item-title">마감 처리 및 재선택 상태 전이</span>
+                <span class="item-desc">타 고객 확정으로 전 후보 마감 시 needs_reselection 자동 전이 및 resubmit_request 처리</span>
                 <span class="code-tag">resubmitRequestRPC</span>
               </td>
             </tr>
