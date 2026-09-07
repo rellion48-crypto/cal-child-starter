@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>김두두 · Persona · User Journey Map (cal.dudu)</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #eaf0f7;
+      color: #172536;
+      font-family: Arial, "Apple SD Gothic Neo", "Pretendard Variable", sans-serif;
+    }
+    nav {
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    button, a { font: inherit; }
+    button {
+      cursor: pointer;
+      border: 1px solid #cad3df;
+      border-radius: 7px;
+      background: white;
+      padding: 9px 16px;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+    button.active {
+      background: #2446ad;
+      color: white;
+      border-color: #2446ad;
+    }
+    button:hover:not(.active) {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+    #viewport {
+      position: relative;
+      margin: auto;
+    }
+    #stage {
+      width: 1920px;
+      height: 1080px;
+      transform-origin: top left;
+      position: absolute;
+      background: #fff9e9;
+      border: 1px solid #ddcd9d;
+      padding: 44px 64px;
+    }
+    section.slide { height: 100%; }
+    section[hidden] { display: none; }
+    
+    .top span {
+      font-size: 20px;
+      font-weight: bold;
+      color: #6d7580;
+    }
+    .top h1 {
+      font-size: 40px;
+      margin: 10px 0 12px;
+      color: #1e293b;
+      letter-spacing: -0.5px;
+    }
+    .top p {
+      font-size: 23px;
+      margin: 0;
+      color: #58616c;
+    }
+
+    /* Page 1: Source / Profile */
+    .source-intro {
+      margin-top: 26px;
+      background: #ffedaf;
+      padding: 26px 32px;
+      font-size: 32px;
+      line-height: 1.6;
+      border-radius: 10px;
+      font-weight: 700;
+      color: #2c2511;
+    }
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin: 22px 0;
+    }
+    .facts div {
+      background: white;
+      padding: 20px 22px;
+      border: 1px solid #e6dcc4;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .facts small {
+      display: block;
+      font-size: 19px;
+      color: #7b715e;
+      font-weight: 600;
+    }
+    .facts b {
+      display: block;
+      font-size: 27px;
+      margin-top: 8px;
+      color: #1e293b;
+    }
+    .source-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .source-columns article {
+      background: white;
+      padding: 24px 28px;
+      border: 1px solid #e6dcc4;
+      border-radius: 8px;
+    }
+    .source-columns h2 {
+      font-size: 26px;
+      margin: 0 0 12px;
+      color: #2446ad;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .source-columns p {
+      font-size: 26px;
+      line-height: 1.75;
+      margin: 0;
+      word-break: keep-all;
+      color: #334155;
+    }
+    .hint {
+      font-size: 20px;
+      color: #646859;
+      margin-top: 18px;
+    }
+
+    /* Page 2: Persona Grid & Axes */
+    .persona-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 44px;
+      margin-top: 20px;
+    }
+    .identity {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      margin-bottom: 20px;
+      background: white;
+      padding: 20px 24px;
+      border-radius: 12px;
+      border: 1px solid #e6dcc4;
+    }
+    .avatar-box {
+      width: 150px;
+      height: 150px;
+      border: 4px solid #2446ad;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #2446ad 0%, #3b82f6 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 70px;
+      box-shadow: 0 4px 12px rgba(36, 70, 173, 0.2);
+    }
+    .identity h2 {
+      font-size: 38px;
+      margin: 0 0 8px;
+      color: #0f172a;
+    }
+    .identity mark {
+      font-size: 21px;
+      background: #ffe178;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .identity p {
+      font-size: 23px;
+      line-height: 1.6;
+      margin: 8px 0 0;
+      color: #475569;
+    }
+    .persona-grid h2 {
+      font-size: 27px;
+      margin: 16px 0 10px;
+      color: #1e3a8a;
+    }
+    .persona-grid .prose {
+      font-size: 25px;
+      line-height: 1.7;
+      margin: 0;
+      word-break: keep-all;
+      color: #334155;
+    }
+    .note {
+      font-size: 19px;
+      line-height: 1.5;
+      color: #776e59;
+      margin-top: 14px;
+    }
+    .persona-grid aside {
+      background: #ffeba8;
+      padding: 22px 28px;
+      border-radius: 12px;
+      border: 1px solid #ddcd9d;
+    }
+    .persona-grid aside h2 {
+      margin: 0 0 14px;
+      font-size: 26px;
+      color: #2446ad;
+    }
+    .axis {
+      margin: 0 0 16px;
+    }
+    .axis-title {
+      display: flex;
+      justify-content: space-between;
+      font-size: 22px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .axis-english {
+      font-size: 18px;
+      margin: 3px 0;
+      color: #64748b;
+      font-weight: 600;
+    }
+    .ends {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 16.5px;
+      line-height: 1.3;
+      color: #475569;
+    }
+    .ends span { max-width: 48%; }
+    .ends span:last-child { text-align: right; }
+    .line {
+      position: relative;
+      border-top: 2px solid #302b20;
+      margin: 10px 10px 0;
+      height: 10px;
+    }
+    .line i {
+      position: absolute;
+      top: -9px;
+      width: 26px;
+      height: 16px;
+      border-radius: 8px;
+      background: #2446ad;
+      transform: translateX(-50%);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+    }
+    .line em {
+      font-size: 15px;
+      background: #ffeba8;
+      position: absolute;
+      top: -10px;
+      left: 30%;
+      font-style: normal;
+      color: #713f12;
+      font-weight: bold;
+    }
+
+    /* Page 3: User Journey Map */
+    .situation-story {
+      background: #dce9f8;
+      padding: 14px 20px;
+      margin: 12px 0 14px;
+      border-radius: 8px;
+      border: 1px solid #bfdbfe;
+    }
+    .situation-story > b {
+      font-size: 24px;
+      color: #1e3a8a;
+    }
+    .situation-story small {
+      font-size: 18px;
+      font-weight: normal;
+      margin-left: 16px;
+      color: #475569;
+    }
+    .situation-story p {
+      font-size: 21px;
+      line-height: 1.45;
+      margin: 6px 0 0;
+      color: #1e293b;
+    }
+
+    .journey {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 18px;
+      background: white;
+    }
+    .journey th, .journey td {
+      border: 2px solid #d7dfe8;
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.35;
+      word-break: keep-all;
+    }
+    .journey th:first-child { width: 135px; }
+    .journey thead th {
+      background: #2446ad;
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .journey th small {
+      display: block;
+      font-size: 15.5px;
+      margin-bottom: 4px;
+      color: #dce5ff;
+    }
+    .journey tbody th {
+      background: #edf1f7;
+      font-size: 18px;
+      color: #1e293b;
+      font-weight: 700;
+    }
+    .touch {
+      display: block;
+      font-size: 15px;
+      color: #0284c7;
+      font-weight: bold;
+      margin-top: 4px;
+    }
+    .emotion-cell {
+      padding: 0 !important;
+      position: relative;
+    }
+    .emotion-chart {
+      height: 140px;
+      position: relative;
+      background: repeating-linear-gradient(to right, transparent 0, transparent calc(16.6667% - 1px), #d7dfe8 calc(16.6667% - 1px), #d7dfe8 16.6667%);
+    }
+    #emotion-line {
+      width: 100%;
+      height: 140px;
+      display: block;
+    }
+    .emotion-point {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      display: flex;
+      gap: 3px;
+      align-items: center;
+      pointer-events: none;
+    }
+    .emotion-point span {
+      font-family: Apple Color Emoji, Segoe UI Emoji, sans-serif;
+      font-size: 30px;
+    }
+    .emotion-point b {
+      font-size: 17px;
+      background: white;
+      border-radius: 8px;
+      padding: 0 4px;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .thought-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      background: #f8fafc;
+      border-top: 1px solid #d7dfe8;
+    }
+    .thought-grid div {
+      padding: 8px 10px;
+      border-right: 1px solid #d7dfe8;
+      font-size: 17px;
+      line-height: 1.35;
+      color: #334155;
+    }
+    .thought-grid div:last-child {
+      border-right: none;
+    }
+    .contrast {
+      padding: 12px 18px;
+      background: #fff0bf;
+      font-size: 20px;
+      line-height: 1.5;
+      margin-top: 14px;
+      border-radius: 6px;
+      border: 1px solid #fde047;
+    }
+    .contrast b { margin-right: 14px; color: #854d0e; }
+
+    /* Footer & Drawer */
+    footer {
+      height: 54px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    dialog {
+      border: 1px solid #bac5d2;
+      border-radius: 12px;
+      width: min(1080px, 94vw);
+      max-height: 86vh;
+      padding: 26px 32px;
+      color: #243143;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+    dialog::backdrop { background: rgba(18, 32, 52, 0.6); }
+    .drawer-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: -26px;
+      background: white;
+      padding: 10px 0;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    .drawer-head b { font-size: 24px; color: #1e293b; }
+    .drawer-body p { font-size: 18px; line-height: 1.8; color: #334155; }
+    .drawer-body article { border-bottom: 1px solid #e2e8f0; padding: 16px 0; }
+    .drawer-body h3 { font-size: 20px; color: #2446ad; margin: 0 0 8px; }
+    .drawer-body pre {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-size: 14.5px;
+      line-height: 1.65;
+      background: #f8fafc;
+      padding: 14px 18px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+
+    @media(max-width: 700px) {
+      nav { gap: 4px; height: 52px; }
+      button { padding: 8px 12px; font-size: 13px; }
+      footer { flex-wrap: wrap; height: auto; padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <button id="tab1" onclick="showPage(1)" class="active">1 · 김두두 원문 프로필</button>
+    <button id="tab2" onclick="showPage(2)">2 · Persona 구조화</button>
+    <button id="tab3" onclick="showPage(3)">3 · User Journey Map (UJM)</button>
+  </nav>
+
+  <div id="viewport" style="width: 1228px; height: 691px;">
+    <main id="stage">
+      
+      <!-- ================= PAGE 1: SOURCE ================= -->
+      <section class="slide" id="page1">
+        <div class="top">
+          <span>01 / SOURCE</span>
+          <h1>김두두를 원문으로 읽기</h1>
+          <p>USER_PERSONA.md 원문과 핵심 프로필 사실(Fact)을 구조화하여 표시합니다.</p>
+        </div>
+
+        <div class="source-intro">
+          "일정은 흐르는 물과 같지... 하지만 위기가 닥치면 누구보다 빠르게 판을 읽고 수습한다!"
+        </div>
+
+        <div class="facts">
+          <div>
+            <small>나이 / 성별</small>
+            <b>31세 · 기획자</b>
+          </div>
+          <div>
+            <small>직업 / 경력</small>
+            <b>PM 5년 차</b>
+          </div>
+          <div>
+            <small>성격 / 성향</small>
+            <b>INTP (사색가)</b>
+          </div>
+          <div>
+            <small>핵심 업무</small>
+            <b>애자일 & 일정 조율</b>
+          </div>
+          <div>
+            <small>서비스 목적</small>
+            <b>9월 집중 미팅 조율</b>
+          </div>
+        </div>
+
+        <div class="source-columns">
+          <article>
+            <h2>💼 직업과 일 (Role & Work)</h2>
+            <p>
+              IT업계 5년 차 서비스 기획자(Product Manager). 사내 신규 프로젝트 리딩과 애자일 스프린트 조율, 외주사 및 외부 파트너사와의 미팅 및 요구사항 조율을 전담합니다. 하루에도 수십 건의 슬랙(Slack) 메시지와 미팅 요청을 소화하며, 급작스러운 일정 변경에 기민하게 대응합니다.
+            </p>
+          </article>
+          <article>
+            <h2>🎯 목표와 포부 (Goals & Needs)</h2>
+            <p>
+              2026년 9월 시즌 집중 비즈니스 미팅과 클래스(9/7~8 수업, 9/9~22 예약 운영) 일정을 신속하게 확정하길 원합니다. 불필요한 반복 수동 업무와 불친절한 에러를 극도로 싫어하며, 42개 슬롯 속에서 직관적으로 일정을 잡고 구글 캘린더에 바로 동기화하고자 합니다.
+            </p>
+          </article>
+        </div>
+
+        <div class="hint">
+          원문 정보(USER_PERSONA.md)와 2페이지의 성향 축(Personality Axes) 구조화를 구분해서 확인합니다.
+        </div>
+      </section>
+
+      <!-- ================= PAGE 2: PERSONA ================= -->
+      <section class="slide" id="page2" hidden>
+        <div class="top">
+          <span>02 / PERSONA</span>
+          <h1>김두두 · 성격과 성향으로 구조화</h1>
+        </div>
+
+        <div class="persona-grid">
+          <div>
+            <div class="identity">
+              <div class="avatar-box">👔</div>
+              <div>
+                <h2>김두두</h2>
+                <mark>INTP · 논리적 효율과 즉흥적 수습의 기획자</mark>
+                <p>31세 · IT 서비스 기획자 (PM 5년 차)<br>애자일 스프린트 리딩 · 외부 파트너 미팅 조율<br>cal.dudu 예약 서비스 실습 대상 페르소나</p>
+              </div>
+            </div>
+
+            <h2>Bio</h2>
+            <p class="prose">
+              IT 업계 5년 차 기획자로서 신규 프로젝트와 스프린트를 리딩하며 다양한 이해관계자들의 일정을 조율한다. 경직된 틀보다는 상황에 맞춘 유연한 대처를 선호하며, 반복적인 수동 작업을 줄이고 명확한 프로세스로 업무를 처리하는 것을 중요하게 생각한다.
+            </p>
+
+            <h2>성격과 성향</h2>
+            <p class="prose">
+              <strong>즉흥적이고 유연함 (P 성향):</strong> 꽉 짜인 마감 압박보다는 상황 변화에 유연하게 대처하며, 일정이 틀어져도 즉시 최선의 대안을 찾아 수습한다.<br>
+              <strong>논리적 분석과 효율 중시 (I/T 성향):</strong> 감성적 설득보다 데이터와 명확한 프로세스를 중시하며 불필요한 반복 작업을 극도로 기피한다.<br>
+              <strong>바쁜 멀티태스킹:</strong> 수많은 슬랙 메시지 속에서 신속한 의사결정을 선호한다.
+            </p>
+
+            <p class="note">
+              * USER_PERSONA.md의 정성적 서술을 기반으로 구조화한 해석 모델입니다.<br>
+              * 성향 점수는 심리검사 결과가 아닌 실습 분석용 지표입니다.
+            </p>
+          </div>
+
+          <aside>
+            <h2>Personality Axes</h2>
+
+            <div class="axis">
+              <div class="axis-title"><b>교류 성향</b><span>2 / 5</span></div>
+              <div class="axis-english">Introvert / Extrovert</div>
+              <div class="ends">
+                <span>1 · 내향적 · 문서/비동기 선호</span>
+                <span>5 · 외향적 · 잦은 미팅 선호</span>
+              </div>
+              <div class="line"><i style="left:25%"></i></div>
+            </div>
+
+            <div class="axis">
+              <div class="axis-title"><b>사고·표현 방식</b><span>2 / 5</span></div>
+              <div class="axis-english">Analytical / Creative</div>
+              <div class="ends">
+                <span>1 · 분석적 · 논리/데이터 중심</span>
+                <span>5 · 창의적 · 직관/아이디어 중심</span>
+              </div>
+              <div class="line"><i style="left:25%"></i></div>
+            </div>
+
+            <div class="axis">
+              <div class="axis-title"><b>일상의 여유</b><span>1 / 5</span></div>
+              <div class="axis-english">Busy / Time rich</div>
+              <div class="ends">
+                <span>1 · 매우 바쁨 · 여유 시간 부족</span>
+                <span>5 · 여유로움 · 자유 시간 풍부</span>
+              </div>
+              <div class="line"><i style="left:0%"></i></div>
+            </div>
+
+            <div class="axis">
+              <div class="axis-title"><b>정리·계획 성향</b><span>3 / 5</span></div>
+              <div class="axis-english">Flexible / Rigid</div>
+              <div class="ends">
+                <span>1 · 유연·즉흥적 · 상황 대처형</span>
+                <span>5 · 엄격·계획적 · 사전 고정형</span>
+              </div>
+              <div class="line"><i style="left:50%"></i></div>
+            </div>
+
+            <div class="axis">
+              <div class="axis-title"><b>일하는 방식</b><span>3 / 5</span></div>
+              <div class="axis-english">Independent / Collaborative</div>
+              <div class="ends">
+                <span>1 · 자율형 · 혼자 주도적 리드</span>
+                <span>5 · 협업형 · 전원 합의 선호</span>
+              </div>
+              <div class="line"><i style="left:50%"></i></div>
+            </div>
+
+            <div class="axis">
+              <div class="axis-title"><b>행동 주도성</b><span>4 / 5</span></div>
+              <div class="axis-english">Passive / Active</div>
+              <div class="ends">
+                <span>1 · 수동적 · 지시 대기</span>
+                <span>5 · 능동적 · 대안 즉시 실행</span>
+              </div>
+              <div class="line"><i style="left:75%"></i></div>
+            </div>
+
+            <div class="axis">
+              <div class="axis-title"><b>위험·도전 선호</b><span>3 / 5</span></div>
+              <div class="axis-english">Safe / Risky</div>
+              <div class="ends">
+                <span>1 · 안정 지향 · 검증된 방식</span>
+                <span>5 · 도전 지향 · 새 도구 적극 시험</span>
+              </div>
+              <div class="line"><i style="left:50%"></i></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ================= PAGE 3: USER JOURNEY MAP ================= -->
+      <section class="slide" id="page3" hidden>
+        <div class="top">
+          <span>03 / USER JOURNEY MAP</span>
+          <h1>As-is · cal.dudu 기본 예약 앱에서 겪은 김두두의 여정</h1>
+          <p>정상 작동하는 기본 실습 예약 앱 기준 · 가상 예약 시나리오 · 감정 5점 긍정적 / 1점 부정적</p>
+        </div>
+
+        <div class="situation-story">
+          <b>김두두 기획자가 겪은 상황 <small>9/7~9/8 · 9월 집중 미팅 조율 시점의 시나리오</small></b>
+          <p>
+            김두두는 외부 파트너사와의 9월 핵심 킥오프 일정을 확정하기 위해 <code>cal.dudu</code> 앱을 실행했다. 9/9~9/22 총 42개 슬롯 중 가장 적절한 9/9 오전(1순위)과 9/9 오후(2순위)를 선택해 제출했다.
+          </p>
+          <p>
+            <strong>9/8 오전 확인 결과 두 후보 슬롯 모두 다른 고객에게 먼저 확정되어 소진되었다.</strong> 기획자 김두두는 즉시 대체 일정을 파악하고 9/10 오전을 찾아 새 후보로 재선택 신청을 제출한다.
+          </p>
+        </div>
+
+        <table class="journey">
+          <thead>
+            <tr>
+              <th>단계<br>Steps</th>
+              <th><small>9/7 10:00</small>1. 일정신청</th>
+              <th><small>9/7 16:00</small>2. 대기확인</th>
+              <th><small>9/8 09:30</small>3. 마감확인</th>
+              <th><small>9/8 10:00</small>4. 일정재확인</th>
+              <th><small>9/8 10:15</small>5. 재선택제출</th>
+              <th><small>9/8 14:00</small>6. 확정완료</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>예상 행동·접점</th>
+              <td>
+                앱에서 42개 슬롯을 확인하고 9/9 오전, 9/9 오후를 1·2순위로 신청한다
+                <small class="touch">CustomerPage.tsx</small>
+              </td>
+              <td>
+                앱을 다시 열어 내 신청 내역의 승인 여부와 상태를 확인한다
+                <small class="touch">CustomerPage.tsx</small>
+              </td>
+              <td>
+                두 후보가 다른 고객에게 확정되어 '재선택 필요' 상태가 된 것을 확인한다
+                <small class="touch">NotificationBanner</small>
+              </td>
+              <td>
+                개인 캘린더를 열어 9/10 이후 비어 있는 대체 시간대를 빠르게 확인한다
+                <small class="touch">개인 캘린더</small>
+              </td>
+              <td>
+                앱의 [재선택하기] 버튼을 눌러 9/10 오전을 새 후보로 즉시 제출한다
+                <small class="touch">CustomerPage (v2)</small>
+              </td>
+              <td>
+                어드민 수동 확정 완료를 확인하고 일정을 구글 캘린더에 옮겨 적는다
+                <small class="touch">AdminPage 확정</small>
+              </td>
+            </tr>
+
+            <tr>
+              <th>목표·기대</th>
+              <td>두 개 희망 슬롯을 순서대로 접수해 관리자 검토를 요청한다</td>
+              <td>신청한 슬롯이 확정되었는지 실시간 진행 상태를 파악한다</td>
+              <td>마감된 이유를 이해하고 즉시 대안 슬롯을 선택할 수 있다</td>
+              <td>바쁜 주간 스케줄 속에서 비어 있는 최적의 슬롯을 결정한다</td>
+              <td>버전 2 신청을 완료하여 관리자에게 신속한 재확정을 요청한다</td>
+              <td>최종 일정을 확정받고 캘린더에 오차 없이 일정을 기록한다</td>
+            </tr>
+
+            <tr class="emotion-row">
+              <th>예상 감정·생각<small>5 긍정적<br>3 중립<br>1 부정적</small></th>
+              <td colspan="6" class="emotion-cell">
+                <div class="emotion-chart">
+                  <canvas id="emotion-line" width="1600" height="140" aria-label="감정 꺾은선: [4, 2, 2, 4, 3, 4]"></canvas>
+                  <div class="emotion-point" style="left: 8.33%; top: 40px;"><span>🙂</span><b>4</b></div>
+                  <div class="emotion-point" style="left: 25.0%; top: 92px;"><span>😟</span><b>2</b></div>
+                  <div class="emotion-point" style="left: 41.66%; top: 92px;"><span>😟</span><b>2</b></div>
+                  <div class="emotion-point" style="left: 58.33%; top: 40px;"><span>🙂</span><b>4</b></div>
+                  <div class="emotion-point" style="left: 75.0%; top: 66px;"><span>😐</span><b>3</b></div>
+                  <div class="emotion-point" style="left: 91.66%; top: 40px;"><span>🙂</span><b>4</b></div>
+                </div>
+                <div class="thought-grid">
+                  <div>42개 슬롯 깔끔하네. 9/9 오전·오후로 넣었으니 금방 잡히겠지</div>
+                  <div>바쁜데 언제 확정되려나... 직접 들어와서 확인해야 하네</div>
+                  <div>아, 두 개 다 다른 사람한테 확정됐네. 빨리 다른 시간 찾아야겠다</div>
+                  <div>오케이, 9/10 오전 비어있네. 이걸로 바로 바꾸면 문제없겠어</div>
+                  <div>9/10 오전으로 재제출 완료. 이번엔 어드민이 빨리 봐주길</div>
+                  <div>드디어 확정됐다! 이제 수동으로 구글 캘린더에 옮겨 적어야겠군</div>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <th>고객의 불편 (Pain)</th>
+              <td>없음 (접수 정상 작동)</td>
+              <td>관리자 수동 확정 시점을 몰라 앱을 반복해서 직접 열어봐야 함</td>
+              <td>두 후보 모두 마감되어 다시 대체 일정을 모색해야 함</td>
+              <td>앱과 개인 캘린더 창을 번갈아 보며 대조해야 함</td>
+              <td>재선택 후에도 다시 관리자 수동 확정을 기다려야 함</td>
+              <td>확정 후 구글 캘린더로의 원클릭 자동 연동이 없어 수동 입력 필요</td>
+            </tr>
+
+            <tr>
+              <th>근거 및 시사점</th>
+              <td>INTP 특유의 빠른 이해, 1~3순위 접수 규칙의 직관성 체감</td>
+              <td>비점유 대기 특성상 관리자 승인 지연 시 즉흥적 성향(P) 유저는 답답함 유발</td>
+              <td>정상적인 선착순 확정 규칙. 후보 소진 시 재선택 경로 명확히 제공</td>
+              <td>INTP 기획자의 빠른 판 읽기 및 즉각적인 대안 슬롯(9/10) 탐색</td>
+              <td>version 2로 안전하게 이전 이력 보존 및 신속한 재접수 달성</td>
+              <td>구글 캘린더 원클릭 연동(To-Be)의 강력한 필요성 및 기회 발견</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="contrast">
+          <b>As-Is의 핵심 통찰:</b> 접수, 상태 확인, 재선택의 기본 비즈니스 로직은 매우 견고하게 작동합니다. 다만 '비점유 대기 시간의 불확실성'과 '확정 후 외부 캘린더 연동의 수동성'이 기획자 김두두에게 주요 병목 구간으로 작용합니다.
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer>
+    <button onclick="showPage(Math.max(1, current - 1))">이전</button>
+    <span id="counter">1 / 3</span>
+    <button onclick="showPage(Math.min(3, current + 1))">다음</button>
+    <button onclick="openDetails()" id="detail-label">원문 전체 보기</button>
+  </footer>
+
+  <dialog id="drawer">
+    <div class="drawer-head">
+      <b>상세 자료 (Persona & UJM 분석 근거)</b>
+      <button onclick="document.getElementById('drawer').close()">닫기</button>
+    </div>
+    <div class="drawer-body" id="drawer-content"></div>
+  </dialog>
+
+  <script>
+    const details = [
+      `<h2>USER_PERSONA.md 원문 분석 · 김두두 프로필</h2>
+       <article>
+         <h3>1. 기본 프로필</h3>
+         <p><b>이름:</b> 김두두 (31세, 가상 페르소나)<br>
+         <b>MBTI:</b> INTP (논리적인 사색가, 아이디어 뱅크, 유연한 사고)<br>
+         <b>직업:</b> IT업계 서비스 기획자 (PM / Planner, 경력 5년 차)<br>
+         <b>주요 업무:</b> 사내 프로젝트 리딩, 애자일 스프린트 조율, 외주/파트너사 미팅 조율, 리소스 관리</p>
+       </article>
+       <article>
+         <h3>2. 성향 및 특징</h3>
+         <p><b>즉흥적이고 유연함 (P 성향):</b> 미팅 변경 시 즉석에서 최선의 대안을 찾아내는 뛰어난 위기 대처 능력.<br>
+         <b>논리적 분석과 효율 중시 (I/T 성향):</b> 반복적인 수동 작업(날짜 계산, 중복 체크 등)을 극도로 싫어함.<br>
+         <b>바쁜 스케줄 속 멀티태스킹:</b> 순간적인 일정 변경에 대응하는 빈도가 높음.</p>
+       </article>
+       <article>
+         <h3>3. 서비스 이용 목적</h3>
+         <p>2026년 9월 시즌 집중 비즈니스 미팅 및 클래스/코칭 일정 조율 (9/7~8 수업, 9/9~22 예약 슬롯 운영). 파트너사와의 컨택 일정을 빠르게 확정하고 구글 캘린더와 연동하고자 함.</p>
+       </article>`,
+
+      `<h2>Persona 성향 축 정의 및 점수 판정 기준</h2>
+       <article>
+         <h3>교류 성향 (2/5) · Introvert / Extrovert</h3>
+         <p>미팅을 리딩하지만 기본적으로 비동기 텍스트와 명확한 문서를 통한 업무 처리를 훨씬 선호합니다.</p>
+       </article>
+       <article>
+         <h3>사고·표현 방식 (2/5) · Analytical / Creative</h3>
+         <p>감성적 설득보다는 데이터와 명확한 프로세스, 논리적 효율성을 최우선으로 검토합니다.</p>
+       </article>
+       <article>
+         <h3>일상의 여유 (1/5) · Busy / Time rich</h3>
+         <p>하루 수십 건의 슬랙 메시지와 미팅 일정으로 인해 여유 시간이 극히 부족하며 빠른 결정을 원합니다.</p>
+       </article>
+       <article>
+         <h3>정리·계획 성향 (3/5) · Flexible / Rigid</h3>
+         <p>경직된 계획에 집착하기보다 상황 변화에 기민하게 반응하고 즉석에서 최적의 대안을 모색합니다.</p>
+       </article>
+       <article>
+         <h3>행동 주도성 (4/5) · Passive / Active</h3>
+         <p>일정이 틀어지거나 후보가 마감되었을 때 지체 없이 대체 슬롯을 찾아 스스로 재선택을 실행합니다.</p>
+       </article>`,
+
+      `<h2>User Journey Map 단계별 상세 데이터</h2>
+       <article>
+         <h3>As-Is 여정 설계 배경</h3>
+         <p>9/7 접수 시작부터 9/8 후보 마감 및 재선택, 최종 수동 확정까지의 6단계를 추적했습니다. 시스템 오류나 버그가 아닌, 정상적인 공통 예약 시스템(비점유 대기, 어드민 수동 확정) 하에서 발생하는 자연스러운 대기 시간과 일정 재조율을 반영했습니다.</p>
+       </article>
+       <article>
+         <h3>To-Be 개선 기회 (Opportunities)</h3>
+         <p>1. <b>상태 변경 알림:</b> 후보 마감 또는 확정 시 사용자에게 즉시 피드백을 전달하여 반복 확인 수고 경감.<br>
+         2. <b>구글 캘린더 원클릭 연동:</b> 확정 완료 화면에서 바로 본인 캘린더에 일정을 등록할 수 있는 템플릿 링크 제공.<br>
+         3. <b>재선택 추천:</b> 후보 소진 시 남은 42개 슬롯 중 비어 있는 시간대를 우선 필터링하여 제시.</p>
+       </article>`
+    ];
+
+    let current = 1;
+
+    function drawEmotion() {
+      const c = document.getElementById("emotion-line");
+      if (!c) return;
+      const ctx = c.getContext("2d");
+      const w = 1600;
+      const h = 140;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.strokeStyle = "#e0e5ed";
+      ctx.lineWidth = 1;
+
+      // 1~5점 배경 가이드라인
+      [1, 2, 3, 4, 5].forEach(v => {
+        let y = 14 + (5 - v) * 26;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      });
+
+      // 감정 꺾은선: [4, 2, 2, 4, 3, 4]
+      ctx.strokeStyle = "#2563eb";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      [4, 2, 2, 4, 3, 4].forEach((v, i) => {
+        let x = (i + 0.5) * (w / 6);
+        let y = 14 + (5 - v) * 26;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+    }
+
+    function fit() {
+      const stage = document.getElementById("stage");
+      const viewport = document.getElementById("viewport");
+      if (!stage || !viewport) return;
+
+      let scale = Math.min((window.innerWidth - 32) / 1920, (window.innerHeight - 120) / 1080);
+      scale = Math.max(0.2, scale);
+
+      stage.style.transform = "scale(" + scale + ")";
+      viewport.style.width = (1920 * scale) + "px";
+      viewport.style.height = (1080 * scale) + "px";
+    }
+
+    function showPage(n) {
+      current = n;
+      [1, 2, 3].forEach(i => {
+        const page = document.getElementById("page" + i);
+        const tab = document.getElementById("tab" + i);
+        if (page) page.hidden = (i !== n);
+        if (tab) tab.classList.toggle("active", i === n);
+      });
+
+      document.getElementById("counter").textContent = n + " / 3";
+      document.getElementById("detail-label").textContent = [
+        "원문 프로필 분석",
+        "성향 축(Axes) 판정 근거",
+        "UJM 상세 데이터 & 기회"
+      ][n - 1];
+
+      location.hash = "page" + n;
+      fit();
+      if (n === 3) {
+        setTimeout(drawEmotion, 50);
+      }
+    }
+
+    function openDetails() {
+      document.getElementById("drawer-content").innerHTML = details[current - 1];
+      document.getElementById("drawer").showModal();
+    }
+
+    window.addEventListener("resize", fit);
+    window.addEventListener("DOMContentLoaded", () => {
+      fit();
+      let m = location.hash.match(/^#page([123])$/);
+      showPage(m ? Number(m[1]) : 1);
+    });
+
+    document.addEventListener("keydown", e => {
+      const drawer = document.getElementById("drawer");
+      if (drawer && drawer.open) return;
+      if (e.key === "ArrowRight") showPage(Math.min(3, current + 1));
+      if (e.key === "ArrowLeft") showPage(Math.max(1, current - 1));
+    });
+  </script>
+</body>
+</html>

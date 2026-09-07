@@ -7,6 +7,17 @@
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- 기획/분석 문서 바로가기 링크 (우측 하단) -->
+    <aside id="doc-shortcuts" aria-label="기획 문서 바로가기" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; gap: 8px; font-family: system-ui, -apple-system, sans-serif;">
+      <a href="/user_persona.html" target="_blank" rel="noopener noreferrer" style="padding: 8px 14px; background: #2446ad; color: white; text-decoration: none; border-radius: 20px; font-size: 13px; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.18); display: flex; align-items: center; gap: 6px; transition: transform 0.2s, background 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        <span>👤</span> 페르소나 (UJM)
+      </a>
+      <a href="/service_blueprint_asis.html" target="_blank" rel="noopener noreferrer" style="padding: 8px 14px; background: #059669; color: white; text-decoration: none; border-radius: 20px; font-size: 13px; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.18); display: flex; align-items: center; gap: 6px; transition: transform 0.2s, background 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        <span>📋</span> 서비스 블루프린트
+      </a>
+    </aside>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

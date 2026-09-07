@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Service Blueprint (As-Is) - cal.dudu 현행 구현 기준</title>
+  <!-- 프리텐다드 폰트 적용 (가독성 최우선) -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Mermaid.js 다이어그램 렌더러 -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --font-main: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --primary-border: #bfdbfe;
+      --success: #059669;
+      --success-light: #ecfdf5;
+      --warning: #d97706;
+      --warning-light: #fffbeb;
+      --danger: #dc2626;
+      --danger-light: #fef2f2;
+      --purple: #7c3aed;
+      --purple-light: #f5f3ff;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.7;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* 헤더 */
+    header {
+      background: var(--bg-card);
+      padding: 36px 40px;
+      border-radius: 16px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, #2563eb, #7c3aed, #059669);
+    }
+
+    .badge-wrap {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      letter-spacing: -0.2px;
+    }
+
+    .badge-blue { background: var(--primary-light); color: var(--primary); border: 1px solid var(--primary-border); }
+    .badge-purple { background: var(--purple-light); color: var(--purple); border: 1px solid #ddd6fe; }
+    .badge-amber { background: var(--warning-light); color: var(--warning); border: 1px solid #fde68a; }
+    .badge-green { background: var(--success-light); color: var(--success); border: 1px solid #a7f3d0; }
+
+    h1 {
+      font-size: 30px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.8px;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 16.5px;
+      color: var(--text-muted);
+      max-width: 1100px;
+      font-weight: 500;
+      line-height: 1.65;
+    }
+
+    /* 섹션 공통 */
+    section {
+      background: var(--bg-card);
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      padding: 36px 40px;
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    /* 다이어그램 줌 툴바 & 박스 */
+    .diagram-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      background: #f1f5f9;
+      padding: 12px 20px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .toolbar-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .zoom-btn {
+      padding: 7px 16px;
+      border-radius: 8px;
+      border: 1.5px solid #cbd5e1;
+      background: white;
+      font-size: 14px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .zoom-btn:hover {
+      background: #eff6ff;
+      border-color: #2563eb;
+      color: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+    .zoom-btn.active {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: white;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+    }
+
+    .mermaid-box {
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
+      padding: 24px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    /* 가로 맞춤 모드: 불필요한 스크롤바 없이 가로 100% 꽉 채움 */
+    .mermaid-box.fit-width {
+      overflow-x: hidden !important;
+    }
+
+    .mermaid-scale-wrapper {
+      width: 100%;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .mermaid {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* 가로 맞춤 상태일 때 SVG: 가로폭 100%에 정확히 맞추고 세로 자동 비율 유지 */
+    .mermaid-box.fit-width .mermaid svg {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: auto !important;
+      display: block !important;
+      margin: 0 auto !important;
+    }
+
+    /* 일반 배율 상태일 때 SVG */
+    .mermaid svg {
+      height: auto !important;
+      display: block;
+      margin: 0 auto;
+      transition: width 0.15s ease-out;
+    }
+
+    /* 노드 및 텍스트 강제 크기 확대 */
+    .mermaid .node rect,
+    .mermaid .node circle,
+    .mermaid .node polygon {
+      stroke-width: 2.5px !important;
+      rx: 10px !important;
+      ry: 10px !important;
+    }
+
+    .mermaid .nodeLabel,
+    .mermaid .node b,
+    .mermaid .node span {
+      font-size: 16.5px !important;
+      line-height: 1.55 !important;
+      font-weight: 700 !important;
+      color: #0f172a !important;
+    }
+
+    .mermaid .node small {
+      font-size: 13.5px !important;
+      font-weight: 600 !important;
+      color: #475569 !important;
+      display: block;
+      margin-top: 4px;
+    }
+
+    .mermaid .cluster-label span,
+    .mermaid .cluster-label {
+      font-size: 20px !important;
+      font-weight: 800 !important;
+      color: #1e3a8a !important;
+      letter-spacing: -0.3px;
+    }
+
+    .mermaid .cluster rect {
+      stroke-width: 2px !important;
+      rx: 12px !important;
+      ry: 12px !important;
+      fill-opacity: 0.45 !important;
+    }
+
+    .mermaid .edgeLabel {
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      background-color: #ffffff !important;
+      padding: 3px 8px !important;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1 !important;
+      color: #334155 !important;
+    }
+
+    .mermaid .edgePath path {
+      stroke-width: 3px !important;
+      stroke: #64748b !important;
+    }
+
+    /* 서비스 블루프린트 테이블 스타일 */
+    .blueprint-wrapper {
+      overflow-x: auto;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      background: white;
+    }
+
+    .blueprint-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1200px;
+      font-size: 14.5px;
+    }
+
+    .blueprint-table th,
+    .blueprint-table td {
+      padding: 20px 18px;
+      border: 1px solid var(--border-color);
+      vertical-align: top;
+      line-height: 1.6;
+    }
+
+    .blueprint-table th {
+      background: #f1f5f9;
+      font-weight: 700;
+      color: #1e293b;
+      text-align: center;
+      font-size: 15px;
+    }
+
+    .blueprint-table tr.layer-row:nth-child(even) {
+      background-color: #fafbfc;
+    }
+
+    .blueprint-table tr.layer-row:hover {
+      background-color: #f1f5f9;
+    }
+
+    .layer-header {
+      width: 180px;
+      font-weight: 800;
+      background: #f8fafc !important;
+      color: #334155;
+      text-align: left !important;
+      position: sticky;
+      left: 0;
+      z-index: 10;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.03);
+    }
+
+    .layer-header .icon-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+    }
+
+    .layer-header .sub-label {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    /* 각 열 헤더(Phase) */
+    .col-phase {
+      width: 18.4%;
+    }
+
+    .phase-num {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      background: #2563eb;
+      color: white;
+      border-radius: 50%;
+      font-size: 12px;
+      line-height: 22px;
+      text-align: center;
+      margin-right: 6px;
+      font-weight: 800;
+    }
+
+    /* 테이블 내부 항목 스타일 */
+    .item-title {
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 5px;
+      display: block;
+      font-size: 15px;
+    }
+
+    .item-desc {
+      color: #475569;
+      font-size: 13.5px;
+      line-height: 1.55;
+    }
+
+    .code-tag {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      background: #f1f5f9;
+      color: #0369a1;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #e2e8f0;
+      display: inline-block;
+      margin-top: 5px;
+      font-weight: 600;
+    }
+
+    .rule-cell {
+      background-color: #f8fafc !important;
+      border-top: 2px solid #cbd5e1;
+    }
+
+    .rule-cell .item-title {
+      color: #1e3a8a;
+    }
+
+    /* 시스템 특징 그리드 */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 20px;
+      margin-top: 16px;
+    }
+
+    .feature-card {
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      border-radius: 12px;
+      padding: 22px 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .feature-card.purple-card {
+      border-color: #ddd6fe;
+      background: #f5f3ff;
+    }
+
+    .feature-card.green-card {
+      border-color: #a7f3d0;
+      background: #ecfdf5;
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feature-card .card-title { color: #1e40af; }
+    .purple-card .card-title { color: #5b21b6; }
+    .green-card .card-title { color: #065f46; }
+
+    .card-content {
+      font-size: 14.5px;
+      color: #334155;
+      line-height: 1.65;
+    }
+
+    .card-content strong {
+      color: #0f172a;
+    }
+
+    .card-content ul {
+      margin-left: 20px;
+      margin-top: 8px;
+    }
+
+    .card-content li {
+      margin-bottom: 6px;
+    }
+
+    /* 푸터 */
+    footer {
+      text-align: center;
+      padding: 24px 0;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 16px 10px; }
+      header, section { padding: 24px 20px; }
+      h1 { font-size: 24px; }
+      .feature-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- 헤더 -->
+    <header>
+      <div class="badge-wrap">
+        <span class="badge badge-blue">Service Blueprint</span>
+        <span class="badge badge-green">현재 구현 기준 (As-Is)</span>
+        <span class="badge badge-purple">42슬롯 (14일×3시간대)</span>
+        <span class="badge badge-amber">이중 모드 (Local / Supabase)</span>
+      </div>
+      <h1>cal.dudu 서비스 블루프린트 (현재 구현 기준 As-Is)</h1>
+      <p class="subtitle">
+        현재 코드베이스(React·Vite·TypeScript 및 Supabase PostgreSQL)에 실제로 구현된 42개 고정 슬롯 가용성 확인, 1~3순위 희망 신청 접수(비점유), 어드민 수동 확정(점유), 후보 소진 시 재선택 및 멱등성 감사 로그의 전 과정을 물리적 증거, 프론트/백스테이지 접점 및 데이터베이스 지원 프로세스로 구성한 현행 서비스 청사진입니다.
+      </p>
+    </header>
+
+    <!-- 섹션 1: 시각 다이어그램 (Mermaid) -->
+    <section>
+      <div class="section-title">
+        <span>📊</span> 1. 계층별 상호작용 아키텍처 다이어그램 (현행 구현 기준)
+      </div>
+      <p class="section-desc">
+        사용자(고객 및 어드민)의 행동을 중심으로 화면 UI(물리적 증거), 프론트엔드 컴포넌트, 백스테이지 로직, 데이터베이스 지원 프로세스의 상호작용을 나타냅니다.
+      </p>
+
+      <!-- 확대/축소 툴바 -->
+      <div class="diagram-toolbar">
+        <span class="toolbar-title">🔍 다이어그램 크기 제어:</span>
+        <button type="button" id="btnFitWidth" class="zoom-btn active" onclick="fitToWidth()" style="margin-right: 12px; background: #2563eb; color: white; border-color: #2563eb;">↔️ 가로 맞춤 (화면폭 기준 100%)</button>
+        <button type="button" class="zoom-btn" onclick="setDiagramZoom(1.0)">100%</button>
+        <button type="button" class="zoom-btn" onclick="setDiagramZoom(1.25)">125%</button>
+        <button type="button" class="zoom-btn" onclick="setDiagramZoom(1.5)">150% (상세 보기)</button>
+        <button type="button" class="zoom-btn" onclick="setDiagramZoom(1.8)">180%</button>
+        <button type="button" class="zoom-btn" onclick="setDiagramZoom(2.2)">220% (특대)</button>
+      </div>
+
+      <div class="mermaid-box">
+        <div id="mermaidWrapper" class="mermaid-scale-wrapper">
+          <div class="mermaid">
+flowchart TB
+    subgraph Evidence ["🖥️ 1. 물리적 증거 (UI / Physical Evidence)"]
+        E1["<b>모드/역할 선택 바</b><br/><small>로컬(역할 전환) / Supabase 로그인</small>"]
+        E2["<b>42슬롯 매트릭스 표</b><br/><small>14일 × 3회 (가능/마감 상태 배지)</small>"]
+        E3["<b>희망 슬롯 선택 폼</b><br/><small>1~3개 체크박스 & 1·2·3순위 칩</small>"]
+        E4["<b>어드민 수동 확정 패널</b><br/><small>신청자 목록 테이블 & [확정] 버튼</small>"]
+        E5["<b>내 신청 조회 & 운영 로그 표</b><br/><small>재선택 버튼 / Operation ID 감사 표</small>"]
+    end
+
+    subgraph UserAction ["👤 2. 사용자 행동 (Customer & Admin Actions)"]
+        U1["<b>1. 접속 및 모드/인증</b><br/><small>로컬 역할 전환 or Supabase Auth</small>"]
+        U2["<b>2. 42개 슬롯 가용성 확인</b><br/><small>열린 슬롯 및 KST 시작 시각 점검</small>"]
+        U3["<b>3. 1~3순위 희망 신청 제출</b><br/><small>비점유 대기 신청 & 멱등키 발행</small>"]
+        U4["<b>4. 어드민 수동 확정 처리</b><br/><small>후보 검증 후 단일 확정 (점유 마감)</small>"]
+        U5["<b>5. 상태 확인 및 재선택/감사</b><br/><small>후보 소진 시 재선택 / 어드민 로그 감사</small>"]
+    end
+
+    subgraph FrontStage ["🌐 3. 프론트엔드 접점 (Front-stage Components)"]
+        F1["<b>App.tsx & AuthModal.tsx</b><br/><small>isSupabaseConfigured / signOut</small>"]
+        F2["<b>SlotTable.tsx & constants.ts</b><br/><small>isSlotStillAvailable 시각 체크</small>"]
+        F3["<b>CustomerPage.tsx</b><br/><small>validateSubmission & 멱등 ID 생성</small>"]
+        F4["<b>AdminPage.tsx</b><br/><small>validateConfirmation & 확정 요청</small>"]
+        F5["<b>NotificationBanner & Status View</b><br/><small>getCustomerStatus / getAdminRequests</small>"]
+    end
+
+    subgraph BackStage ["⚙️ 4. 백스테이지 접점 (Back-stage Logic & RPC)"]
+        B1["<b>세션 검증 & 권한 판정</b><br/><small>auth.uid() / app_metadata.role</small>"]
+        B2["<b>슬롯 가용성 조회</b><br/><small>개인정보 제외 slots 공개 쿼리</small>"]
+        B3["<b>submit_request 실행</b><br/><small>requests & candidates 1~3 비점유 저장</small>"]
+        B4["<b>confirm_request 실행</b><br/><small>슬롯 마감 & needs_reselection 자동 전이</small>"]
+        B5["<b>resubmit_request & 감사 로깅</b><br/><small>버전 증가 (v2) & operation_logs 기록</small>"]
+    end
+
+    subgraph Support ["🛠️ 5. 지원 시스템 (Database & Infrastructure)"]
+        S1["<b>DatabaseManager / Supabase Auth</b><br/><small>localStorage or GoTrue 인증 서버</small>"]
+        S2["<b>PostgreSQL slots 테이블</b><br/><small>42개 고정 슬롯 (UNIQUE date, time_label)</small>"]
+        S3["<b>PostgreSQL requests & candidates</b><br/><small>RLS: 본인 소유만 조회/신청 허용</small>"]
+        S4["<b>PostgreSQL confirmations & RPC</b><br/><small>SECURITY DEFINER 원자적 트랜잭션</small>"]
+        S5["<b>PostgreSQL operation_logs</b><br/><small>작업 ID 중복 방지 (Idempotency) 캐시</small>"]
+    end
+
+    %% 연결 관계 매핑
+    E1 -.- U1
+    E2 -.- U2
+    E3 -.- U3
+    E4 -.- U4
+    E5 -.- U5
+
+    U1 ==> F1 ==> B1 ==> S1
+    U2 ==> F2 ==> B2 ==> S2
+    U3 ==> F3 ==> B3 ==> S3
+    U4 ==> F4 ==> B4 ==> S4
+    U5 ==> F5 ==> B5 ==> S5
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 섹션 2: 서비스 블루프린트 5단계 상세 매트릭스 -->
+    <section>
+      <div class="section-title">
+        <span>📋</span> 2. 현행 구현 기준 5단계 서비스 블루프린트 매트릭스
+      </div>
+      <p class="section-desc">
+        현재 코드베이스의 모듈과 함수, 데이터베이스 테이블 및 RPC 호출에 1:1로 대응되는 현행 프로세스 분석표입니다.
+      </p>
+
+      <div class="blueprint-wrapper">
+        <table class="blueprint-table">
+          <thead>
+            <tr>
+              <th class="layer-header">구분 (Layers)</th>
+              <th class="col-phase"><span class="phase-num">1</span> 진입 및 모드/인증</th>
+              <th class="col-phase"><span class="phase-num">2</span> 42슬롯 탐색</th>
+              <th class="col-phase"><span class="phase-num">3</span> 희망 신청 (접수)</th>
+              <th class="col-phase"><span class="phase-num">4</span> 어드민 수동 확정</th>
+              <th class="col-phase"><span class="phase-num">5</span> 재선택 및 감사 로그</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 1. 물리적 증거 -->
+            <tr class="layer-row">
+              <td class="layer-header">
+                <div class="icon-label"><span>🖥️</span> 물리적 증거</div>
+                <div class="sub-label">Physical Evidence</div>
+              </td>
+              <td>
+                <span class="item-title">모드 배지 & 역할 전환 버튼</span>
+                <span class="item-desc">로컬/Supabase 모드 배지, 로컬 고객/어드민 토글, Supabase 로그인 모달, 테스트 시간 고정 바</span>
+              </td>
+              <td>
+                <span class="item-title">42슬롯 표 (14행 × 3열)</span>
+                <span class="item-desc">2026-09-09~22 날짜행, 오전/오후/저녁 시간열, '가능' / '마감' 상태 배지</span>
+              </td>
+              <td>
+                <span class="item-title">체크박스 선택 & 1~3순위 목록</span>
+                <span class="item-desc">선택된 슬롯 순위 리스트, [신청하기] 버튼, 중복 방지 비활성화</span>
+              </td>
+              <td>
+                <span class="item-title">어드민 신청 목록 & [확정] 버튼</span>
+                <span class="item-desc">접수 순 정렬된 고객별 신청서, 후보 슬롯 라디오 선택, [수동 확정] 버튼</span>
+              </td>
+              <td>
+                <span class="item-title">내 신청 카드 & 운영 기록 표</span>
+                <span class="item-desc">재선택 필요(needs_reselection) 배지 및 [재선택] 폼, 어드민의 operation_logs 감사 테이블</span>
+              </td>
+            </tr>
+
+            <!-- 2. 사용자 행동 -->
+            <tr class="layer-row">
+              <td class="layer-header">
+                <div class="icon-label"><span>👤</span> 사용자 행동</div>
+                <div class="sub-label">Customer / Admin</div>
+              </td>
+              <td>
+                <span class="item-title">접속 및 인증/역할 지정</span>
+                <span class="item-desc">로컬 모드에서 고객(C01) 또는 어드민 선택, Supabase 모드에서는 이메일 로그인 수행</span>
+              </td>
+              <td>
+                <span class="item-title">슬롯 가용성 및 일정 확인</span>
+                <span class="item-desc">현재 시각 기준으로 열려 있는 슬롯 확인 (시작 시각 경과 슬롯 선택 불가)</span>
+              </td>
+              <td>
+                <span class="item-title">1~3개 슬롯 선택 후 제출</span>
+                <span class="item-desc">원하는 열린 슬롯을 1~3순위로 지정하여 신청 제출 (비점유 대기)</span>
+              </td>
+              <td>
+                <span class="item-title">(어드민) 희망 후보 중 확정</span>
+                <span class="item-desc">고객의 신청 후보 중 1개를 선택하여 수동 확정 (슬롯 점유 마감)</span>
+              </td>
+              <td>
+                <span class="item-title">결과 확인 및 재선택 / 감사</span>
+                <span class="item-desc">고객: 확정 확인 or 후보 소진 시 재선택 제출<br/>어드민: 실행 기록 및 오류 위치 확인</span>
+              </td>
+            </tr>
+
+            <!-- 3. 프론트엔드 접점 -->
+            <tr class="layer-row">
+              <td class="layer-header">
+                <div class="icon-label"><span>🌐</span> 프론트 접점</div>
+                <div class="sub-label">Front-stage</div>
+              </td>
+              <td>
+                <span class="item-title">App.tsx / AuthModal.tsx</span>
+                <span class="item-desc">isSupabaseConfigured() 검사, DatabaseManager vs SupabaseManager 인스턴스 초기화</span>
+                <span class="code-tag">src/pages/App.tsx</span>
+              </td>
+              <td>
+                <span class="item-title">SlotTable.tsx</span>
+                <span class="item-desc">getAllDates(), TIME_SLOTS 매트릭스 렌더링, isSlotStillAvailable() 체크박스 제어</span>
+                <span class="code-tag">src/components/SlotTable.tsx</span>
+              </td>
+              <td>
+                <span class="item-title">CustomerPage.tsx</span>
+                <span class="item-desc">validateSubmission() 1~3개 검증, operationId 생성 후 submitRequest() 호출</span>
+                <span class="code-tag">src/components/CustomerPage.tsx</span>
+              </td>
+              <td>
+                <span class="item-title">AdminPage.tsx</span>
+                <span class="item-desc">getAdminRequests() 접수순 정렬, validateConfirmation() 검증 후 confirmRequest() 호출</span>
+                <span class="code-tag">src/components/AdminPage.tsx</span>
+              </td>
+              <td>
+                <span class="item-title">CustomerPage / AdminPage</span>
+                <span class="item-desc">resubmitRequest() 새 버전 신청, NotificationBanner 토스트, OperationLog 표 렌더링</span>
+                <span class="code-tag">src/utils/operations.ts</span>
+              </td>
+            </tr>
+
+            <!-- 4. 백스테이지 접점 -->
+            <tr class="layer-row">
+              <td class="layer-header">
+                <div class="icon-label"><span>⚙️</span> 백스테이지 접점</div>
+                <div class="sub-label">Back-stage Logic</div>
+              </td>
+              <td>
+                <span class="item-title">인증 세션 & 권한 검증</span>
+                <span class="item-desc">Supabase auth.uid() 식별, app_metadata.role='admin' 관리자 권한 확인</span>
+                <span class="code-tag">src/utils/supabase.ts</span>
+              </td>
+              <td>
+                <span class="item-title">슬롯 상태 조회</span>
+                <span class="item-desc">개인정보를 배제한 slots 공개 조회, 현재 시각(KST)과 슬롯 시작 시각 비교</span>
+                <span class="code-tag">src/utils/decide.ts</span>
+              </td>
+              <td>
+                <span class="item-title">submit_request 실행</span>
+                <span class="item-desc">operationId 멱등성 검사, requests 레코드 생성 및 candidates(1~3순위) 비점유 등록</span>
+                <span class="code-tag">submitRequestRPC</span>
+              </td>
+              <td>
+                <span class="item-title">confirm_request 트랜잭션</span>
+                <span class="item-desc">slots 마감('confirmed'), 요청 확정, 타 신청자의 남은 후보 없을 시 'needs_reselection' 갱신</span>
+                <span class="code-tag">confirmRequestRPC</span>
+              </td>
+              <td>
+                <span class="item-title">resubmit_request & 감사 기록</span>
+                <span class="item-desc">버전 증가(version+1), 새 후보 등록, operation_logs에 액션·요청·슬롯·결과 기록</span>
+                <span class="code-tag">resubmitRequestRPC</span>
+              </td>
+            </tr>
+
+            <!-- 5. 지원 시스템 & 데이터 계층 -->
+            <tr class="layer-row">
+              <td class="layer-header">
+                <div class="icon-label"><span>🛠️</span> 지원 시스템</div>
+                <div class="sub-label">DB & Infra Layer</div>
+              </td>
+              <td>
+                <span class="item-title">DatabaseManager / GoTrue</span>
+                <span class="item-desc">로컬 localStorage 인메모리 저장소 or Supabase Auth 인증 엔진</span>
+                <span class="code-tag">localStorage / auth.users</span>
+              </td>
+              <td>
+                <span class="item-title">public.slots (42개)</span>
+                <span class="item-desc">42개 슬롯 마스터 (id, date, time_label, status, confirmed_by, confirmed_at)</span>
+                <span class="code-tag">idx_slots_date_time</span>
+              </td>
+              <td>
+                <span class="item-title">public.requests & candidates</span>
+                <span class="item-desc">신청서 및 순위별 후보 테이블. RLS: authenticated는 자기 customer_id만 접근</span>
+                <span class="code-tag">unique_request_slot</span>
+              </td>
+              <td>
+                <span class="item-title">confirmations & 함수 권한</span>
+                <span class="item-desc">확정 테이블, SECURITY DEFINER RPC 트랜잭션, REVOKE PUBLIC / GRANT authenticated</span>
+                <span class="code-tag">idx_confirmations_slot</span>
+              </td>
+              <td>
+                <span class="item-title">public.operation_logs</span>
+                <span class="item-desc">작업 ID 고유 인덱스(UNIQUE operation_id), 재시도 멱등성 보장 및 운영 감사 로그</span>
+                <span class="code-tag">idx_logs_operation</span>
+              </td>
+            </tr>
+
+            <!-- 6. 핵심 업무 규칙 및 무결성 -->
+            <tr class="layer-row rule-cell">
+              <td class="layer-header" style="background:#f1f5f9 !important; color:#1e3a8a;">
+                <div class="icon-label"><span>📌</span> 핵심 업무 규칙</div>
+                <div class="sub-label">Business Integrity</div>
+              </td>
+              <td>
+                <span class="item-title">모드 분리 원칙</span>
+                <span class="item-desc">로컬 데모는 브라우저 단일 수업용이며 동시성을 보장하지 않음. Supabase 모드는 실제 RLS와 DB 트랜잭션 적용</span>
+              </td>
+              <td>
+                <span class="item-title">슬롯 고정 & 시간 검증</span>
+                <span class="item-desc">2026-09-09~22 총 42슬롯 불변. 현재 시각(KST) 기준 시작 시각이 지난 슬롯은 신청·확정 불가</span>
+              </td>
+              <td>
+                <span class="item-title">접수는 비점유</span>
+                <span class="item-desc">1~3개 서로 다른 열린 슬롯 선택. 신청 단계에서는 슬롯이 마감되지 않으며 다중 고객 동시 대기 허용</span>
+              </td>
+              <td>
+                <span class="item-title">확정만 점유 (단일 배정)</span>
+                <span class="item-desc">어드민 수동 확정만 슬롯 마감. 슬롯당 확정 1건, 요청당 확정 1건을 DB 제약으로 보장. 원래 희망 밖 슬롯 확정 불가</span>
+              </td>
+              <td>
+                <span class="item-title">후보 소진 시 재선택</span>
+                <span class="item-desc">타 고객 확정으로 모든 후보가 마감되면 'needs_reselection' 전이. 임의 배정 없이 새 버전으로 재제출, 이전 이력 보존</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 섹션 3: 현행 구현 아키텍처의 3대 핵심 메커니즘 -->
+    <section>
+      <div class="section-title">
+        <span>⚙️</span> 3. 현행 시스템의 3대 핵심 구현 메커니즘
+      </div>
+      <p class="section-desc">
+        PRD 요구사항과 AGENTS 작업 규칙에 따라 실제 코드에 구현된 기술적 안정성 장치입니다.
+      </p>
+
+      <div class="feature-grid">
+        <!-- 메커니즘 1 -->
+        <div class="feature-card">
+          <div class="card-title"><span>🔄</span> 1. 이중 모드 아키텍처 (Local vs Supabase)</div>
+          <div class="card-content">
+            <strong>공통 인터페이스(IDatabase) 기반 추상화:</strong>
+            <p>로컬 단일 브라우저 데모와 Supabase 실제 클라우드 환경을 완벽히 분리하되, 동일한 비즈니스 로직(OperationManager)으로 검증합니다.</p>
+            <ul>
+              <li><strong>Local:</strong> <code>DatabaseManager</code>가 localStorage 및 메모리 draft를 활용해 트랜잭션 롤백/커밋 시뮬레이션</li>
+              <li><strong>Supabase:</strong> <code>SupabaseManager</code>가 RLS와 PostgreSQL RPC(SECURITY DEFINER)를 호출하여 원자적 데이터 보장</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 메커니즘 2 -->
+        <div class="feature-card purple-card">
+          <div class="card-title"><span>🔒</span> 2. 비점유 대기 & 단일 점유 확정 트랜잭션</div>
+          <div class="card-content">
+            <strong>무결성 제약 및 자동 상태 전이:</strong>
+            <p>동일 슬롯에 여러 고객이 신청할 수 있으나, 확정 시점에는 오직 한 명만 점유하도록 원자적 트랜잭션을 적용합니다.</p>
+            <ul>
+              <li><strong>슬롯 마감:</strong> <code>UPDATE slots SET status='confirmed' WHERE status='available'</code>로 동시 확정 경합 방지</li>
+              <li><strong>재선택 자동 전이:</strong> 확정된 슬롯으로 인해 남은 유효 후보가 0개가 된 다른 요청을 <code>needs_reselection</code>으로 즉시 업데이트</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 메커니즘 3 -->
+        <div class="feature-card green-card">
+          <div class="card-title"><span>🛡️</span> 3. 멱등성 보장 & KST 시각 고정 검증</div>
+          <div class="card-content">
+            <strong>네트워크 재시도 안정성 & 시간 제약:</strong>
+            <p>중복 제출과 시간대 오류를 원천 차단하기 위한 규칙이 구현되어 있습니다.</p>
+            <ul>
+              <li><strong>Operation ID:</strong> <code>operation_logs</code>의 UNIQUE 제약을 통해 동일 작업 ID 재요청 시 기존 성공 결과를 반환하여 중복 확정 차단</li>
+              <li><strong>KST 시각 제약:</strong> OS 로컬 시간대와 무관하게 한국 시간(Asia/Seoul)으로 슬롯을 해석하며, 지나간 슬롯은 선택 불가능</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer>
+      cal.dudu-works.com As-Is Service Blueprint · Built on Actual Implementation (React · Vite · TypeScript · Supabase)
+    </footer>
+  </div>
+
+  <script>
+    // Mermaid 초기화 (폰트 및 간격 대폭 확대)
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'neutral',
+      themeVariables: {
+        fontFamily: 'Pretendard, -apple-system, sans-serif',
+        fontSize: '18px',
+        subGraphTitleFontSize: '22px',
+        primaryColor: '#eff6ff',
+        primaryBorderColor: '#2563eb',
+        primaryTextColor: '#0f172a',
+        lineColor: '#64748b'
+      },
+      flowchart: {
+        curve: 'basis',
+        htmlLabels: true,
+        nodeSpacing: 65,
+        rankSpacing: 75
+      }
+    });
+
+    // 다이어그램 배율 및 가로 맞춤 제어
+    let currentScale = 1.0;
+    let isFitWidth = true;
+
+    // SVG 고유 너비 가져오기 (viewBox 기준)
+    function getSvgNaturalWidth(svg) {
+      if (!svg) return 1250;
+      if (svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width > 0) {
+        return svg.viewBox.baseVal.width;
+      }
+      const bbox = svg.getBBox ? svg.getBBox() : null;
+      if (bbox && bbox.width > 0) {
+        return bbox.width;
+      }
+      return 1250;
+    }
+
+    // 1. 가로 맞춤 (화면 가로폭에 100% 딱 맞춤, 세로 기준 축소 없음, 가로 스크롤바 완전 제거)
+    function fitToWidth() {
+      const box = document.querySelector('.mermaid-box');
+      const wrapper = document.getElementById('mermaidWrapper');
+      const svg = document.querySelector('.mermaid svg');
+      if (!box || !wrapper) return;
+
+      isFitWidth = true;
+      box.classList.add('fit-width');
+      
+      wrapper.style.transform = 'none';
+      wrapper.style.width = '100%';
+      wrapper.style.height = 'auto';
+
+      if (svg) {
+        svg.style.width = '100%';
+        svg.style.maxWidth = '100%';
+        svg.style.height = 'auto';
+      }
+
+      // 버튼 활성화 상태 갱신
+      document.querySelectorAll('.zoom-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      });
+      const fitBtn = document.getElementById('btnFitWidth');
+      if (fitBtn) {
+        fitBtn.classList.add('active');
+        fitBtn.style.background = '#2563eb';
+        fitBtn.style.color = 'white';
+        fitBtn.style.borderColor = '#2563eb';
+      }
+    }
+
+    // 2. 고정 배율 확대/축소 (100%, 125%, 150%, 180%, 220%)
+    function setDiagramZoom(scale) {
+      const box = document.querySelector('.mermaid-box');
+      const wrapper = document.getElementById('mermaidWrapper');
+      const svg = document.querySelector('.mermaid svg');
+      if (!box || !wrapper || !svg) return;
+
+      isFitWidth = false;
+      box.classList.remove('fit-width');
+      currentScale = scale;
+
+      const baseWidth = getSvgNaturalWidth(svg);
+      const targetWidth = Math.round(baseWidth * scale);
+
+      wrapper.style.transform = 'none';
+      wrapper.style.width = 'max-content';
+      wrapper.style.height = 'auto';
+
+      svg.style.width = targetWidth + 'px';
+      svg.style.maxWidth = 'none';
+      svg.style.height = 'auto';
+
+      // 버튼 활성화 상태 갱신
+      document.querySelectorAll('.zoom-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      });
+      const percent = Math.round(scale * 100) + '%';
+      const targetBtn = Array.from(document.querySelectorAll('.zoom-btn')).find(b => b.textContent.trim().startsWith(percent));
+      if (targetBtn) {
+        targetBtn.classList.add('active');
+        targetBtn.style.background = '#2563eb';
+        targetBtn.style.color = 'white';
+        targetBtn.style.borderColor = '#2563eb';
+      }
+    }
+
+    // 초기 렌더링 완료 후 기본으로 '가로 맞춤' 실행
+    window.addEventListener('DOMContentLoaded', () => {
+      const checkAndInit = () => {
+        const svg = document.querySelector('.mermaid svg');
+        if (svg) {
+          fitToWidth();
+        } else {
+          setTimeout(checkAndInit, 100);
+        }
+      };
+      setTimeout(checkAndInit, 250);
+    });
+  </script>
+</body>
+</html>
