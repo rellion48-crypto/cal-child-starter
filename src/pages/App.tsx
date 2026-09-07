@@ -82,27 +82,27 @@ const App: React.FC = () => {
           {mode === 'supabase' && authUser ? (
             <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '14px' }}>
               <span>로그인: {authUser.email}</span>
-              <button className="btn btn-secondary" onClick={handleSignOut} style={{ padding: '6px 12px', fontSize: '12px' }}>
+              <button className="btn btn-secondary" onClick={handleSignOut} style={{ padding: '6px 12px', fontSize: '12px', color: 'white', background: '#6c757d' }}>
                 로그아웃
               </button>
             </div>
           ) : null}
 
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
             {mode === 'local' && (
               <>
-                <span style={{ fontWeight: 'bold', fontSize: '14px' }}>역할</span>
+                <span style={{ fontWeight: 'bold', fontSize: '14px', whiteSpace: 'nowrap' }}>역할</span>
                 <button
                   className={`btn ${role === 'customer' ? 'btn-primary' : 'btn-secondary'}`}
                   onClick={() => handleRoleChange('customer')}
-                  style={{ padding: '8px 16px', fontSize: '14px' }}
+                  style={{ padding: '8px 16px', fontSize: '14px', color: 'white' }}
                 >
                   고객
                 </button>
                 <button
                   className={`btn ${role === 'admin' ? 'btn-primary' : 'btn-secondary'}`}
                   onClick={() => handleRoleChange('admin')}
-                  style={{ padding: '8px 16px', fontSize: '14px' }}
+                  style={{ padding: '8px 16px', fontSize: '14px', color: 'white' }}
                 >
                   어드민
                 </button>
@@ -110,13 +110,13 @@ const App: React.FC = () => {
             )}
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginLeft: '20px' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginLeft: '20px', flexWrap: 'wrap' }}>
             <span className={`mode-badge ${mode}`}>{mode === 'local' ? '로컬 모드' : 'Supabase 모드'}</span>
             {mode === 'local' && (
               <button
                 className="btn btn-secondary"
                 onClick={handleResetData}
-                style={{ padding: '6px 12px', fontSize: '12px' }}
+                style={{ padding: '6px 12px', fontSize: '12px', color: 'white', background: '#6c757d', whiteSpace: 'nowrap' }}
               >
                 데이터 초기화
               </button>

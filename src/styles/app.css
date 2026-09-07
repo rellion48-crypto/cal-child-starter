@@ -185,10 +185,15 @@ body {
 .btn-secondary {
   background: #6c757d;
   color: white;
+  border: none;
 }
 
 .btn-secondary:hover:not(:disabled) {
   background: #5a6268;
+}
+
+.btn-secondary:active:not(:disabled) {
+  background: #545b62;
 }
 
 .btn-success {
