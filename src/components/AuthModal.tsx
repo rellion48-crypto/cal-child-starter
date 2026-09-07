@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { signInWithEmail, signUpWithEmail } from '../utils/supabase';
+import { formatErrorMessage } from '../utils/formatError';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -26,19 +27,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onLoginSuccess, on
       if (mode === 'login') {
         const { error: err } = await signInWithEmail(email, password);
         if (err) {
-          setError(err.message || '로그인 실패');
+          setError(formatErrorMessage(err.message || '로그인에 실패했습니다.'));
           return;
         }
       } else {
         const { error: err } = await signUpWithEmail(email, password);
         if (err) {
-          setError(err.message || '회원가입 실패');
+          setError(formatErrorMessage(err.message || '회원가입에 실패했습니다.'));
           return;
         }
       }
       onLoginSuccess();
     } catch (err) {
-      setError(String(err));
+      setError(formatErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +54,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onLoginSuccess, on
 
         {error && (
           <div style={styles.errorBox}>
-            <strong>오류:</strong> {error}
+            <span style={{ marginRight: '6px' }}>⚠️</span>
+            <span>{error}</span>
           </div>
         )}
 

@@ -6,6 +6,7 @@ import { DatabaseManager } from '../utils/database';
 import { SupabaseManager } from '../utils/supabaseManager';
 import { decideRequestStatus } from '../utils/decide';
 import { TIME_SLOTS } from '../utils/constants';
+import { formatErrorMessage } from '../utils/formatError';
 
 interface CustomerPageProps {
   db: DatabaseManager | SupabaseManager;
@@ -140,12 +141,12 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
 
   const handleSubmit = async () => {
     if (!om) {
-      setError('데이터베이스 연결 실패');
+      setError(formatErrorMessage('데이터베이스 연결 실패'));
       return;
     }
 
     if (selectedSlots.length === 0) {
-      setError('최소 1개 이상의 슬롯을 선택하세요');
+      setError('예약 희망 슬롯을 최소 1개 이상 선택해주세요.');
       return;
     }
 
@@ -170,11 +171,14 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
         onNotify?.('신청이 완료되었습니다!', 'success');
         setTimeout(() => loadData(), 500);
       } else {
-        setError(result.error || '신청 실패');
-        onNotify?.(result.error || '신청 실패', 'error');
+        const friendlyError = formatErrorMessage(result.error || '신청 처리 중 문제가 발생했습니다.');
+        setError(friendlyError);
+        onNotify?.(friendlyError, 'error');
       }
     } catch (err) {
-      setError(String(err));
+      const friendlyError = formatErrorMessage(err);
+      setError(friendlyError);
+      onNotify?.(friendlyError, 'error');
     } finally {
       setLoading(false);
     }
@@ -182,12 +186,12 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
 
   const handleReselect = async () => {
     if (selectedSlots.length === 0) {
-      setError('최소 1개 이상의 슬롯을 선택하세요');
+      setError('새로 신청할 희망 슬롯을 최소 1개 이상 선택해주세요.');
       return;
     }
 
     if (!om) {
-      setError('데이터베이스 연결 실패');
+      setError(formatErrorMessage('데이터베이스 연결 실패'));
       return;
     }
 
@@ -217,17 +221,20 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
       }
 
       if (result.success) {
-        setSuccess('재선택이 완료되었습니다!');
+        setSuccess('재선택 신청이 완료되었습니다!');
         setSelectedSlots([]);
         setStage('view');
-        onNotify?.('재선택이 완료되었습니다!', 'success');
+        onNotify?.('재선택 신청이 완료되었습니다!', 'success');
         setTimeout(() => loadData(), 500);
       } else {
-        setError(result.error || '재선택 실패');
-        onNotify?.(result.error || '재선택 실패', 'error');
+        const friendlyError = formatErrorMessage(result.error || '재선택 처리 중 문제가 발생했습니다.');
+        setError(friendlyError);
+        onNotify?.(friendlyError, 'error');
       }
     } catch (err) {
-      setError(String(err));
+      const friendlyError = formatErrorMessage(err);
+      setError(friendlyError);
+      onNotify?.(friendlyError, 'error');
     } finally {
       setLoading(false);
     }
@@ -247,7 +254,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
       const decision = decideRequestStatus(latest.request, currentState.candidates, currentState.slots);
 
       if (decision.status !== 'ok') {
-        setError('선택한 슬롯의 상태가 변경되었습니다. 다시 선택해주세요.');
+        setError('선택하신 슬롯이 다른 고객에게 먼저 마감되었습니다. 다른 일정을 다시 선택해주세요.');
         setStage('reselect');
         setSelectedSlots([]);
         return false;
@@ -286,8 +293,18 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
         )}
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
-      {success && <div className="alert alert-success">{success}</div>}
+      {error && (
+        <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '18px' }}>⚠️</span>
+          <span>{error}</span>
+        </div>
+      )}
+      {success && (
+        <div className="alert alert-success" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '18px' }}>✅</span>
+          <span>{success}</span>
+        </div>
+      )}
 
       {stage === 'select' && (
         <div>

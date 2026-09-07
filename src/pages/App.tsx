@@ -7,6 +7,7 @@ import { DatabaseManager } from '../utils/database';
 import { SupabaseManager } from '../utils/supabaseManager';
 import { REFERENCE_TIME, getCurrentTime, setTestTime } from '../utils/constants';
 import { isSupabaseConfigured, getAuthUser, signOut, isAdmin } from '../utils/supabase';
+import { formatErrorMessage } from '../utils/formatError';
 
 type Mode = 'local' | 'supabase';
 type Role = 'customer' | 'admin';
@@ -61,7 +62,7 @@ const App: React.FC = () => {
           }
         } catch (err) {
           console.error('Supabase 연결 실패:', err);
-          setAuthError('Supabase 연결 실패: ' + String(err));
+          setAuthError('데이터베이스 서버 연결 실패: ' + formatErrorMessage(err));
         }
       } else {
         setMode('local');
@@ -139,8 +140,9 @@ const App: React.FC = () => {
       setRole('customer');
       addNotification('로그아웃되었습니다', 'info', 3000);
     } catch (err) {
-      setAuthError('로그아웃 실패: ' + String(err));
-      addNotification('로그아웃 실패: ' + String(err), 'error', 4000);
+      const friendly = '로그아웃 처리 실패: ' + formatErrorMessage(err);
+      setAuthError(friendly);
+      addNotification(friendly, 'error', 4000);
     }
   };
 
@@ -154,11 +156,12 @@ const App: React.FC = () => {
         const roleText = isAdminUser ? '어드민' : '고객';
         addNotification(`${user.email}로 로그인했습니다 (${roleText})`, 'success', 3000);
       } else {
-        setAuthError('로그인 사용자 정보를 가져오지 못했습니다.');
+        setAuthError('로그인된 사용자 정보를 불러오지 못했습니다. 다시 로그인해주세요.');
       }
     } catch (err) {
-      setAuthError('인증 확인 실패: ' + String(err));
-      addNotification('로그인 실패: ' + String(err), 'error', 4000);
+      const friendly = formatErrorMessage(err);
+      setAuthError(friendly);
+      addNotification(friendly, 'error', 4000);
     } finally {
       setIsLoading(false);
     }
@@ -188,7 +191,7 @@ const App: React.FC = () => {
       setAuthError('');
       addNotification('Supabase 모드로 전환되었습니다', 'info', 2000);
     } catch (err) {
-      setAuthError('Supabase 연결 실패: ' + String(err));
+      setAuthError('데이터베이스 서버 연결 실패: ' + formatErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
@@ -338,8 +341,9 @@ const App: React.FC = () => {
       )}
 
       {authError && (
-        <div className="alert alert-error">
-          <strong>오류:</strong> {authError}
+        <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '18px' }}>⚠️</span>
+          <span>{authError}</span>
         </div>
       )}
 

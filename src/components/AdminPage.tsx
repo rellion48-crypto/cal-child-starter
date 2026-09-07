@@ -5,6 +5,7 @@ import { OperationManager } from '../utils/operations';
 import { DatabaseManager } from '../utils/database';
 import { SupabaseManager } from '../utils/supabaseManager';
 import { TIME_SLOTS } from '../utils/constants';
+import { formatErrorMessage } from '../utils/formatError';
 
 interface AdminPageProps {
   db: DatabaseManager | SupabaseManager;
@@ -40,7 +41,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
   const loadData = async () => {
     try {
       if (!db) {
-        setError('데이터베이스 연결 실패');
+        setError(formatErrorMessage('데이터베이스 연결 실패'));
         return;
       }
 
@@ -74,13 +75,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
       setSuccess('');
     } catch (err) {
       console.error('Failed to load data:', err);
-      setError('데이터 로드 실패');
+      setError('예약 신청 목록을 불러오지 못했습니다. 페이지를 새로고침해주세요.');
     }
   };
 
   const handleConfirm = async () => {
     if (!selectedRequest || !selectedSlotForConfirm) {
-      setError('요청과 슬롯을 선택하세요');
+      setError('확정 처리할 고객 신청 건과 배정할 슬롯을 모두 선택해주세요.');
       return;
     }
 
@@ -109,18 +110,21 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
       }
 
       if (result.success) {
-        const message = `확정되었습니다! 영향받은 요청: ${result.affectedRequests?.length || 0}건`;
+        const message = `예약이 성공적으로 확정되었습니다! (마감 영향 건수: ${result.affectedRequests?.length || 0}건)`;
         setSuccess(message);
         setSelectedRequest(null);
         setSelectedSlotForConfirm(null);
         onNotify?.(message, 'success');
         setTimeout(() => loadData(), 500);
       } else {
-        setError(result.error || '확정 실패');
-        onNotify?.(result.error || '확정 실패', 'error');
+        const friendlyError = formatErrorMessage(result.error || '확정 처리에 실패했습니다.');
+        setError(friendlyError);
+        onNotify?.(friendlyError, 'error');
       }
     } catch (err) {
-      setError(String(err));
+      const friendlyError = formatErrorMessage(err);
+      setError(friendlyError);
+      onNotify?.(friendlyError, 'error');
     } finally {
       setLoading(false);
     }
@@ -132,8 +136,18 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
     <div className="admin-page">
       <h2>어드민 패널</h2>
 
-      {error && <div className="alert alert-error">{error}</div>}
-      {success && <div className="alert alert-success">{success}</div>}
+      {error && (
+        <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '18px' }}>⚠️</span>
+          <span>{error}</span>
+        </div>
+      )}
+      {success && (
+        <div className="alert alert-success" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '18px' }}>✅</span>
+          <span>{success}</span>
+        </div>
+      )}
 
       <div className="grid">
         {/* 요청 목록 */}
