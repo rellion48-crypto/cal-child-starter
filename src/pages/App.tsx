@@ -5,7 +5,7 @@ import { AuthModal } from '../components/AuthModal';
 import { DatabaseManager } from '../utils/database';
 import { SupabaseManager } from '../utils/supabaseManager';
 import { REFERENCE_TIME } from '../utils/constants';
-import { isSupabaseConfigured, getAuthUser, signOut } from '../utils/supabase';
+import { isSupabaseConfigured, getAuthUser, signOut, isAdmin } from '../utils/supabase';
 
 type Mode = 'local' | 'supabase';
 type Role = 'customer' | 'admin';
@@ -31,6 +31,15 @@ const App: React.FC = () => {
             const supabseDb = new SupabaseManager(user.id);
             await supabseDb.initialize();
             setDb(supabseDb);
+
+            // 어드민 여부 확인 및 role 설정
+            try {
+              const isAdminUser = await isAdmin();
+              setRole(isAdminUser ? 'admin' : 'customer');
+            } catch (err) {
+              console.error('Failed to check admin status:', err);
+              setRole('customer');
+            }
           }
         } catch (err) {
           setAuthError('Supabase 연결 실패');
@@ -75,6 +84,15 @@ const App: React.FC = () => {
       const user = await getAuthUser();
       setAuthUser(user);
       setAuthError('');
+
+      // 어드민 여부 확인 및 role 업데이트
+      try {
+        const isAdminUser = await isAdmin();
+        setRole(isAdminUser ? 'admin' : 'customer');
+      } catch (err) {
+        console.error('Failed to check admin status:', err);
+        setRole('customer');
+      }
     } catch (err) {
       setAuthError('인증 확인 실패: ' + String(err));
     }
