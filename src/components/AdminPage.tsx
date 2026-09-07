@@ -298,12 +298,12 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
                 .slice()
                 .reverse()
                 .slice(0, 20)
-                .map(log => (
-                  <tr key={log.id} style={{ fontSize: '12px' }}>
-                    <td>{new Date(log.timestamp).toLocaleString()}</td>
-                    <td>{log.action}</td>
+                .map((log, idx) => (
+                  <tr key={log.id || `log-${idx}`} style={{ fontSize: '12px' }}>
+                    <td>{log.timestamp ? new Date(log.timestamp).toLocaleString() : '-'}</td>
+                    <td>{log.action || '-'}</td>
                     <td style={{ fontSize: '10px', fontFamily: 'monospace' }}>
-                      {log.requestId.substring(0, 8)}...
+                      {log.requestId ? `${log.requestId.substring(0, 8)}...` : '-'}
                     </td>
                     <td>{log.slotId ? log.slotId : '-'}</td>
                     <td>
