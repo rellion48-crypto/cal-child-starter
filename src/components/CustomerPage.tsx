@@ -47,20 +47,19 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
     setError('');
     setSuccess('');
 
-    // 첫 로드인지 확인
-    if (status.length === 0) {
-      setStage('select');
-      setSelectedSlots([]);
+    // 신청 상태에 따라 stage 결정
+    // 고객당 여러 신청 가능 - 항상 새 신청 가능
+    const hasNeedsReselection = status.some(s => s.request.status === 'needs_reselection');
+
+    if (hasNeedsReselection) {
+      // 재선택이 필요한 신청이 있으면 우선 표시
+      setStage('reselect');
     } else {
-      const latest = status[status.length - 1];
-      if (latest.request.status === 'needs_reselection') {
-        setStage('reselect');
-      } else if (latest.request.status === 'confirmed') {
-        setStage('view');
-      } else {
-        setStage('view');
-      }
+      // 새 신청 선택 가능
+      setStage('select');
     }
+
+    setSelectedSlots([]);
   };
 
   const handleSlotToggle = (slotId: string) => {

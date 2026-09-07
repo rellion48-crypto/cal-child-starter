@@ -58,12 +58,13 @@ describe('OperationManager', () => {
       expect(result2.requestId).toBe(result1.requestId); // 캐시됨
     });
 
-    it('should reject customer with pending request', async () => {
-      await om.submitRequest('C01', ['2026-09-09:am'], 'op-1');
-      const result2 = await om.submitRequest('C01', ['2026-09-09:pm'], 'op-2');
+    it('should allow multiple requests from same customer', async () => {
+      const r1 = await om.submitRequest('C01', ['2026-09-09:am'], 'op-1');
+      const r2 = await om.submitRequest('C01', ['2026-09-09:pm'], 'op-2');
 
-      expect(result2.success).toBe(false);
-      expect(result2.error).toContain('pending request');
+      expect(r1.success).toBe(true);
+      expect(r2.success).toBe(true);
+      expect(r1.requestId).not.toBe(r2.requestId);
     });
 
     it('should allow resubmit after reselection', async () => {

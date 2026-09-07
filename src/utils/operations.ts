@@ -42,16 +42,6 @@ export class OperationManager {
       // 트랜잭션 시작
       this.db.beginTransaction();
 
-      // 고객당 1개 신청만 허용 (미확정 요청이 없어야 함)
-      const existingRequests = this.db.getRequestsByCustomerId(customerId);
-      const hasPendingRequest = existingRequests.some(r => r.status !== 'confirmed');
-      if (hasPendingRequest) {
-        logError = 'Customer already has a pending request';
-        result = { success: false, error: logError };
-        this.db.rollbackTransaction();
-        return result;
-      }
-
       // 요청 생성
       const request = this.db.createRequest(customerId);
       if (!request) {

@@ -39,8 +39,6 @@ CREATE TABLE IF NOT EXISTS requests (
 CREATE INDEX IF NOT EXISTS idx_requests_customer ON requests(customer_id);
 CREATE INDEX IF NOT EXISTS idx_requests_status ON requests(status);
 CREATE INDEX IF NOT EXISTS idx_requests_created ON requests(created_at DESC);
-CREATE UNIQUE INDEX IF NOT EXISTS idx_requests_pending
-  ON requests(customer_id) WHERE status IN ('received', 'needs_reselection');
 
 ALTER TABLE requests ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Customers can view own requests"
@@ -181,15 +179,6 @@ BEGIN
 
   IF v_existing_request_id IS NOT NULL THEN
     RETURN jsonb_build_object('success', true, 'requestId', v_existing_request_id::text);
-  END IF;
-
-  IF EXISTS (
-    SELECT 1 FROM requests
-    WHERE customer_id = p_customer_id AND status IN ('received', 'needs_reselection')
-  ) THEN
-    INSERT INTO operation_logs (operation_id, action, status, error_message)
-    VALUES (p_operation_id, 'submit', 'failed', 'Pending request exists');
-    RETURN jsonb_build_object('success', false, 'error', 'Customer already has a pending request');
   END IF;
 
   IF array_length(p_slot_ids, 1) IS NULL OR array_length(p_slot_ids, 1) < 1 OR array_length(p_slot_ids, 1) > 3 THEN

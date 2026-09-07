@@ -133,14 +133,7 @@ export class DatabaseManager {
   // 요청 생성 (고객당 1개만 허용, needs_reselection 상태는 제외)
   createRequest(customerId: string): Request | null {
     const current = this.getCurrent();
-    // 고객의 미확정 요청이 있으면 새로 생성하지 않음
-    const existing = current.requests.find(
-      r => r.customerId === customerId && r.status !== 'confirmed'
-    );
-    if (existing) {
-      return null; // 이미 미확정 요청이 있음
-    }
-
+    // 고객당 여러 신청 허용
     const request: Request = {
       id: generateId(),
       customerId,
