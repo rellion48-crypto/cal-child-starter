@@ -4,9 +4,10 @@ import { signInWithEmail, signUpWithEmail } from '../utils/supabase';
 interface AuthModalProps {
   isOpen: boolean;
   onLoginSuccess: () => void;
+  onSwitchToLocal?: () => void;
 }
 
-export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onLoginSuccess }) => {
+export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onLoginSuccess, onSwitchToLocal }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -142,11 +143,34 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onLoginSuccess }) 
         </div>
 
         <div style={styles.hint}>
-          <p>테스트 계정:</p>
-          <p>user1@test.com / password123</p>
-          <p>user2@test.com / password123</p>
-          <p>admin@test.com / password123</p>
+          <p style={{ margin: '0 0 6px 0', fontWeight: 'bold' }}>테스트 계정 (Supabase Auth):</p>
+          <p style={{ margin: '2px 0' }}>user1@test.com / password123</p>
+          <p style={{ margin: '2px 0' }}>user2@test.com / password123</p>
+          <p style={{ margin: '2px 0' }}>admin@test.com / password123</p>
         </div>
+
+        {onSwitchToLocal && (
+          <div style={{ marginTop: '16px', textAlign: 'center' }}>
+            <button
+              type="button"
+              onClick={onSwitchToLocal}
+              disabled={isLoading}
+              style={{
+                background: '#f1f5f9',
+                border: '1px solid #cbd5e1',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                fontSize: '13px',
+                fontWeight: 600,
+                color: '#475569',
+                cursor: 'pointer',
+                width: '100%',
+              }}
+            >
+              로그인 없이 로컬 데모 모드로 둘러보기
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

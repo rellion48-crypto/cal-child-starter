@@ -29,33 +29,39 @@ const App: React.FC = () => {
   const [testTimeInput, setTestTimeInput] = useState<string>('');
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
+  const initUserSession = async (user: any) => {
+    setAuthUser(user);
+    const supabaseDb = new SupabaseManager(user.id);
+    await supabaseDb.initialize();
+    setDb(supabaseDb);
+
+    let isAdminUser = false;
+    try {
+      isAdminUser = await isAdmin();
+      setRole(isAdminUser ? 'admin' : 'customer');
+    } catch (err) {
+      console.error('Failed to check admin status:', err);
+      setRole('customer');
+    }
+    return isAdminUser;
+  };
+
   // 초기화: Supabase 설정 여부 확인
   useEffect(() => {
     const checkSupabase = async () => {
       if (isSupabaseConfigured()) {
+        setMode('supabase');
         try {
           const user = await getAuthUser();
-          setAuthUser(user);
-          setMode('supabase');
-          // Supabase 모드에서는 사용자별 SupabaseManager 생성
           if (user) {
-            const supabseDb = new SupabaseManager(user.id);
-            await supabseDb.initialize();
-            setDb(supabseDb);
-
-            // 어드민 여부 확인 및 role 설정
-            try {
-              const isAdminUser = await isAdmin();
-              setRole(isAdminUser ? 'admin' : 'customer');
-            } catch (err) {
-              console.error('Failed to check admin status:', err);
-              setRole('customer');
-            }
+            await initUserSession(user);
+          } else {
+            setAuthUser(null);
+            setDb(null);
           }
         } catch (err) {
-          setAuthError('Supabase 연결 실패');
-          setMode('local');
-          setDb(new DatabaseManager());
+          console.error('Supabase 연결 실패:', err);
+          setAuthError('Supabase 연결 실패: ' + String(err));
         }
       } else {
         setMode('local');
@@ -128,6 +134,7 @@ const App: React.FC = () => {
     try {
       await signOut();
       setAuthUser(null);
+      setDb(null);
       setAuthError('');
       setRole('customer');
       addNotification('로그아웃되었습니다', 'info', 3000);
@@ -138,33 +145,56 @@ const App: React.FC = () => {
   };
 
   const handleAuthSuccess = async () => {
+    setIsLoading(true);
     try {
       const user = await getAuthUser();
-      setAuthUser(user);
-      setAuthError('');
-
-      // 어드민 여부 확인 및 role 업데이트
-      let isAdminUser = false;
-      try {
-        isAdminUser = await isAdmin();
-        setRole(isAdminUser ? 'admin' : 'customer');
-      } catch (err) {
-        console.error('Failed to check admin status:', err);
-        setRole('customer');
-      }
-
-      // 로그인 성공 알림
       if (user) {
+        const isAdminUser = await initUserSession(user);
+        setAuthError('');
         const roleText = isAdminUser ? '어드민' : '고객';
         addNotification(`${user.email}로 로그인했습니다 (${roleText})`, 'success', 3000);
+      } else {
+        setAuthError('로그인 사용자 정보를 가져오지 못했습니다.');
       }
     } catch (err) {
       setAuthError('인증 확인 실패: ' + String(err));
       addNotification('로그인 실패: ' + String(err), 'error', 4000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  if (isLoading || !db) {
+  const handleSwitchToLocal = () => {
+    setMode('local');
+    setDb(new DatabaseManager());
+    addNotification('로컬 데모 모드로 전환되었습니다', 'info', 2000);
+  };
+
+  const handleSwitchToSupabase = async () => {
+    if (!isSupabaseConfigured()) {
+      addNotification('Supabase 환경 변수가 설정되지 않았습니다', 'warning', 3000);
+      return;
+    }
+    setIsLoading(true);
+    setMode('supabase');
+    try {
+      const user = await getAuthUser();
+      if (user) {
+        await initUserSession(user);
+      } else {
+        setAuthUser(null);
+        setDb(null);
+      }
+      setAuthError('');
+      addNotification('Supabase 모드로 전환되었습니다', 'info', 2000);
+    } catch (err) {
+      setAuthError('Supabase 연결 실패: ' + String(err));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading || (mode === 'local' && !db)) {
     return (
       <div className="container">
         <div style={{ padding: '40px', textAlign: 'center' }}>
@@ -242,6 +272,24 @@ const App: React.FC = () => {
 
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginLeft: '20px', flexWrap: 'wrap' }}>
             <span className={`mode-badge ${mode}`}>{mode === 'local' ? '로컬 모드' : 'Supabase 모드'}</span>
+            {mode === 'supabase' && (
+              <button
+                className="btn btn-secondary"
+                onClick={handleSwitchToLocal}
+                style={{ padding: '6px 12px', fontSize: '12px', color: 'white', background: '#475569', whiteSpace: 'nowrap' }}
+              >
+                로컬 모드로 전환
+              </button>
+            )}
+            {mode === 'local' && isSupabaseConfigured() && (
+              <button
+                className="btn btn-secondary"
+                onClick={handleSwitchToSupabase}
+                style={{ padding: '6px 12px', fontSize: '12px', color: 'white', background: '#0284c7', whiteSpace: 'nowrap' }}
+              >
+                Supabase 모드로 전환
+              </button>
+            )}
             {mode === 'local' && (
               <button
                 className="btn btn-secondary"
@@ -275,7 +323,11 @@ const App: React.FC = () => {
         </div>
       )}
 
-      <AuthModal isOpen={mode === 'supabase' && !authUser} onLoginSuccess={handleAuthSuccess} />
+      <AuthModal
+        isOpen={mode === 'supabase' && !authUser}
+        onLoginSuccess={handleAuthSuccess}
+        onSwitchToLocal={handleSwitchToLocal}
+      />
 
       {db && mode === 'local' && (
         <>
