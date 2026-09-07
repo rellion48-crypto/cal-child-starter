@@ -8,9 +8,10 @@ import { TIME_SLOTS } from '../utils/constants';
 interface AdminPageProps {
   db: DatabaseManager;
   mode: 'local' | 'supabase';
+  userId?: string;
 }
 
-export const AdminPage: React.FC<AdminPageProps> = ({ db }) => {
+export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _userId }) => {
   const [adminId] = useState<string>('ADMIN001');
   const [slots, setSlots] = useState<Record<string, Slot>>({});
   const [requests, setRequests] = useState<

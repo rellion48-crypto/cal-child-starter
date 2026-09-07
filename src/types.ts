@@ -50,3 +50,12 @@ export interface AppState {
   logs: OperationLog[];
   userId?: string; // Supabase auth 사용자
 }
+
+export type ErrorType =
+  | 'auth_failed'
+  | 'auth_expired'
+  | 'not_admin'
+  | 'request_failed'
+  | 'network_error'
+  | 'rpc_error'
+  | 'unknown_error';
