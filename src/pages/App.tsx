@@ -253,16 +253,36 @@ const App: React.FC = () => {
               <>
                 <span style={{ fontWeight: 'bold', fontSize: '14px', whiteSpace: 'nowrap' }}>역할</span>
                 <button
-                  className={`btn ${role === 'customer' ? 'btn-primary' : 'btn-secondary'}`}
+                  className={`btn ${role === 'customer' ? 'active' : ''}`}
                   onClick={() => handleRoleChange('customer')}
-                  style={{ padding: '8px 16px', fontSize: '14px', color: 'white' }}
+                  style={{
+                    padding: '8px 18px',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    background: role === 'customer' ? '#2563eb' : '#f8fafc',
+                    color: role === 'customer' ? '#ffffff' : '#334155',
+                    border: role === 'customer' ? '2px solid #2563eb' : '2px solid #cbd5e1',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    boxShadow: role === 'customer' ? '0 2px 4px rgba(37, 99, 235, 0.25)' : 'none',
+                  }}
                 >
                   고객
                 </button>
                 <button
-                  className={`btn ${role === 'admin' ? 'btn-primary' : 'btn-secondary'}`}
+                  className={`btn ${role === 'admin' ? 'active' : ''}`}
                   onClick={() => handleRoleChange('admin')}
-                  style={{ padding: '8px 16px', fontSize: '14px', color: 'white' }}
+                  style={{
+                    padding: '8px 18px',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    background: role === 'admin' ? '#2563eb' : '#f8fafc',
+                    color: role === 'admin' ? '#ffffff' : '#334155',
+                    border: role === 'admin' ? '2px solid #2563eb' : '2px solid #cbd5e1',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    boxShadow: role === 'admin' ? '0 2px 4px rgba(37, 99, 235, 0.25)' : 'none',
+                  }}
                 >
                   어드민
                 </button>
