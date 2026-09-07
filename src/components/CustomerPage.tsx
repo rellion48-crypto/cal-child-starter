@@ -15,8 +15,8 @@ interface CustomerPageProps {
 }
 
 export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, onNotify }) => {
-  // Supabase 모드에서는 userId(이메일)를 사용, 로컬 모드에서는 'C01' 사용
-  const [customerId] = useState<string>(mode === 'supabase' && userId ? userId : 'C01');
+  // Supabase 모드에서는 userId(이메일)를 사용, 로컬 모드에서는 C01, C02 등 선택 가능
+  const [customerId, setCustomerId] = useState<string>(mode === 'supabase' && userId ? userId : 'C01');
   const [stage, setStage] = useState<'select' | 'confirm' | 'view' | 'reselect'>('select');
   const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
   const [slots, setSlots] = useState<Record<string, Slot>>({});
@@ -251,13 +251,30 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
     <div className="customer-page">
       <div className="form-group">
         <label>고객 코드 {mode === 'supabase' && '(로그인된 사용자)'}</label>
-        <input
-          type="text"
-          value={customerId}
-          onChange={() => {}}
-          placeholder="C01"
-          disabled
-        />
+        {mode === 'local' ? (
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <select
+              value={customerId}
+              onChange={(e) => setCustomerId(e.target.value)}
+              style={{ padding: '8px 14px', fontSize: '14px', borderRadius: '4px', border: '1.5px solid #2563eb', fontWeight: 'bold', background: '#eff6ff', color: '#1e40af' }}
+            >
+              <option value="C01">고객 C01 (기본 신청자)</option>
+              <option value="C02">고객 C02 (경합 테스트용 고객)</option>
+              <option value="C03">고객 C03</option>
+            </select>
+            <span style={{ fontSize: '12px', color: '#64748b' }}>
+              💡 로컬 모드에서는 고객 코드를 C01/C02로 변경하여 <strong>다중 고객 경합 및 재선택 시나리오</strong>를 직접 테스트할 수 있습니다.
+            </span>
+          </div>
+        ) : (
+          <input
+            type="text"
+            value={customerId}
+            onChange={() => {}}
+            placeholder="C01"
+            disabled
+          />
+        )}
       </div>
 
       {error && <div className="alert alert-error">{error}</div>}
