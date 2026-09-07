@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CustomerPage } from '../components/CustomerPage';
 import { AdminPage } from '../components/AdminPage';
 import { AuthModal } from '../components/AuthModal';
+import { NotificationBanner } from '../components/NotificationBanner';
 import { DatabaseManager } from '../utils/database';
 import { SupabaseManager } from '../utils/supabaseManager';
 import { REFERENCE_TIME, getCurrentTime, setTestTime } from '../utils/constants';
@@ -9,6 +10,13 @@ import { isSupabaseConfigured, getAuthUser, signOut, isAdmin } from '../utils/su
 
 type Mode = 'local' | 'supabase';
 type Role = 'customer' | 'admin';
+
+interface Notification {
+  id: string;
+  type: 'info' | 'success' | 'warning' | 'error';
+  message: string;
+  duration?: number;
+}
 
 const App: React.FC = () => {
   const [mode, setMode] = useState<Mode>('local');
@@ -19,6 +27,7 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState<Date>(getCurrentTime());
   const [testTimeInput, setTestTimeInput] = useState<string>('');
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   // 초기화: Supabase 설정 여부 확인
   useEffect(() => {
@@ -59,13 +68,18 @@ const App: React.FC = () => {
 
   const handleRoleChange = (newRole: Role) => {
     setRole(newRole);
+    const roleText = newRole === 'admin' ? '어드민' : '고객';
+    addNotification(`${roleText} 모드로 전환되었습니다`, 'info', 2000);
   };
 
   const handleResetData = () => {
     if (window.confirm('모든 데이터를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
       if (db) {
         db.reset();
-        window.location.reload();
+        addNotification('데이터를 초기화하는 중입니다...', 'warning', 2000);
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       }
     }
   };
@@ -81,9 +95,12 @@ const App: React.FC = () => {
       const time = new Date(testTimeInput);
       setTestTime(time);
       setCurrentTime(time);
-      window.location.reload();
+      addNotification(`테스트 시간: ${time.toLocaleString('ko-KR')}로 설정되었습니다`, 'info', 2000);
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } catch (err) {
-      alert('잘못된 시간 형식입니다. (예: 2026-09-09T09:00:00+09:00)');
+      addNotification('잘못된 시간 형식입니다', 'error', 3000);
     }
   };
 
@@ -91,7 +108,20 @@ const App: React.FC = () => {
     setTestTime(null);
     setCurrentTime(new Date());
     setTestTimeInput('');
-    window.location.reload();
+    addNotification('테스트 시간 설정이 해제되었습니다', 'info', 2000);
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
+  };
+
+  const addNotification = (message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info', duration = 4000) => {
+    const id = `notif-${Date.now()}-${Math.random()}`;
+    const notification: Notification = { id, type, message, duration };
+    setNotifications((prev) => [...prev, notification]);
+  };
+
+  const removeNotification = (id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
 
   const handleSignOut = async () => {
@@ -100,8 +130,10 @@ const App: React.FC = () => {
       setAuthUser(null);
       setAuthError('');
       setRole('customer');
+      addNotification('로그아웃되었습니다', 'info', 3000);
     } catch (err) {
       setAuthError('로그아웃 실패: ' + String(err));
+      addNotification('로그아웃 실패: ' + String(err), 'error', 4000);
     }
   };
 
@@ -112,15 +144,23 @@ const App: React.FC = () => {
       setAuthError('');
 
       // 어드민 여부 확인 및 role 업데이트
+      let isAdminUser = false;
       try {
-        const isAdminUser = await isAdmin();
+        isAdminUser = await isAdmin();
         setRole(isAdminUser ? 'admin' : 'customer');
       } catch (err) {
         console.error('Failed to check admin status:', err);
         setRole('customer');
       }
+
+      // 로그인 성공 알림
+      if (user) {
+        const roleText = isAdminUser ? '어드민' : '고객';
+        addNotification(`${user.email}로 로그인했습니다 (${roleText})`, 'success', 3000);
+      }
     } catch (err) {
       setAuthError('인증 확인 실패: ' + String(err));
+      addNotification('로그인 실패: ' + String(err), 'error', 4000);
     }
   };
 
@@ -136,6 +176,8 @@ const App: React.FC = () => {
 
   return (
     <div className="container">
+      <NotificationBanner notifications={notifications} onClose={removeNotification} />
+
       <div className="header">
         <div>
           <h1>cal.dudu-works.com</h1>
@@ -237,15 +279,15 @@ const App: React.FC = () => {
 
       {db && mode === 'local' && (
         <>
-          {role === 'customer' && <CustomerPage db={db} mode={mode} />}
-          {role === 'admin' && <AdminPage db={db} mode={mode} />}
+          {role === 'customer' && <CustomerPage db={db} mode={mode} onNotify={addNotification} />}
+          {role === 'admin' && <AdminPage db={db} mode={mode} onNotify={addNotification} />}
         </>
       )}
 
       {db && mode === 'supabase' && authUser ? (
         <>
-          {role === 'customer' && <CustomerPage db={db} mode={mode} userId={authUser.id} />}
-          {role === 'admin' && <AdminPage db={db} mode={mode} userId={authUser.id} />}
+          {role === 'customer' && <CustomerPage db={db} mode={mode} userId={authUser.id} onNotify={addNotification} />}
+          {role === 'admin' && <AdminPage db={db} mode={mode} userId={authUser.id} onNotify={addNotification} />}
         </>
       ) : null}
 

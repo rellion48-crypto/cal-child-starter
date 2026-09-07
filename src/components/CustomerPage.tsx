@@ -11,9 +11,10 @@ interface CustomerPageProps {
   db: DatabaseManager | SupabaseManager;
   mode: 'local' | 'supabase';
   userId?: string;
+  onNotify?: (message: string, type: 'success' | 'error' | 'info') => void;
 }
 
-export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) => {
+export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, onNotify }) => {
   // Supabase 모드에서는 userId(이메일)를 사용, 로컬 모드에서는 'C01' 사용
   const [customerId] = useState<string>(mode === 'supabase' && userId ? userId : 'C01');
   const [stage, setStage] = useState<'select' | 'confirm' | 'view' | 'reselect'>('select');
@@ -103,9 +104,11 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
         setSuccess('신청이 완료되었습니다!');
         setSelectedSlots([]);
         setStage('view');
+        onNotify?.('신청이 완료되었습니다!', 'success');
         setTimeout(() => loadData(), 500);
       } else {
         setError(result.error || '신청 실패');
+        onNotify?.(result.error || '신청 실패', 'error');
       }
     } catch (err) {
       setError(String(err));
@@ -154,9 +157,11 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
         setSuccess('재선택이 완료되었습니다!');
         setSelectedSlots([]);
         setStage('view');
+        onNotify?.('재선택이 완료되었습니다!', 'success');
         setTimeout(() => loadData(), 500);
       } else {
         setError(result.error || '재선택 실패');
+        onNotify?.(result.error || '재선택 실패', 'error');
       }
     } catch (err) {
       setError(String(err));

@@ -10,9 +10,10 @@ interface AdminPageProps {
   db: DatabaseManager | SupabaseManager;
   mode: 'local' | 'supabase';
   userId?: string;
+  onNotify?: (message: string, type: 'success' | 'error' | 'info') => void;
 }
 
-export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _userId }) => {
+export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _userId, onNotify }) => {
   const [adminId] = useState<string>('ADMIN001');
   const [slots, setSlots] = useState<Record<string, Slot>>({});
   const [requests, setRequests] = useState<
@@ -107,12 +108,15 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
       }
 
       if (result.success) {
-        setSuccess(`확정되었습니다! 영향받은 요청: ${result.affectedRequests?.length || 0}건`);
+        const message = `확정되었습니다! 영향받은 요청: ${result.affectedRequests?.length || 0}건`;
+        setSuccess(message);
         setSelectedRequest(null);
         setSelectedSlotForConfirm(null);
+        onNotify?.(message, 'success');
         setTimeout(() => loadData(), 500);
       } else {
         setError(result.error || '확정 실패');
+        onNotify?.(result.error || '확정 실패', 'error');
       }
     } catch (err) {
       setError(String(err));
