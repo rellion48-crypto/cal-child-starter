@@ -468,6 +468,54 @@
       margin-bottom: 6px;
     }
 
+    /* 공통 제약 조건 그리드 스타일 */
+    .constraints-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .constraint-item {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 16px 18px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .constraint-item:hover {
+      border-color: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1);
+    }
+
+    .c-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+
+    .c-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+
+    .c-desc {
+      font-size: 13.5px;
+      color: #475569;
+      line-height: 1.55;
+    }
+
     /* 푸터 */
     footer {
       text-align: center;
@@ -500,6 +548,66 @@
         현재 코드베이스(React·Vite·TypeScript 및 Supabase PostgreSQL)에 실제로 구현된 42개 고정 슬롯 가용성 확인, 1~3순위 희망 신청 접수(비점유), 어드민 수동 확정(점유), 후보 소진 시 재선택 및 멱등성 감사 로그의 전 과정을 물리적 증거, 프론트/백스테이지 접점 및 데이터베이스 지원 프로세스로 구성한 현행 서비스 청사진입니다.
       </p>
     </header>
+
+    <!-- 섹션: 공통 조건 및 핵심 제약 조건 (8대 업무 규칙) -->
+    <section id="constraints" style="border-left: 6px solid #2563eb;">
+      <div class="section-title" style="color: #1e3a8a;">
+        <span>📌</span> 공통 조건 및 핵심 제약 조건 (8대 업무 규칙)
+      </div>
+      <p class="section-desc">
+        본 서비스 블루프린트와 cal.dudu 실습 앱의 모든 예약 흐름 및 데이터베이스 저장은 다음 8대 핵심 제약 조건을 엄격히 준수하고 유지합니다.
+      </p>
+
+      <div class="constraints-grid">
+        <div class="constraint-item">
+          <div class="c-badge">제약 1</div>
+          <div class="c-title">🗓️ 14일 · 하루 3슬롯 (42슬롯)</div>
+          <div class="c-desc">2026-09-09 ~ 2026-09-22(주말 포함), 매일 오전 09:00, 오후 13:00, 저녁 18:00 KST 시작. 총 42개 고정 슬롯으로 운영합니다.</div>
+        </div>
+
+        <div class="constraint-item">
+          <div class="c-badge">제약 2</div>
+          <div class="c-title">🎯 최대 3개 희망 후보</div>
+          <div class="c-desc">고객은 열려 있는 서로 다른 슬롯 중 1~3개를 선택하며, 선택 순서에 따라 희망 1순위, 2순위, 3순위가 부여됩니다.</div>
+        </div>
+
+        <div class="constraint-item">
+          <div class="c-badge">제약 3</div>
+          <div class="c-title">⏳ 접수와 확정 구분 (비점유 vs 점유)</div>
+          <div class="c-desc">접수(received)는 슬롯을 점유하지 않는 대기 상태로 여러 고객이 동시 신청할 수 있으며, 확정(confirmed)만 슬롯을 마감(점유)합니다.</div>
+        </div>
+
+        <div class="constraint-item">
+          <div class="c-badge">제약 4</div>
+          <div class="c-title">👨‍💼 관리자 수동 확정</div>
+          <div class="c-desc">선착순 자동 확정이나 자동 배정 없이, 어드민이 접수된 대기열을 검토하여 원하는 후보를 수동으로 확정합니다.</div>
+        </div>
+
+        <div class="constraint-item">
+          <div class="c-badge">제약 5</div>
+          <div class="c-title">🔒 슬롯당 확정 1명 (배타적 점유)</div>
+          <div class="c-desc">하나의 슬롯에는 오직 단 1명의 고객만 확정될 수 있으며, DB 제약 조건 및 RPC 트랜잭션으로 이중 확정을 원천 차단합니다.</div>
+        </div>
+
+        <div class="constraint-item">
+          <div class="c-badge">제약 6</div>
+          <div class="c-title">🎯 신청한 후보 안에서만 확정</div>
+          <div class="c-desc">어드민은 고객이 실제로 신청서에 포함한 1~3순위 희망 후보 슬롯 내에서만 확정할 수 있으며, 후보 밖 임의 슬롯 강제 배정은 불가합니다.</div>
+        </div>
+
+        <div class="constraint-item">
+          <div class="c-badge">제약 7</div>
+          <div class="c-title">🔄 모두 마감되면 재선택</div>
+          <div class="c-desc">신청된 모든 후보가 타 고객의 확정 등으로 소진되면 needs_reselection 상태로 자동 전이되며, 이전 이력을 보존한 채 새 버전으로 재선택합니다.</div>
+        </div>
+
+        <div class="constraint-item">
+          <div class="c-badge">제약 8</div>
+          <div class="c-title">🛡️ 저장 직전 중복 검사 유지</div>
+          <div class="c-desc">고유 작업 식별자(operationId 멱등성), 슬롯 점유 여부, 버전 정합성을 저장 직전에 재검증하여 동시성 충돌을 철저히 차단합니다.</div>
+        </div>
+      </div>
+    </section>
 
     <!-- 섹션 1: 시각 다이어그램 (Mermaid) -->
     <section>
