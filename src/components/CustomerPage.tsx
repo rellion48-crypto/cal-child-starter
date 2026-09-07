@@ -3,11 +3,12 @@ import { SlotTable } from './SlotTable';
 import type { Slot, Request, Candidate } from '../types';
 import { OperationManager } from '../utils/operations';
 import { DatabaseManager } from '../utils/database';
+import { SupabaseManager } from '../utils/supabaseManager';
 import { decideRequestStatus } from '../utils/decide';
 import { TIME_SLOTS } from '../utils/constants';
 
 interface CustomerPageProps {
-  db: DatabaseManager;
+  db: DatabaseManager | SupabaseManager;
   mode: 'local' | 'supabase';
   userId?: string;
 }

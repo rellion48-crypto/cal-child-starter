@@ -3,10 +3,11 @@ import { SlotTable } from './SlotTable';
 import type { Slot, Request, Candidate, OperationLog } from '../types';
 import { OperationManager } from '../utils/operations';
 import { DatabaseManager } from '../utils/database';
+import { SupabaseManager } from '../utils/supabaseManager';
 import { TIME_SLOTS } from '../utils/constants';
 
 interface AdminPageProps {
-  db: DatabaseManager;
+  db: DatabaseManager | SupabaseManager;
   mode: 'local' | 'supabase';
   userId?: string;
 }

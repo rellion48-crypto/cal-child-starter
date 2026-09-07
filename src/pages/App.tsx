@@ -3,6 +3,7 @@ import { CustomerPage } from '../components/CustomerPage';
 import { AdminPage } from '../components/AdminPage';
 import { AuthModal } from '../components/AuthModal';
 import { DatabaseManager } from '../utils/database';
+import { SupabaseManager } from '../utils/supabaseManager';
 import { REFERENCE_TIME } from '../utils/constants';
 import { isSupabaseConfigured, getAuthUser, signOut } from '../utils/supabase';
 
@@ -12,7 +13,7 @@ type Role = 'customer' | 'admin';
 const App: React.FC = () => {
   const [mode, setMode] = useState<Mode>('local');
   const [role, setRole] = useState<Role>('customer');
-  const [db] = useState(() => new DatabaseManager());
+  const [db, setDb] = useState<DatabaseManager | SupabaseManager | null>(null);
   const [authUser, setAuthUser] = useState<any>(null);
   const [authError, setAuthError] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
@@ -25,12 +26,20 @@ const App: React.FC = () => {
           const user = await getAuthUser();
           setAuthUser(user);
           setMode('supabase');
+          // Supabase 모드에서는 사용자별 SupabaseManager 생성
+          if (user) {
+            const supabseDb = new SupabaseManager(user.id);
+            await supabseDb.initialize();
+            setDb(supabseDb);
+          }
         } catch (err) {
           setAuthError('Supabase 연결 실패');
           setMode('local');
+          setDb(new DatabaseManager());
         }
       } else {
         setMode('local');
+        setDb(new DatabaseManager());
       }
       setIsLoading(false);
     };
@@ -43,8 +52,10 @@ const App: React.FC = () => {
 
   const handleResetData = () => {
     if (window.confirm('모든 데이터를 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
-      db.reset();
-      window.location.reload();
+      if (db) {
+        db.reset();
+        window.location.reload();
+      }
     }
   };
 
@@ -69,7 +80,7 @@ const App: React.FC = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || !db) {
     return (
       <div className="container">
         <div style={{ padding: '40px', textAlign: 'center' }}>
@@ -158,14 +169,14 @@ const App: React.FC = () => {
 
       <AuthModal isOpen={mode === 'supabase' && !authUser} onLoginSuccess={handleAuthSuccess} />
 
-      {mode === 'local' && (
+      {db && mode === 'local' && (
         <>
           {role === 'customer' && <CustomerPage db={db} mode={mode} />}
           {role === 'admin' && <AdminPage db={db} mode={mode} />}
         </>
       )}
 
-      {mode === 'supabase' && authUser ? (
+      {db && mode === 'supabase' && authUser ? (
         <>
           {role === 'customer' && <CustomerPage db={db} mode={mode} userId={authUser.id} />}
           {role === 'admin' && <AdminPage db={db} mode={mode} userId={authUser.id} />}

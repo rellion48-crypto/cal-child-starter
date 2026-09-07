@@ -1,12 +1,12 @@
 // 업무 로직: 신청 제출, 확정, 재선택 등 (operationId 중복 방지, 고객당 1개 신청)
-import { DatabaseManager } from './database';
-import { validateSubmission, validateConfirmation, decideRequestStatus } from './decide';
+import type { IDatabase } from './databaseInterface';
 import type { OperationLog } from '../types';
+import { validateSubmission, validateConfirmation, decideRequestStatus } from './decide';
 
 export class OperationManager {
-  private db: DatabaseManager;
+  private db: IDatabase;
 
-  constructor(db: DatabaseManager) {
+  constructor(db: IDatabase) {
     this.db = db;
   }
 
