@@ -15,6 +15,7 @@ interface AdminPageProps {
 
 export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _userId, onNotify }) => {
   const [adminId] = useState<string>('ADMIN001');
+  const activeAdminId = _mode === 'supabase' && _userId ? _userId : adminId;
   const [slots, setSlots] = useState<Record<string, Slot>>({});
   const [requests, setRequests] = useState<
     Array<{ request: Request; candidates: Candidate[]; decision: any }>
@@ -95,14 +96,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
         result = await (db as SupabaseManager).confirmRequest(
           selectedRequest,
           selectedSlotForConfirm,
-          adminId,
+          activeAdminId,
           operationId
         );
       } else {
         result = await om.confirmRequest(
           selectedRequest,
           selectedSlotForConfirm,
-          adminId,
+          activeAdminId,
           operationId
         );
       }

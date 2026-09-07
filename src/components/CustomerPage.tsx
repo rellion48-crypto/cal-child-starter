@@ -15,8 +15,10 @@ interface CustomerPageProps {
 }
 
 export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, onNotify }) => {
-  // Supabase 모드에서는 userId(이메일)를 사용, 로컬 모드에서는 C01, C02 등 선택 가능
-  const [customerId, setCustomerId] = useState<string>(mode === 'supabase' && userId ? userId : 'C01');
+  // 로컬 모드에서는 C01, C02 등 선택 가능, Supabase 모드에서는 전달받은 userId(UUID) 우선 사용
+  const [customerId, setCustomerId] = useState<string>('C01');
+  const activeCustomerId = mode === 'supabase' && userId ? userId : customerId;
+
   const [stage, setStage] = useState<'select' | 'confirm' | 'view' | 'reselect'>('select');
   const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
   const [slots, setSlots] = useState<Record<string, Slot>>({});
@@ -36,13 +38,20 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
     if (db) {
       loadData();
     }
-  }, [customerId, db]);
+  }, [activeCustomerId, db]);
 
-  const loadData = () => {
+  const loadData = async () => {
     if (!db || !om) return;
+    if (isSupabase) {
+      try {
+        await (db as SupabaseManager).initialize();
+      } catch (err) {
+        console.error('Supabase initialize error:', err);
+      }
+    }
     const state = db.getState();
     setSlots(state.slots);
-    const status = om.getCustomerStatus(customerId);
+    const status = om.getCustomerStatus(activeCustomerId);
     setCustomerRequests(status);
     setError('');
     setSuccess('');
@@ -145,13 +154,13 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
     setSuccess('');
 
     try {
-      const operationId = `submit-${customerId}-${Date.now()}`;
+      const operationId = `submit-${activeCustomerId}-${Date.now()}`;
 
       let result;
       if (isSupabase) {
-        result = await (db as SupabaseManager).submitRequest(customerId, selectedSlots, operationId);
+        result = await (db as SupabaseManager).submitRequest(activeCustomerId, selectedSlots, operationId);
       } else {
-        result = await om!.submitRequest(customerId, selectedSlots, operationId);
+        result = await om!.submitRequest(activeCustomerId, selectedSlots, operationId);
       }
 
       if (result.success) {
@@ -193,14 +202,14 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
       let result;
       if (isSupabase) {
         result = await (db as SupabaseManager).resubmitRequest(
-          customerId,
+          activeCustomerId,
           latest.request.id,
           selectedSlots,
           operationId
         );
       } else {
         result = await om!.resubmitRequest(
-          customerId,
+          activeCustomerId,
           latest.request.id,
           selectedSlots,
           operationId
@@ -269,7 +278,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
         ) : (
           <input
             type="text"
-            value={customerId}
+            value={activeCustomerId}
             onChange={() => {}}
             placeholder="C01"
             disabled
