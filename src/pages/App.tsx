@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CustomerPage } from '../components/CustomerPage';
 import { AdminPage } from '../components/AdminPage';
+import { AuthModal } from '../components/AuthModal';
 import { DatabaseManager } from '../utils/database';
 import { REFERENCE_TIME } from '../utils/constants';
 import { isSupabaseConfigured, getAuthUser, signOut } from '../utils/supabase';
@@ -55,6 +56,16 @@ const App: React.FC = () => {
       setRole('customer');
     } catch (err) {
       setAuthError('로그아웃 실패: ' + String(err));
+    }
+  };
+
+  const handleAuthSuccess = async () => {
+    try {
+      const user = await getAuthUser();
+      setAuthUser(user);
+      setAuthError('');
+    } catch (err) {
+      setAuthError('인증 확인 실패: ' + String(err));
     }
   };
 
@@ -145,6 +156,8 @@ const App: React.FC = () => {
         </div>
       )}
 
+      <AuthModal isOpen={mode === 'supabase' && !authUser} onLoginSuccess={handleAuthSuccess} />
+
       {mode === 'local' && (
         <>
           {role === 'customer' && <CustomerPage db={db} mode={mode} />}
@@ -157,10 +170,6 @@ const App: React.FC = () => {
           {role === 'customer' && <CustomerPage db={db} mode={mode} userId={authUser.id} />}
           {role === 'admin' && <AdminPage db={db} mode={mode} userId={authUser.id} />}
         </>
-      ) : mode === 'supabase' ? (
-        <div className="alert alert-warning" style={{ marginTop: '20px' }}>
-          <p>로그인이 필요합니다. (구현 예정)</p>
-        </div>
       ) : null}
 
       <hr style={{ margin: '40px 0', borderColor: '#ddd' }} />
