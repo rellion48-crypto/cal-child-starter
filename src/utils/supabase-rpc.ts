@@ -36,6 +36,7 @@ export async function submitRequestRPC(
     });
 
     if (error) {
+      console.error('[submitRequestRPC] Error:', error.message);
       return { success: false, error: error.message };
     }
 
@@ -50,6 +51,7 @@ export async function submitRequestRPC(
 
     return { success: false, error: 'Invalid response format' };
   } catch (err) {
+    console.error('[submitRequestRPC] Exception:', err);
     return { success: false, error: String(err) };
   }
 }

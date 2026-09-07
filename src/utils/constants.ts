@@ -5,6 +5,27 @@ export const REFERENCE_TIME = new Date('2026-09-07T08:00:00+09:00');
 export const START_DATE = new Date('2026-09-09T00:00:00+09:00');
 export const END_DATE = new Date('2026-09-22T23:59:59+09:00');
 
+// 테스트 시간 고정 (sessionStorage 'TEST_TIME'으로 오버라이드 가능)
+let fixedTestTime: Date | null = null;
+
+export function setTestTime(time: Date | null): void {
+  fixedTestTime = time;
+  if (time) {
+    sessionStorage.setItem('TEST_TIME', time.toISOString());
+  } else {
+    sessionStorage.removeItem('TEST_TIME');
+  }
+}
+
+export function getTestTime(): Date | null {
+  return fixedTestTime || (sessionStorage.getItem('TEST_TIME') ? new Date(sessionStorage.getItem('TEST_TIME')!) : null);
+}
+
+export function getCurrentTime(): Date {
+  const testTime = getTestTime();
+  return testTime || new Date();
+}
+
 // 시간대 (KST 기준)
 export const TIME_SLOTS = [
   { label: 'am', hour: 9, displayLabel: '오전 09:00' },

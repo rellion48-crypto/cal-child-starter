@@ -58,8 +58,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onLoginSuccess }) 
 
         <form onSubmit={handleSubmit} style={styles.form}>
           <div style={styles.formGroup}>
-            <label style={styles.label}>이메일</label>
+            <label htmlFor="email-input" style={styles.label}>이메일</label>
             <input
+              id="email-input"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -71,9 +72,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onLoginSuccess }) 
           </div>
 
           <div style={styles.formGroup}>
-            <label style={styles.label}>비밀번호</label>
+            <label htmlFor="password-input" style={styles.label}>비밀번호</label>
             <div style={styles.passwordContainer}>
               <input
+                id="password-input"
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

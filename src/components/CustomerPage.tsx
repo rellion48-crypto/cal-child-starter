@@ -26,14 +26,19 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
   const [success, setSuccess] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
-  const om = new OperationManager(db);
+  // db가 변경될 때마다 새로운 OperationManager 생성
+  const om = db ? new OperationManager(db) : null;
+  const isSupabase = mode === 'supabase' && db instanceof SupabaseManager;
 
   // 초기 로드
   useEffect(() => {
-    loadData();
-  }, [customerId]);
+    if (db) {
+      loadData();
+    }
+  }, [customerId, db]);
 
   const loadData = () => {
+    if (!db || !om) return;
     const state = db.getState();
     setSlots(state.slots);
     const status = om.getCustomerStatus(customerId);
@@ -70,6 +75,11 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
   };
 
   const handleSubmit = async () => {
+    if (!om) {
+      setError('데이터베이스 연결 실패');
+      return;
+    }
+
     if (selectedSlots.length === 0) {
       setError('최소 1개 이상의 슬롯을 선택하세요');
       return;
@@ -81,7 +91,13 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
 
     try {
       const operationId = `submit-${customerId}-${Date.now()}`;
-      const result = await om.submitRequest(customerId, selectedSlots, operationId);
+
+      let result;
+      if (isSupabase) {
+        result = await (db as SupabaseManager).submitRequest(customerId, selectedSlots, operationId);
+      } else {
+        result = await om!.submitRequest(customerId, selectedSlots, operationId);
+      }
 
       if (result.success) {
         setSuccess('신청이 완료되었습니다!');
@@ -104,6 +120,11 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
       return;
     }
 
+    if (!om) {
+      setError('데이터베이스 연결 실패');
+      return;
+    }
+
     setLoading(true);
     setError('');
     setSuccess('');
@@ -111,12 +132,23 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId }) 
     try {
       const latest = customerRequests[customerRequests.length - 1];
       const operationId = `reselect-${latest.request.id}-${Date.now()}`;
-      const result = await om.resubmitRequest(
-        customerId,
-        latest.request.id,
-        selectedSlots,
-        operationId
-      );
+
+      let result;
+      if (isSupabase) {
+        result = await (db as SupabaseManager).resubmitRequest(
+          customerId,
+          latest.request.id,
+          selectedSlots,
+          operationId
+        );
+      } else {
+        result = await om!.resubmitRequest(
+          customerId,
+          latest.request.id,
+          selectedSlots,
+          operationId
+        );
+      }
 
       if (result.success) {
         setSuccess('재선택이 완료되었습니다!');

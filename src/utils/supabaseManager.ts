@@ -80,7 +80,7 @@ export class SupabaseManager implements IDatabase {
         nextQueueSeq: Math.max(...candidatesList.map(c => c.queueSeq), 0) + 1,
       };
     } catch (err) {
-      console.error('Failed to initialize SupabaseManager:', err);
+      console.error('[SupabaseManager] Initialize error:', err);
       throw err;
     }
   }
@@ -228,7 +228,6 @@ export class SupabaseManager implements IDatabase {
     const result = await submitRequestRPC(customerId, selectedSlotIds, operationId);
 
     if (result.success && result.requestId) {
-      // 캐시 갱신
       await this.initialize();
     }
 

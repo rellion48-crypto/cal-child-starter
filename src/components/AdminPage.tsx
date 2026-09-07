@@ -26,21 +26,47 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
   const [loading, setLoading] = useState(false);
 
   const om = new OperationManager(db);
+  const isSupabase = _mode === 'supabase' && db instanceof SupabaseManager;
 
   // 초기 로드
   useEffect(() => {
-    loadData().catch(err => console.error('Initial load failed:', err));
+    if (db) {
+      loadData().catch(err => console.error('Initial load failed:', err));
+    }
   }, [db]);
 
   const loadData = async () => {
     try {
+      if (!db) {
+        setError('데이터베이스 연결 실패');
+        return;
+      }
+
       // Supabase 모드일 때 데이터 갱신
       if (db instanceof SupabaseManager) {
         await (db as SupabaseManager).initialize();
       }
+
       const state = db.getState();
       setSlots(state.slots);
-      setRequests(om.getAdminRequests());
+
+      // OperationManager는 로컬 모드에서만 사용
+      if (isSupabase) {
+        // Supabase 모드: 직접 상태 구성
+        const candidates = state.candidates;
+        const requests = state.requests
+          .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+          .map(request => ({
+            request,
+            candidates: candidates.filter(c => c.requestId === request.id).sort((a, b) => a.priority - b.priority),
+            decision: {},
+          }));
+        setRequests(requests);
+      } else {
+        // 로컬 모드: OperationManager 사용
+        setRequests(om!.getAdminRequests());
+      }
+
       setLogs(state.logs || []);
       setError('');
       setSuccess('');
@@ -62,12 +88,23 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
 
     try {
       const operationId = `confirm-${selectedRequest}-${selectedSlotForConfirm}-${Date.now()}`;
-      const result = await om.confirmRequest(
-        selectedRequest,
-        selectedSlotForConfirm,
-        adminId,
-        operationId
-      );
+
+      let result;
+      if (isSupabase) {
+        result = await (db as SupabaseManager).confirmRequest(
+          selectedRequest,
+          selectedSlotForConfirm,
+          adminId,
+          operationId
+        );
+      } else {
+        result = await om.confirmRequest(
+          selectedRequest,
+          selectedSlotForConfirm,
+          adminId,
+          operationId
+        );
+      }
 
       if (result.success) {
         setSuccess(`확정되었습니다! 영향받은 요청: ${result.affectedRequests?.length || 0}건`);
@@ -109,10 +146,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
                   style={{
                     cursor: 'pointer',
                     background: selectedRequest === item.request.id ? '#e7f3ff' : 'white',
-                    borderColor: selectedRequest === item.request.id ? '#007bff' : '#ddd',
                     marginBottom: '0',
                     borderRadius: '0',
-                    borderBottom: '1px solid #ddd',
+                    border: `1px solid ${selectedRequest === item.request.id ? '#007bff' : '#ddd'}`,
                   }}
                 >
                   <div>

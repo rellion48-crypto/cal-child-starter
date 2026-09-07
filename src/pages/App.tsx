@@ -4,7 +4,7 @@ import { AdminPage } from '../components/AdminPage';
 import { AuthModal } from '../components/AuthModal';
 import { DatabaseManager } from '../utils/database';
 import { SupabaseManager } from '../utils/supabaseManager';
-import { REFERENCE_TIME } from '../utils/constants';
+import { REFERENCE_TIME, getCurrentTime, setTestTime } from '../utils/constants';
 import { isSupabaseConfigured, getAuthUser, signOut, isAdmin } from '../utils/supabase';
 
 type Mode = 'local' | 'supabase';
@@ -17,6 +17,8 @@ const App: React.FC = () => {
   const [authUser, setAuthUser] = useState<any>(null);
   const [authError, setAuthError] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
+  const [currentTime, setCurrentTime] = useState<Date>(getCurrentTime());
+  const [testTimeInput, setTestTimeInput] = useState<string>('');
 
   // 초기화: Supabase 설정 여부 확인
   useEffect(() => {
@@ -68,6 +70,30 @@ const App: React.FC = () => {
     }
   };
 
+  const handleSetTestTime = () => {
+    if (!testTimeInput.trim()) {
+      setTestTime(null);
+      setCurrentTime(new Date());
+      setTestTimeInput('');
+      return;
+    }
+    try {
+      const time = new Date(testTimeInput);
+      setTestTime(time);
+      setCurrentTime(time);
+      window.location.reload();
+    } catch (err) {
+      alert('잘못된 시간 형식입니다. (예: 2026-09-09T09:00:00+09:00)');
+    }
+  };
+
+  const handleClearTestTime = () => {
+    setTestTime(null);
+    setCurrentTime(new Date());
+    setTestTimeInput('');
+    window.location.reload();
+  };
+
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -115,7 +141,29 @@ const App: React.FC = () => {
           <h1>cal.dudu-works.com</h1>
           <div className="reference-time">
             기준 시각: {REFERENCE_TIME.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })} (고정)
+            <br />
+            현재 시각: {currentTime.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}
           </div>
+          {mode === 'local' && (
+            <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f0f0f0', borderRadius: '4px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 'bold' }}>테스트 시간 고정:</label>
+              <div style={{ display: 'flex', gap: '5px', marginTop: '5px' }}>
+                <input
+                  type="datetime-local"
+                  value={testTimeInput}
+                  onChange={(e) => setTestTimeInput(e.target.value)}
+                  style={{ padding: '6px', fontSize: '12px', flex: 1 }}
+                  placeholder="2026-09-09T09:00"
+                />
+                <button onClick={handleSetTestTime} style={{ padding: '6px 12px', fontSize: '12px', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                  설정
+                </button>
+                <button onClick={handleClearTestTime} style={{ padding: '6px 12px', fontSize: '12px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                  해제
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="role-selector">
