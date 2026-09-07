@@ -13,6 +13,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         service_blueprint_asis: resolve(__dirname, 'service_blueprint_asis.html'),
+        service_blueprint_tobe: resolve(__dirname, 'service_blueprint_tobe.html'),
         user_persona: resolve(__dirname, 'user_persona.html'),
       },
     },
