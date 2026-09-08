@@ -84,9 +84,6 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
     setError('');
   };
 
-  // [Must Have 2] 3순위 최대 선택 권장 넛지 모달/상태
-  const [showNudgePrompt, setShowNudgePrompt] = useState(false);
-
   // [Must Have 1] 이전 희망 패턴 기반 스마트 대체 슬롯 계산
   // 이유: 재선택 발생 시 42개 슬롯을 처음부터 다시 탐색하는 인지적 피로를 없애고,
   // 이전 선호 시간대(오전/오후/저녁)의 열린 슬롯을 즉시 1클릭으로 담아 빠른 재접수를 지원함.
@@ -123,20 +120,6 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
       setSelectedSlots(recommended);
       onNotify?.(`스마트 추천 슬롯 ${recommended.length}개가 자동 선택되었습니다!`, 'success');
     }
-  };
-
-  const handleProceedToConfirm = () => {
-    // 1~2개 선택 시 3개 채우기 권장 넛지 표시
-    if (selectedSlots.length > 0 && selectedSlots.length < 3) {
-      setShowNudgePrompt(true);
-    } else {
-      setStage('confirm');
-    }
-  };
-
-  const handleConfirmWithCurrentSlots = () => {
-    setShowNudgePrompt(false);
-    setStage('confirm');
   };
 
   const handleSubmit = async () => {
@@ -264,260 +247,384 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
   };
 
   return (
-    <div className="customer-page">
-      <div className="form-group">
-        <label>고객 코드 {mode === 'supabase' && '(로그인된 사용자)'}</label>
-        {mode === 'local' ? (
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+    <div className="customer-page" style={{ maxWidth: '1160px', margin: '0 auto' }}>
+      {/* 1. 상단 글로벌 컴팩트 바: 고객 코드 & 네비게이션 탭 */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '12px',
+          marginBottom: '16px',
+          paddingBottom: '12px',
+          borderBottom: '1.5px solid #e2e8f0',
+        }}
+      >
+        {/* 좌측: 고객 코드 선택기 */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '13px', fontWeight: 800, color: '#475569' }}>
+            신청자 계정:
+          </span>
+          {mode === 'local' ? (
             <select
               value={customerId}
               onChange={(e) => setCustomerId(e.target.value)}
-              style={{ padding: '8px 14px', fontSize: '14px', borderRadius: '4px', border: '1.5px solid #2563eb', fontWeight: 'bold', background: '#eff6ff', color: '#1e40af' }}
-            >
-              <option value="C01">고객 C01 (기본 신청자)</option>
-              <option value="C02">고객 C02 (경합 테스트용 고객)</option>
-              <option value="C03">고객 C03</option>
-            </select>
-            <span style={{ fontSize: '12px', color: '#64748b' }}>
-              💡 로컬 모드에서는 고객 코드를 C01/C02로 변경하여 <strong>다중 고객 경합 및 재선택 시나리오</strong>를 직접 테스트할 수 있습니다.
-            </span>
-          </div>
-        ) : (
-          <input
-            type="text"
-            value={activeCustomerId}
-            onChange={() => {}}
-            placeholder="C01"
-            disabled
-          />
-        )}
-      </div>
-
-      {/* 상단 네비게이션 탭: 새 예약 신청 vs 내 예약 진행 상황 */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', borderBottom: '2px solid #e2e8f0', paddingBottom: '8px', flexWrap: 'wrap' }}>
-        <button
-          type="button"
-          onClick={() => {
-            setStage('select');
-            setError('');
-          }}
-          style={{
-            padding: '10px 18px',
-            borderRadius: '6px',
-            border: 'none',
-            fontWeight: 'bold',
-            fontSize: '14px',
-            cursor: 'pointer',
-            background: stage === 'select' || stage === 'confirm' ? '#2563eb' : '#f1f5f9',
-            color: stage === 'select' || stage === 'confirm' ? 'white' : '#475569',
-            transition: 'all 0.2s',
-          }}
-        >
-          📅 새 일정 예약 신청
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            setStage('view');
-            setError('');
-          }}
-          style={{
-            padding: '10px 18px',
-            borderRadius: '6px',
-            border: 'none',
-            fontWeight: 'bold',
-            fontSize: '14px',
-            cursor: 'pointer',
-            background: stage === 'view' ? '#2563eb' : '#f1f5f9',
-            color: stage === 'view' ? 'white' : '#475569',
-            transition: 'all 0.2s',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-          }}
-        >
-          <span>📊 내 예약 진행 상황</span>
-          {customerRequests.length > 0 && (
-            <span
               style={{
-                background: stage === 'view' ? 'white' : '#2563eb',
-                color: stage === 'view' ? '#2563eb' : 'white',
-                borderRadius: '10px',
-                padding: '1px 7px',
-                fontSize: '11px',
-                fontWeight: 800,
+                padding: '5px 10px',
+                fontSize: '13px',
+                borderRadius: '6px',
+                border: '1.5px solid #2563eb',
+                fontWeight: 'bold',
+                background: '#eff6ff',
+                color: '#1e40af',
+                cursor: 'pointer',
               }}
             >
-              {customerRequests.length}
+              <option value="C01">고객 C01 (기본 신청자)</option>
+              <option value="C02">고객 C02 (경합 테스트용)</option>
+              <option value="C03">고객 C03</option>
+            </select>
+          ) : (
+            <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e40af', background: '#eff6ff', padding: '4px 8px', borderRadius: '4px' }}>
+              {activeCustomerId}
             </span>
           )}
-        </button>
+        </div>
 
-        {customerRequests.some(s => s.request.status === 'needs_reselection') && (
+        {/* 우측: 탭 네비게이션 (새 예약 신청 vs 내 예약 진행 상황) */}
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
           <button
             type="button"
             onClick={() => {
-              setStage('reselect');
-              setSelectedSlots([]);
+              setStage('select');
               setError('');
             }}
             style={{
-              padding: '10px 18px',
+              padding: '7px 14px',
               borderRadius: '6px',
               border: 'none',
-              fontWeight: 'bold',
-              fontSize: '14px',
+              fontWeight: 700,
+              fontSize: '13px',
               cursor: 'pointer',
-              background: stage === 'reselect' ? '#d97706' : '#fffbeb',
-              color: stage === 'reselect' ? 'white' : '#b45309',
-              transition: 'all 0.2s',
+              background: stage === 'select' ? '#2563eb' : '#f1f5f9',
+              color: stage === 'select' ? 'white' : '#475569',
+              boxShadow: stage === 'select' ? '0 1px 3px rgba(37,99,235,0.2)' : 'none',
+              transition: 'all 0.15s',
             }}
           >
-            ⚠️ 대체 슬롯 재선택 필요
+            📅 예약 신청
           </button>
-        )}
+
+          <button
+            type="button"
+            onClick={() => {
+              setStage('view');
+              setError('');
+            }}
+            style={{
+              padding: '7px 14px',
+              borderRadius: '6px',
+              border: 'none',
+              fontWeight: 700,
+              fontSize: '13px',
+              cursor: 'pointer',
+              background: stage === 'view' ? '#2563eb' : '#f1f5f9',
+              color: stage === 'view' ? 'white' : '#475569',
+              boxShadow: stage === 'view' ? '0 1px 3px rgba(37,99,235,0.2)' : 'none',
+              transition: 'all 0.15s',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            <span>📊 진행 상황 추적</span>
+            {customerRequests.length > 0 && (
+              <span
+                style={{
+                  background: stage === 'view' ? 'white' : '#2563eb',
+                  color: stage === 'view' ? '#2563eb' : 'white',
+                  borderRadius: '10px',
+                  padding: '1px 6px',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                }}
+              >
+                {customerRequests.length}
+              </span>
+            )}
+          </button>
+
+          {customerRequests.some(s => s.request.status === 'needs_reselection') && (
+            <button
+              type="button"
+              onClick={() => {
+                setStage('reselect');
+                setSelectedSlots([]);
+                setError('');
+              }}
+              style={{
+                padding: '7px 14px',
+                borderRadius: '6px',
+                border: 'none',
+                fontWeight: 700,
+                fontSize: '13px',
+                cursor: 'pointer',
+                background: stage === 'reselect' ? '#d97706' : '#fffbeb',
+                color: stage === 'reselect' ? 'white' : '#b45309',
+                transition: 'all 0.15s',
+              }}
+            >
+              ⚠️ 대체 슬롯 재선택
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* 예약 진행 중인 건이 있을 때 select 화면 상단에 알림 바 표출 */}
+      {/* 대기 알림 인라인 배너 */}
       {stage === 'select' && customerRequests.some(s => s.request.status === 'received') && (
-        <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', padding: '10px 16px', marginBottom: '16px', fontSize: '13px', color: '#1e40af', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+        <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px', padding: '10px 16px', marginBottom: '14px', fontSize: '13px', color: '#1e40af', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span>⏳</span>
-            <span>현재 <strong>관리자 확인 대기 중</strong>인 예약이 있습니다. (서버 전송 완료 ➔ 심사 대기 중)</span>
+            <span>현재 <strong>관리자 확인 대기 중</strong>인 예약이 있습니다.</span>
           </div>
           <button
             type="button"
             onClick={() => setStage('view')}
             style={{ background: '#2563eb', color: 'white', border: 'none', borderRadius: '4px', padding: '4px 10px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
           >
-            진행 상황 확인하기 →
+            진행 상황 확인 →
           </button>
         </div>
       )}
 
       {error && (
-        <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
           <span style={{ fontSize: '18px' }}>⚠️</span>
           <span>{error}</span>
         </div>
       )}
       {success && (
-        <div className="alert alert-success" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div className="alert alert-success" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
           <span style={{ fontSize: '18px' }}>✅</span>
           <span>{success}</span>
         </div>
       )}
 
+      {/* 2. Calendly식 일체형 2분할 통합 카드 (stage === 'select') */}
       {stage === 'select' && (
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '6px' }}>
-            <h3 style={{ margin: 0 }}>슬롯 선택 (1~3개)</h3>
-            <span style={{ fontSize: '13px', background: '#eff6ff', color: '#1e40af', padding: '3px 10px', borderRadius: '12px', fontWeight: 700, border: '1px solid #bfdbfe' }}>
-              📅 Google Calendar 예약 일정 방식 (인근 날짜 비교)
-            </span>
-          </div>
-          <p style={{ color: '#64748b', fontSize: '13.5px', margin: '0 0 14px 0' }}>
-            원하는 슬롯을 선택하고 제출하세요. 달력 형태로 인근 날짜의 시간대(오전·오후·저녁)를 한눈에 비교할 수 있으며, 선택 순서가 희망 우선순위(1~3순위)로 자동 배정됩니다.
-          </p>
-          <SlotTable
-            slots={slots}
-            selectedSlots={selectedSlots}
-            onToggle={handleSlotToggle}
-            mode="select"
-            maxSelect={3}
-          />
-
-          <div style={{ marginBottom: '20px' }}>
-            <h4>선택한 슬롯 ({selectedSlots.length}/3)</h4>
-            <ul className="list">
-              {selectedSlots.map((slotId, idx) => {
-                const slot = slots[slotId];
-                return (
-                  <li key={slotId}>
-                    <span>
-                      {idx + 1}. {slot?.date} {TIME_SLOTS.find(t => t.label === slot?.timeLabel)?.displayLabel}
-                    </span>
-                    <button
-                      className="btn btn-secondary"
-                      onClick={() => handleSlotToggle(slotId)}
-                      style={{ padding: '4px 8px', fontSize: '12px' }}
-                    >
-                      제거
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-
-          {/* [Must Have 2] 3순위 최대 선택 권장 넛지 배너 */}
-          {selectedSlots.length > 0 && selectedSlots.length < 3 && (
-            <div style={{ background: '#fef3c7', border: '1px solid #fde68a', borderRadius: '6px', padding: '12px 16px', marginBottom: '16px', fontSize: '13.5px', color: '#92400e', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '16px' }}>💡</span>
-              <div>
-                <strong>[3순위 선택 권장 넛지]</strong> 현재 <strong>{selectedSlots.length}개</strong> 선택됨. 최대 3개까지 모두 선택하시면 다른 고객과 경합 시 <strong>전원 마감될 위험을 67% 방지</strong>할 수 있습니다. (남은 선택 가능: <strong>{3 - selectedSlots.length}개</strong>)
-              </div>
-            </div>
-          )}
-
-          {selectedSlots.length === 3 && (
-            <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '6px', padding: '12px 16px', marginBottom: '16px', fontSize: '13.5px', color: '#065f46', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '16px' }}>✅</span>
-              <div>
-                <strong>[선택 최적화 완료]</strong> 3순위까지 모두 채워졌습니다! 타 고객 경합 시 확정 확률이 극대화되었습니다.
-              </div>
-            </div>
-          )}
-
-          <button
-            className="btn btn-primary"
-            onClick={handleProceedToConfirm}
-            disabled={selectedSlots.length === 0 || loading}
+        <div
+          style={{
+            background: '#ffffff',
+            border: '1.5px solid #e2e8f0',
+            borderRadius: '12px',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.05)',
+            display: 'flex',
+            flexWrap: 'wrap',
+            overflow: 'hidden',
+          }}
+        >
+          {/* [좌측 패널: 예약 요약 & 선택 현황 & 즉시 제출 버튼] */}
+          <div
+            style={{
+              width: '320px',
+              minWidth: '280px',
+              background: '#f8fafc',
+              borderRight: '1.5px solid #e2e8f0',
+              padding: '24px 20px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}
           >
-            다음: 최종 확인
-          </button>
-
-          {/* [Must Have 2] 3순위 채우기 권장 넛지 모달 */}
-          {showNudgePrompt && (
-            <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-              <div style={{ background: 'white', padding: '24px', borderRadius: '8px', maxWidth: '440px', width: '90%', boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }}>
-                <h4 style={{ margin: '0 0 12px 0', fontSize: '17px', color: '#1e293b' }}>💡 슬롯을 더 추가하시겠습니까?</h4>
-                <p style={{ fontSize: '14px', color: '#475569', lineHeight: '1.6', margin: '0 0 20px 0' }}>
-                  현재 <strong>{selectedSlots.length}개</strong>의 슬롯만 선택되었습니다.<br />
-                  규약상 최대 <strong>3개</strong>까지 선택하실 수 있으며, 3개를 모두 채우면 특정 슬롯이 타 고객에게 우선 배정되더라도 <strong>차순위 후보로 즉시 확정될 확률</strong>이 대폭 높아집니다.
-                </p>
-                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                  <button
-                    className="btn btn-secondary"
-                    onClick={handleConfirmWithCurrentSlots}
-                    style={{ padding: '8px 14px', fontSize: '13px' }}
-                  >
-                    현재 {selectedSlots.length}개로 계속
-                  </button>
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => setShowNudgePrompt(false)}
-                    style={{ padding: '8px 16px', fontSize: '13px', background: '#2563eb' }}
-                  >
-                    + 1개 더 선택하기
-                  </button>
+            <div>
+              {/* 호스트 / 서비스 브랜딩 */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                <span style={{ fontSize: '24px' }}>🗓️</span>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 800, color: '#0f172a' }}>cal.dudu 일정 조율</h3>
+                  <span style={{ fontSize: '12px', color: '#64748b' }}>비즈니스 미팅 1:1 예약</span>
                 </div>
               </div>
+
+              {/* 핵심 안내 태그 */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '18px', fontSize: '12px', color: '#475569' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>⏱️</span>
+                  <span><strong>9/9(수) ~ 9/22(화)</strong> (14일 42슬롯)</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>🌐</span>
+                  <span>한국 표준시 (KST) 기준</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>🤝</span>
+                  <span>1~3순위 비점유 대기 ➔ 어드민 수동 확정</span>
+                </div>
+              </div>
+
+              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 800, color: '#1e293b' }}>
+                    내가 선택한 희망 일정
+                  </span>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: selectedSlots.length > 0 ? '#2563eb' : '#94a3b8' }}>
+                    {selectedSlots.length} / 3개
+                  </span>
+                </div>
+
+                {/* 0개 선택 시 안내 */}
+                {selectedSlots.length === 0 && (
+                  <div style={{ padding: '20px 14px', background: '#ffffff', borderRadius: '8px', border: '1px dashed #cbd5e1', textAlign: 'center', color: '#64748b', fontSize: '12.5px' }}>
+                    <div style={{ fontSize: '22px', marginBottom: '6px' }}>👈</div>
+                    <div>우측 달력에서 희망하는 일정을 <strong>1~3개</strong> 클릭하여 선택하세요.</div>
+                  </div>
+                )}
+
+                {/* 선택한 슬롯 실시간 1~3순위 카드 목록 */}
+                {selectedSlots.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
+                    {selectedSlots.map((slotId, idx) => {
+                      const slot = slots[slotId];
+                      return (
+                        <div
+                          key={slotId}
+                          style={{
+                            background: '#ffffff',
+                            border: '1.5px solid #bfdbfe',
+                            borderRadius: '8px',
+                            padding: '8px 12px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span
+                              style={{
+                                background: '#2563eb',
+                                color: 'white',
+                                fontSize: '11px',
+                                fontWeight: 800,
+                                padding: '2px 6px',
+                                borderRadius: '4px',
+                              }}
+                            >
+                              {idx + 1}순위
+                            </span>
+                            <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>
+                              {slot?.date} {TIME_SLOTS.find(t => t.label === slot?.timeLabel)?.displayLabel}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleSlotToggle(slotId)}
+                            style={{
+                              background: 'transparent',
+                              border: 'none',
+                              color: '#94a3b8',
+                              fontSize: '14px',
+                              fontWeight: 'bold',
+                              cursor: 'pointer',
+                              padding: '2px 6px',
+                            }}
+                            title="삭제"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* 3순위 넛지 배지 */}
+                {selectedSlots.length > 0 && selectedSlots.length < 3 && (
+                  <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '6px', padding: '8px 10px', fontSize: '12px', color: '#92400e', display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+                    <span>💡</span>
+                    <span>
+                      <strong>+{3 - selectedSlots.length}개 추가 권장:</strong> 3순위까지 채우면 타 고객 경합 시 전원 마감 위험을 대폭 방지합니다.
+                    </span>
+                  </div>
+                )}
+
+                {selectedSlots.length === 3 && (
+                  <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '6px', padding: '8px 10px', fontSize: '12px', color: '#065f46', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span>✅</span>
+                    <span><strong>3순위 채움 완료!</strong> 확정 확률이 극대화되었습니다.</span>
+                  </div>
+                )}
+              </div>
             </div>
-          )}
+
+            {/* 좌측 패널 하단: 원클릭 즉시 제출 버튼 (화면 전환 없이 원스톱 신청 완료) */}
+            <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px' }}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSubmit}
+                disabled={selectedSlots.length === 0 || loading}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  fontSize: '14px',
+                  fontWeight: 800,
+                  borderRadius: '8px',
+                  background: selectedSlots.length > 0 ? '#2563eb' : '#cbd5e1',
+                  color: 'white',
+                  border: 'none',
+                  cursor: selectedSlots.length > 0 ? 'pointer' : 'not-allowed',
+                  boxShadow: selectedSlots.length > 0 ? '0 2px 6px rgba(37,99,235,0.3)' : 'none',
+                  transition: 'all 0.15s',
+                }}
+              >
+                {loading ? '신청서 제출 중...' : selectedSlots.length === 0 ? '일정을 선택해주세요' : `예약 신청서 제출 (${selectedSlots.length}개 희망) →`}
+              </button>
+              <div style={{ textAlign: 'center', marginTop: '8px', fontSize: '11.5px', color: '#64748b' }}>
+                제출 즉시 관리자 검토 대기열에 등록됩니다.
+              </div>
+            </div>
+          </div>
+
+          {/* [우측 패널: 주간 달력 및 시간 슬롯 선택기] */}
+          <div
+            style={{
+              flex: 1,
+              minWidth: '320px',
+              padding: '20px 24px',
+              background: '#ffffff',
+            }}
+          >
+            <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#0f172a' }}>날짜 및 시간 선택</h4>
+                <p style={{ margin: '3px 0 0 0', fontSize: '12.5px', color: '#64748b' }}>
+                  인근 날짜의 오전(09:00), 오후(13:00), 저녁(18:00) 슬롯을 비교하고 클릭하세요.
+                </p>
+              </div>
+            </div>
+
+            <SlotTable
+              slots={slots}
+              selectedSlots={selectedSlots}
+              onToggle={handleSlotToggle}
+              mode="select"
+              maxSelect={3}
+            />
+          </div>
         </div>
       )}
 
+      {/* 기존 confirm 단계는 좌측 패널의 원클릭 신청으로 통합되었으나, fallback 호환성을 위해 안전하게 지원 */}
       {stage === 'confirm' && checkSlotAvailability() && (
-        <div>
+        <div style={{ background: '#ffffff', border: '1.5px solid #e2e8f0', borderRadius: '12px', padding: '24px' }}>
           <h3>최종 확인</h3>
           <p style={{ color: '#666', fontSize: '14px' }}>
             다음과 같이 신청합니다. 제출하면 어드민이 확인 후 확정합니다.
           </p>
           <SlotTable slots={slots} selectedSlots={selectedSlots} onToggle={() => {}} mode="view" />
-
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ margin: '16px 0' }}>
             <h4>최종 선택 (우선순위 순)</h4>
             <ul className="list">
               {selectedSlots.map((slotId, idx) => {
@@ -532,20 +639,11 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
               })}
             </ul>
           </div>
-
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button
-              className="btn btn-primary"
-              onClick={handleSubmit}
-              disabled={loading}
-            >
+            <button className="btn btn-primary" onClick={handleSubmit} disabled={loading}>
               {loading ? '처리 중...' : '제출'}
             </button>
-            <button
-              className="btn btn-secondary"
-              onClick={handleCancel}
-              disabled={loading}
-            >
+            <button className="btn btn-secondary" onClick={handleCancel} disabled={loading}>
               돌아가기
             </button>
           </div>
@@ -903,120 +1001,211 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
       )}
 
       {stage === 'reselect' && customerRequests.length > 0 && (
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '6px' }}>
-            <h3 style={{ margin: 0 }}>슬롯 재선택 (새 버전 v{customerRequests[customerRequests.length - 1].request.version + 1} 신청)</h3>
-            <span style={{ fontSize: '13px', background: '#eff6ff', color: '#1e40af', padding: '3px 10px', borderRadius: '12px', fontWeight: 700, border: '1px solid #bfdbfe' }}>
-              📅 Google Calendar 예약 일정 방식 (달력 & 인근 날짜)
-            </span>
-          </div>
-          <p style={{ color: '#64748b', fontSize: '13.5px', margin: '0 0 14px 0' }}>
-            이전 신청의 슬롯이 모두 마감되었습니다. 스마트 추천을 활용하거나, 달력에서 인근 날짜의 빈 슬롯을 비교하여 새로 선택하세요. 이전 이력은 완벽 보존됩니다.
-          </p>
-
-          {/* [Must Have 1] 스마트 대체 슬롯 원클릭 추천 카드 */}
-          {getSmartRecommendations().length > 0 && (
-            <div style={{ background: '#eff6ff', border: '1.5px solid #93c5fd', borderRadius: '8px', padding: '16px 20px', marginBottom: '20px', boxShadow: '0 2px 6px rgba(37,99,235,0.06)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '10px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', color: '#1e40af', fontSize: '15px' }}>
-                  <span>✨</span>
-                  <span>스마트 대체 슬롯 원클릭 추천</span>
-                  <span style={{ fontSize: '11.5px', background: '#dbeafe', color: '#1e40af', padding: '2px 8px', borderRadius: '12px', fontWeight: 600 }}>
-                    이전 선호 시간대 분석
-                  </span>
+        <div
+          style={{
+            background: '#ffffff',
+            border: '1.5px solid #fde68a',
+            borderRadius: '12px',
+            boxShadow: '0 4px 16px rgba(217, 119, 6, 0.08)',
+            display: 'flex',
+            flexWrap: 'wrap',
+            overflow: 'hidden',
+          }}
+        >
+          {/* [좌측 패널: 재선택 안내, 스마트 추천 & 제출 버튼] */}
+          <div
+            style={{
+              width: '320px',
+              minWidth: '280px',
+              background: '#fffdf5',
+              borderRight: '1.5px solid #fde68a',
+              padding: '24px 20px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                <span style={{ fontSize: '24px' }}>⚠️</span>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#92400e' }}>
+                    대체 슬롯 재선택 (v{customerRequests[customerRequests.length - 1].request.version + 1})
+                  </h3>
+                  <span style={{ fontSize: '12px', color: '#b45309' }}>이전 신청 전원 마감에 따른 재접수</span>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleApplySmartRecommendation}
-                  style={{ background: '#2563eb', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 2px 4px rgba(37,99,235,0.2)' }}
-                >
-                  ⚡ 추천 슬롯 자동 채우기 ({getSmartRecommendations().length}개)
-                </button>
               </div>
-              <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#334155' }}>
-                이전 1순위 희망 시간대(<strong>{TIME_SLOTS.find(t => t.label === (slots[customerRequests[customerRequests.length - 1]?.candidates[0]?.slotId]?.timeLabel || 'am'))?.displayLabel}</strong>)와 가장 가까운 열린 슬롯을 자동 선별했습니다.
-              </p>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                {getSmartRecommendations().map((sId, idx) => {
-                  const slot = slots[sId];
-                  return (
-                    <span key={sId} style={{ background: 'white', border: '1px solid #bfdbfe', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', color: '#1e40af', fontWeight: 'bold' }}>
-                      추천 {idx + 1}: {slot?.date} {TIME_SLOTS.find(t => t.label === slot?.timeLabel)?.displayLabel}
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-          )}
 
-          <SlotTable
-            slots={slots}
-            selectedSlots={selectedSlots}
-            onToggle={handleSlotToggle}
-            mode="select"
-            maxSelect={3}
-          />
-
-          <div style={{ marginBottom: '20px' }}>
-            <h4>새로 선택한 슬롯 ({selectedSlots.length}/3)</h4>
-            <ul className="list">
-              {selectedSlots.map((slotId, idx) => {
-                const slot = slots[slotId];
-                return (
-                  <li key={slotId}>
-                    <span>
-                      {idx + 1}. {slot?.date} {TIME_SLOTS.find(t => t.label === slot?.timeLabel)?.displayLabel}
+              {/* 스마트 대체 슬롯 원클릭 추천 버튼 */}
+              {getSmartRecommendations().length > 0 && (
+                <div style={{ background: '#ffffff', border: '1.5px solid #93c5fd', borderRadius: '8px', padding: '12px', marginBottom: '14px', boxShadow: '0 1px 4px rgba(37,99,235,0.08)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <span style={{ fontSize: '12.5px', fontWeight: 800, color: '#1e40af' }}>
+                      ✨ 스마트 1클릭 추천
                     </span>
                     <button
-                      className="btn btn-secondary"
-                      onClick={() => handleSlotToggle(slotId)}
-                      style={{ padding: '4px 8px', fontSize: '12px' }}
+                      type="button"
+                      onClick={handleApplySmartRecommendation}
+                      style={{
+                        background: '#2563eb',
+                        color: 'white',
+                        border: 'none',
+                        padding: '5px 10px',
+                        borderRadius: '4px',
+                        fontSize: '11.5px',
+                        fontWeight: 'bold',
+                        cursor: 'pointer',
+                      }}
                     >
-                      제거
+                      자동 채우기
                     </button>
-                  </li>
-                );
-              })}
-            </ul>
+                  </div>
+                  <div style={{ fontSize: '11.5px', color: '#64748b', lineHeight: 1.4 }}>
+                    이전 선호 시간대 분석 기반 열린 슬롯 {getSmartRecommendations().length}개 즉시 배정
+                  </div>
+                </div>
+              )}
+
+              <div style={{ borderTop: '1px solid #fde68a', paddingTop: '14px', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 800, color: '#1e293b' }}>
+                    새로 선택한 희망 일정
+                  </span>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: selectedSlots.length > 0 ? '#d97706' : '#94a3b8' }}>
+                    {selectedSlots.length} / 3개
+                  </span>
+                </div>
+
+                {selectedSlots.length === 0 && (
+                  <div style={{ padding: '16px 12px', background: '#ffffff', borderRadius: '8px', border: '1px dashed #cbd5e1', textAlign: 'center', color: '#64748b', fontSize: '12px' }}>
+                    👈 우측 달력에서 새 일정을 선택하거나, 위의 <strong>[자동 채우기]</strong>를 누르세요.
+                  </div>
+                )}
+
+                {selectedSlots.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '10px' }}>
+                    {selectedSlots.map((slotId, idx) => {
+                      const slot = slots[slotId];
+                      return (
+                        <div
+                          key={slotId}
+                          style={{
+                            background: '#ffffff',
+                            border: '1.5px solid #fde68a',
+                            borderRadius: '8px',
+                            padding: '8px 12px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span
+                              style={{
+                                background: '#d97706',
+                                color: 'white',
+                                fontSize: '11px',
+                                fontWeight: 800,
+                                padding: '2px 5px',
+                                borderRadius: '4px',
+                              }}
+                            >
+                              {idx + 1}순위
+                            </span>
+                            <span style={{ fontSize: '12.5px', fontWeight: 700, color: '#1e293b' }}>
+                              {slot?.date} {TIME_SLOTS.find(t => t.label === slot?.timeLabel)?.displayLabel}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleSlotToggle(slotId)}
+                            style={{
+                              background: 'transparent',
+                              border: 'none',
+                              color: '#94a3b8',
+                              fontSize: '13px',
+                              fontWeight: 'bold',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {selectedSlots.length > 0 && selectedSlots.length < 3 && (
+                  <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '6px', padding: '8px', fontSize: '11.5px', color: '#92400e' }}>
+                    💡 <strong>+{3 - selectedSlots.length}개 추가 권장:</strong> 3순위까지 채우면 재선택 후 재마감 위험을 67% 방지합니다.
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 좌측 패널 하단: 재선택 제출 버튼 */}
+            <div style={{ borderTop: '1px solid #fde68a', paddingTop: '16px' }}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleReselect}
+                disabled={selectedSlots.length === 0 || loading}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  fontSize: '14px',
+                  fontWeight: 800,
+                  borderRadius: '8px',
+                  background: selectedSlots.length > 0 ? '#d97706' : '#cbd5e1',
+                  color: 'white',
+                  border: 'none',
+                  cursor: selectedSlots.length > 0 ? 'pointer' : 'not-allowed',
+                  boxShadow: selectedSlots.length > 0 ? '0 2px 6px rgba(217, 119, 6, 0.3)' : 'none',
+                  transition: 'all 0.15s',
+                  marginBottom: '8px',
+                }}
+              >
+                {loading ? '재선택 제출 중...' : selectedSlots.length === 0 ? '일정을 선택해주세요' : `재선택 신청서 제출 (${selectedSlots.length}개 희망) →`}
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => {
+                  setStage('view');
+                  setSelectedSlots([]);
+                }}
+                disabled={loading}
+                style={{ width: '100%', padding: '8px', fontSize: '12.5px' }}
+              >
+                내 예약 목록으로 돌아가기
+              </button>
+            </div>
           </div>
 
-          {/* [Must Have 2] 재선택 단계 3순위 넛지 배너 */}
-          {selectedSlots.length > 0 && selectedSlots.length < 3 && (
-            <div style={{ background: '#fef3c7', border: '1px solid #fde68a', borderRadius: '6px', padding: '12px 16px', marginBottom: '16px', fontSize: '13.5px', color: '#92400e', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '16px' }}>💡</span>
-              <div>
-                <strong>[3순위 선택 권장 넛지]</strong> 현재 <strong>{selectedSlots.length}개</strong> 선택됨. 최대 3개까지 모두 선택하시면 재선택 후 또다시 마감될 위험을 <strong>67% 방지</strong>할 수 있습니다. (남은 선택 가능: <strong>{3 - selectedSlots.length}개</strong>)
-              </div>
+          {/* [우측 패널: 주간 달력 & 슬롯 선택기] */}
+          <div
+            style={{
+              flex: 1,
+              minWidth: '320px',
+              padding: '20px 24px',
+              background: '#ffffff',
+            }}
+          >
+            <div style={{ marginBottom: '12px' }}>
+              <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#0f172a' }}>새 일정 선택</h4>
+              <p style={{ margin: '3px 0 0 0', fontSize: '12.5px', color: '#64748b' }}>
+                달력에서 원하는 빈 슬롯(오전·오후·저녁)을 1~3순위로 선택하세요.
+              </p>
             </div>
-          )}
 
-          {selectedSlots.length === 3 && (
-            <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '6px', padding: '12px 16px', marginBottom: '16px', fontSize: '13.5px', color: '#065f46', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '16px' }}>✅</span>
-              <div>
-                <strong>[선택 최적화 완료]</strong> 3순위까지 모두 채워졌습니다! 확정 확률이 극대화되었습니다.
-              </div>
-            </div>
-          )}
-
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <button
-              className="btn btn-primary"
-              onClick={handleReselect}
-              disabled={selectedSlots.length === 0 || loading}
-            >
-              {loading ? '처리 중...' : '재선택 제출'}
-            </button>
-            <button
-              className="btn btn-secondary"
-              onClick={() => {
-                setStage('view');
-                setSelectedSlots([]);
-              }}
-              disabled={loading}
-            >
-              돌아가기
-            </button>
+            <SlotTable
+              slots={slots}
+              selectedSlots={selectedSlots}
+              onToggle={handleSlotToggle}
+              mode="select"
+              maxSelect={3}
+            />
           </div>
         </div>
       )}
