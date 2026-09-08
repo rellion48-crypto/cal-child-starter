@@ -625,7 +625,7 @@
 flowchart TB
     subgraph Evidence ["🖥️ 1. 물리적 증거 (Physical Evidence)"]
         E1["<b>상담 예약 알림 & 로그인 화면</b><br/><small>상담 안내 배너 및 로그인 폼</small>"]
-        E2["<b>14일 42슬롯 일정표</b><br/><small>14일 × 3회 (열린 슬롯 배지)</small>"]
+        E2["<b>📅 구글 캘린더 스타일 달력 & 인근 날짜 일정표</b><br/><small>인근 날짜 주간 비교 & 시간대 블록 정렬</small>"]
         E3["<b>3순위 권장 넛지 배너/모달</b><br/><small>💡 3개 풀 선택 시 마감 탈락 위험 67% 감소 안내</small>"]
         E4["<b>✨ 실시간 3단계 진행 트래커</b><br/><small>① 서버 전송 완료 ➔ ② 관리자 미확인/심사 ➔ ③ 최종 결과</small>"]
         E5["<b>✨ 스마트 추천 재선택 화면</b><br/><small>⚡ [추천 슬롯 자동 채우기] 원클릭 프리셋 버튼</small>"]
@@ -633,7 +633,7 @@ flowchart TB
 
     subgraph UserAction ["👤 2. 고객 행동 (Customer Actions - 페르소나: 김두두)"]
         U1["<b>1. 예약 접속 및 로그인</b><br/><small>상담 안내 링크 확인 후 본인 계정 로그인</small>"]
-        U2["<b>2. 42개 슬롯 일정 탐색</b><br/><small>프로젝트 일정 및 파트너사 미팅 시간 대조</small>"]
+        U2["<b>2. 📅 인근 날짜 기준 달력 일정 탐색</b><br/><small>구글 캘린더 스타일 주간 인근 날짜 및 시간대 수평 비교</small>"]
         U3["<b>3. ✨ 3순위 풀 채우기 신청 제출</b><br/><small>💡 넛지 수용으로 3순위까지 안전하게 선택 완료</small>"]
         U4["<b>4. ✨ 진행 트래커 확인 & 안심 대기</b><br/><small>실시간 3단계 상태 및 대기열 확인으로 불안 0 해소</small>"]
         U5["<b>5. ✨ 스마트 원클릭 재선택 (or 확정)</b><br/><small>마감 통보 시 1클릭으로 선호시간 3개 자동 채워 1초 만에 재접수</small>"]
@@ -641,7 +641,7 @@ flowchart TB
 
     subgraph FrontStage ["💻 3. 전면 서비스 접점 (Front-stage Interfaces)"]
         F1["<b>AuthModal.tsx & App.tsx</b><br/><small>로그인 폼 표출 및 인증 세션 관리</small>"]
-        F2["<b>SlotTable.tsx</b><br/><small>42개 슬롯 가용성 렌더링</small>"]
+        F2["<b>SlotTable.tsx (달력 & 인근 날짜 뷰)</b><br/><small>Google Calendar appointment schedules 스타일 그리드</small>"]
         F3["<b>CustomerPage.tsx (Nudge)</b><br/><small>handleProceedToConfirm 3순위 권장 넛지 모달 표출</small>"]
         F4["<b>CustomerPage.tsx (진행 트래커)</b><br/><small>3단계 Stepper & 심사 대기열 실시간 표출</small>"]
         F5["<b>CustomerPage (Smart Preset)</b><br/><small>getSmartRecommendations() 1클릭 자동 매칭</small>"]
@@ -671,9 +671,11 @@ flowchart TB
     E5 --> U5 --> F5 --> B5 --> S5
 
     %% To-Be 핵심 기능 강조 스타일
+    style E2 fill:#eff6ff,stroke:#2563eb,stroke-width:2px;
     style E3 fill:#fef3c7,stroke:#d97706,stroke-width:2px;
     style E4 fill:#ecfdf5,stroke:#059669,stroke-width:2px;
     style E5 fill:#eff6ff,stroke:#2563eb,stroke-width:2.5px;
+    style F2 fill:#eff6ff,stroke:#2563eb,stroke-width:2px;
     style F3 fill:#fef3c7,stroke:#d97706,stroke-width:2px;
     style F4 fill:#ecfdf5,stroke:#059669,stroke-width:2px;
     style F5 fill:#eff6ff,stroke:#2563eb,stroke-width:2.5px;
@@ -716,16 +718,16 @@ flowchart TB
             </tr>
 
             <tr>
-              <td class="col-phase">2. 42슬롯 일정 탐색</td>
+              <td class="col-phase">2. 42슬롯 일정 탐색<br/><strong>(📅 구글 캘린더 달력 뷰 ✨)</strong></td>
               <td class="col-asis">
-                <span class="tag-asis">As-Is</span><br/>
-                • 42개 슬롯 매트릭스를 단순히 보고 임의로 선택<br/>
-                • 어떤 시간대를 선택해야 마감 확률이 낮은지 안내 부재
+                <span class="tag-asis">기존 상태</span><br/>
+                • 14개 행으로 길게 나열된 표에서 스크롤하며 인근 날짜를 일일이 비교해야 함<br/>
+                • 인근 날짜 간 동일 시간대(오전/오후) 수평 비교가 어려워 탐색 피로도 가중
               </td>
               <td class="col-tobe">
-                <span class="tag-tobe">To-Be 개선</span><br/>
-                • 프로젝트 스프린트 및 업무 일정에 맞춰 14일 42슬롯 중 열려 있는 시간대를 직관적으로 파악<br/>
-                • KST 기준 실시간 유효성 판정 표시 및 14일 42슬롯 데이터 완벽 보존
+                <span class="tag-tobe">가시편의성 극대화 ✨</span><br/>
+                • <strong>Google Calendar appointment schedules 방식 달력 표출</strong>: 1주차(9/9~9/15), 2주차(9/16~9/22) 인근 날짜를 요일별 열로 나란히 배치하고 동일 시간대(오전 09:00, 오후 13:00, 저녁 18:00)를 수평 정렬하여 인근 날짜 비교 속도 대폭 향상<br/>
+                • <strong>9월 미니 달력 & 전체 표 뷰 전환</strong>: 월간 달력 날짜 점프 및 스프레드시트 표 뷰 토글 지원
               </td>
             </tr>
 

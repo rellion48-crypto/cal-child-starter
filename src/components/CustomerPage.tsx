@@ -411,9 +411,14 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
 
       {stage === 'select' && (
         <div>
-          <h3>슬롯 선택 (1~3개)</h3>
-          <p style={{ color: '#666', fontSize: '14px' }}>
-            원하는 슬롯을 선택하고 제출하세요. 선택 순서가 희망 우선순위입니다.
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '6px' }}>
+            <h3 style={{ margin: 0 }}>슬롯 선택 (1~3개)</h3>
+            <span style={{ fontSize: '13px', background: '#eff6ff', color: '#1e40af', padding: '3px 10px', borderRadius: '12px', fontWeight: 700, border: '1px solid #bfdbfe' }}>
+              📅 Google Calendar 예약 일정 방식 (인근 날짜 비교)
+            </span>
+          </div>
+          <p style={{ color: '#64748b', fontSize: '13.5px', margin: '0 0 14px 0' }}>
+            원하는 슬롯을 선택하고 제출하세요. 달력 형태로 인근 날짜의 시간대(오전·오후·저녁)를 한눈에 비교할 수 있으며, 선택 순서가 희망 우선순위(1~3순위)로 자동 배정됩니다.
           </p>
           <SlotTable
             slots={slots}
@@ -899,9 +904,14 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
 
       {stage === 'reselect' && customerRequests.length > 0 && (
         <div>
-          <h3>슬롯 재선택 (새 버전 신청)</h3>
-          <p style={{ color: '#666', fontSize: '14px' }}>
-            이전 신청의 슬롯이 모두 마감되었습니다. 이전 이력은 보존되며 새로운 순번으로 접수됩니다.
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '6px' }}>
+            <h3 style={{ margin: 0 }}>슬롯 재선택 (새 버전 v{customerRequests[customerRequests.length - 1].request.version + 1} 신청)</h3>
+            <span style={{ fontSize: '13px', background: '#eff6ff', color: '#1e40af', padding: '3px 10px', borderRadius: '12px', fontWeight: 700, border: '1px solid #bfdbfe' }}>
+              📅 Google Calendar 예약 일정 방식 (달력 & 인근 날짜)
+            </span>
+          </div>
+          <p style={{ color: '#64748b', fontSize: '13.5px', margin: '0 0 14px 0' }}>
+            이전 신청의 슬롯이 모두 마감되었습니다. 스마트 추천을 활용하거나, 달력에서 인근 날짜의 빈 슬롯을 비교하여 새로 선택하세요. 이전 이력은 완벽 보존됩니다.
           </p>
 
           {/* [Must Have 1] 스마트 대체 슬롯 원클릭 추천 카드 */}
