@@ -749,17 +749,17 @@
       <section class="slide" id="page4" hidden>
         <div class="top">
           <span style="color: #059669;">04 / USER JOURNEY MAP (TO-BE)</span>
-          <h1>To-be · Must Have 2대 핵심 기능 적용 후 김두두의 여정</h1>
-          <p>Must Have(3순위 풀 선택 넛지 + 스마트 대체 슬롯 원클릭 프리셋) 적용 · 8대 제약 조건 100% 준수 · 감정 5점 긍정적 / 1점 부정적</p>
+          <h1>To-be · 대기확인 강화 & Must Have 핵심 기능 적용 후 김두두의 여정</h1>
+          <p>3단계 실시간 진행 트래커(대기확인 강화) · Must Have(3순위 넛지 + 스마트 대체 슬롯) · 8대 제약 100% 준수</p>
         </div>
 
         <div class="situation-story" style="background: #ecfdf5; border: 1.5px solid #a7f3d0;">
-          <b style="color: #065f46;">Must Have 2대 핵심 기능으로 완전히 바뀐 김두두의 여정 <small style="color: #047857;">9/7~9/8 · 일정 신청부터 마감 극복 및 최종 확정까지</small></b>
+          <b style="color: #065f46;">실시간 3단계 진행 트래커와 Must Have 2대 기능으로 완전히 바뀐 김두두의 여정 <small style="color: #047857;">9/7~9/8 · 일정 신청부터 대기 안심, 마감 극복 및 최종 확정까지</small></b>
           <p>
             김두두는 9월 집중 미팅 조율을 위해 <code>cal.dudu</code> 앱을 열었다. <strong>[개선안 ① 3순위 풀 채우기 권장 넛지]</strong>의 친절한 안내를 받아, 1~2개만 고르는 대신 9/9 오전(1순위), 9/9 오후(2순위), 9/10 오전(3순위)까지 3개 슬롯을 꽉 채워 제출했다.
           </p>
           <p>
-            <strong>9/8 오전 확인 결과 1·2순위가 다른 고객에게 먼저 확정되었으나, [개선안 ② 스마트 대체 슬롯 원클릭 프리셋]이 즉시 발동!</strong> 복잡한 42개 슬롯을 뒤질 필요 없이 선호 시간대(오전) 기반의 최적 대체 슬롯이 자동 추천되었고, [자동 채우기] 버튼 1클릭으로 1.5초 만에 v2 재신청을 완료하여 신속하게 최종 일정을 확정받는다.
+            <strong>신청 직후 [실시간 3단계 예약 진행 트래커]를 통해 '서버 전송 완료(안전 저장)'와 '관리자 미확인(심사 대기열)' 상태가 투명하게 표출</strong>되어 깜깜이 대기 불안을 100% 해소했다(감정 5점 만점 🤩). 이어 <strong>9/8 오전 확인 결과 1·2순위가 다른 고객에게 먼저 확정되었으나, [개선안 ② 스마트 대체 슬롯 원클릭 프리셋]이 즉시 발동!</strong> 복잡한 42개 슬롯을 뒤질 필요 없이 선호 시간대(오전) 기반의 최적 대체 슬롯이 자동 추천되었고, [자동 채우기] 버튼 1클릭으로 1.5초 만에 v2 재신청을 완료하여 신속하게 최종 일정을 확정받는다.
           </p>
         </div>
 
@@ -768,7 +768,7 @@
             <tr>
               <th style="background: #059669;">단계<br>Steps</th>
               <th style="background: #059669;"><small>9/7 10:00</small>1. 일정신청<br><span style="font-size:13.5px; color:#d1fae5; font-weight:normal;">(3순위 넛지)</span></th>
-              <th style="background: #059669;"><small>9/7 16:00</small>2. 대기확인<br><span style="font-size:13.5px; color:#d1fae5; font-weight:normal;">(진행 파악)</span></th>
+              <th style="background: #047857; border: 2px solid #34d399;"><small>9/7 16:00</small>2. 대기확인 ✨<br><span style="font-size:13.5px; color:#fef08a; font-weight:bold;">(3단계 진행 트래커)</span></th>
               <th style="background: #047857; border: 2px solid #34d399;"><small>9/8 09:30</small>3. 마감확인 ✨<br><span style="font-size:13.5px; color:#fef08a; font-weight:bold;">(스마트 추천 발동)</span></th>
               <th style="background: #059669;"><small>9/8 09:31</small>4. 일정확인<br><span style="font-size:13.5px; color:#d1fae5; font-weight:normal;">(대안 1초 검토)</span></th>
               <th style="background: #059669;"><small>9/8 09:32</small>5. 재선택제출<br><span style="font-size:13.5px; color:#d1fae5; font-weight:normal;">(원클릭 1.5초)</span></th>
@@ -782,9 +782,9 @@
                 1~2개 선택 시 나타나는 3순위 권장 넛지 모달을 확인하고 3개 슬롯을 꽉 채워 제출한다
                 <small class="touch" style="color: #059669;">CustomerPage (Nudge)</small>
               </td>
-              <td>
-                앱을 열어 내 신청서가 접수(received) 상태로 관리자 대기열에 등록되었음을 확인한다
-                <small class="touch" style="color: #059669;">CustomerPage.tsx</small>
+              <td style="background: #f0fdf4;">
+                앱을 열어 <strong>[📊 내 예약 진행 상황] 탭의 3단계 진행 트래커</strong>(① 서버 전송 완료 ➔ ② 관리자 미확인/심사 대기 ➔ ③ 최종 확정 대기)로 실시간 상태를 확인한다
+                <small class="touch" style="color: #047857; font-weight:800;">CustomerPage (진행 트래커)</small>
               </td>
               <td style="background: #f0fdf4;">
                 1·2순위 마감 안내와 함께 <strong>[⚡ 추천 슬롯 자동 채우기]</strong> 버튼이 즉시 표출된다
@@ -807,7 +807,7 @@
             <tr>
               <th>목표·기대</th>
               <td>3순위까지 채워 전원 마감 위험을 67% 줄이고 안전하게 관리자 검토를 요청한다</td>
-              <td>접수 대기 상태를 실시간으로 확인하고 차분하게 확정 결과를 기다린다</td>
+              <td>신청 데이터가 DB에 안전하게 보존되었는지, 관리자가 확인 전인지 진행 단계를 투명하게 확인하고 안심한다</td>
               <td>마감 통보에도 당황하지 않고 즉각 제시된 최적의 대안 슬롯을 확인한다</td>
               <td>42개 복잡한 시간표를 일일이 대조하는 시간 낭비 없이 대안을 바로 확정한다</td>
               <td>원클릭 자동 완성으로 지체 없이 가장 빠르게 차순위 우선순위를 선점한다</td>
@@ -818,9 +818,9 @@
               <th>예상 감정·생각<small>5 긍정적<br>3 중립<br>1 부정적</small></th>
               <td colspan="6" class="emotion-cell">
                 <div class="emotion-chart">
-                  <canvas id="emotion-line-tobe" width="1600" height="140" aria-label="감정 꺾은선 (To-Be): [5, 3, 4, 5, 5, 5]"></canvas>
+                  <canvas id="emotion-line-tobe" width="1600" height="140" aria-label="감정 꺾은선 (To-Be): [5, 5, 4, 5, 5, 5]"></canvas>
                   <div class="emotion-point" style="left: 8.33%; top: 14px;"><span>🤩</span><b>5</b></div>
-                  <div class="emotion-point" style="left: 25.0%; top: 66px;"><span>😐</span><b>3</b></div>
+                  <div class="emotion-point" style="left: 25.0%; top: 14px; background: #ecfdf5; border: 2px solid #059669; border-radius: 20px; padding: 2px 6px;"><span>🤩</span><b style="color:#059669;">5 (불안 0 해소!)</b></div>
                   <div class="emotion-point" style="left: 41.66%; top: 40px; background: #ecfdf5; border: 2px solid #059669; border-radius: 20px; padding: 2px 6px;"><span>🙂</span><b style="color:#059669;">4 (급상승!)</b></div>
                   <div class="emotion-point" style="left: 58.33%; top: 14px;"><span>🤩</span><b>5</b></div>
                   <div class="emotion-point" style="left: 75.0%; top: 14px;"><span>🤩</span><b>5</b></div>
@@ -828,7 +828,7 @@
                 </div>
                 <div class="thought-grid">
                   <div>3순위까지 꽉 채우니까 탈락 위험이 줄어들어 훨씬 든든하네!</div>
-                  <div>접수 상태 잘 떠있네. 대기 순서대로 관리자가 봐주시겠지</div>
+                  <div>서버 전송 완료 찍혔고 관리자 대기열 순번도 훤히 보이네. 언제 봐줄지 진행 상황이 투명해서 진짜 안심이다!</div>
                   <div>1·2순위는 마감됐지만, 바로 밑에 딱 맞는 대체 시간이 추천되어 있네? 나이스!</div>
                   <div>대체 추천된 3개가 내 선호(오전)랑 완벽히 일치해. 표를 찾을 필요가 없군</div>
                   <div>버튼 한 번 누르니까 3개 싹 담겨서 1초 만에 재신청 완료! 진짜 편하다</div>
@@ -840,7 +840,7 @@
             <tr>
               <th>고객의 개선 효과 (Benefits)</th>
               <td>3순위 풀 채우기로 1~2개 선택 시의 마감 탈락 위험 67% 사전 예방</td>
-              <td>명확한 접수('received') 피드백으로 반복 확인 및 막연한 불안 완화</td>
+              <td><strong>실시간 3단계 진행 트래커로 '접수 누락' 불안 완벽 해소 (감정 2점 ➔ 5점 🤩, +150% 수직 상승)</strong></td>
               <td><strong>마감 절망감 ➔ 기민한 대응으로 감정 반전 (2점 ➔ 4점, +100% 상승)</strong></td>
               <td>42개 매트릭스 수동 눈대중 탐색 45초 ➔ 추천 슬롯 1초 검토로 단축</td>
               <td>복잡한 재선택 ➔ 원클릭 1.5초 재접수 (소요 시간 96.7% 극적 단축)</td>
@@ -850,7 +850,7 @@
             <tr>
               <th>기술 및 규칙 시사점</th>
               <td>1~3순위 접수 DB 규약을 100% 유지하며 프론트엔드 UX 넛지로 문제 예방</td>
-              <td>비점유 대기(received) 상태의 투명한 피드백을 통해 업무 규칙 명확화</td>
+              <td>CustomerPage에 3단계 진행 상황 트래커(서버 전송 완료 ➔ 관리자 확인 대기열 ➔ 최종 결과)를 제공하여 비점유 대기 투명성 보장</td>
               <td>8대 제약 조건(42슬롯, 배타적 점유, 수동 확정)을 단 1줄도 변경 없이 충족</td>
               <td>선호 시간대 가중치 기반 클라이언트 스마트 추천 알고리즘 정합성 검증</td>
               <td>이전 이력(v1) 완벽 보존 + operationId 멱등성 보장 v2 트랜잭션 안전 생성</td>
@@ -860,7 +860,7 @@
         </table>
 
         <div class="contrast" style="background: #ecfdf5; border-color: #6ee7b7; color: #065f46;">
-          <b>To-Be의 핵심 통찰:</b> 14일 42슬롯과 관리자 수동 확정이라는 8대 엄격한 DB 제약을 단 1줄도 변경하지 않고, '3순위 권장 넛지'와 '원클릭 스마트 추천 프리셋'만으로 김두두의 최대 병목 구간이었던 <strong>Step 3 [마감확인] 감정 점수를 2점(😟)에서 4점(🙂)으로 100% 끌어올렸으며, 재선택 탐색 시간을 45초에서 1.5초로 96.7% 단축</strong>시켰습니다.
+          <b>To-Be의 핵심 통찰:</b> 14일 42슬롯과 관리자 수동 확정이라는 8대 엄격한 DB 제약을 단 1줄도 변경하지 않고, <strong>'실시간 3단계 진행 트래커'로 Step 2 [대기확인] 감정 점수를 2점(😟)에서 5점(🤩)으로 끌어올렸으며</strong>, '3순위 권장 넛지'와 '원클릭 스마트 추천 프리셋'으로 <strong>Step 3 [마감확인] 감정 점수를 2점에서 4점으로 반등시키고 재선택 탐색 시간을 45초에서 1.5초로 96.7% 단축</strong>시켰습니다.
         </div>
       </section>
 
@@ -1006,11 +1006,11 @@
         ctx.stroke();
       });
 
-      // 감정 꺾은선 (To-Be): [5, 3, 4, 5, 5, 5] (에메랄드 녹색)
+      // 감정 꺾은선 (To-Be): [5, 5, 4, 5, 5, 5] (에메랄드 녹색)
       ctx.strokeStyle = "#059669";
       ctx.lineWidth = 4;
       ctx.beginPath();
-      [5, 3, 4, 5, 5, 5].forEach((v, i) => {
+      [5, 5, 4, 5, 5, 5].forEach((v, i) => {
         let x = (i + 0.5) * (w / 6);
         let y = 14 + (5 - v) * 26;
         if (i === 0) ctx.moveTo(x, y);
