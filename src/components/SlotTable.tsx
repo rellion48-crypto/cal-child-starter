@@ -140,17 +140,17 @@ export const SlotTable: React.FC<SlotTableProps> = ({
         </div>
 
         {/* 범례 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#64748b', fontSize: '12px' }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#64748b', fontSize: '12px' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
             <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FF5E10' }} />
             선택
           </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} />
+          <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#64748B' }} />
             가능
           </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#cbd5e1' }} />
+          <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#CBD5E1' }} />
             마감
           </span>
         </div>
@@ -208,11 +208,11 @@ export const SlotTable: React.FC<SlotTableProps> = ({
                             style={{
                               fontSize: '11px',
                               fontWeight: 700,
-                              background: openCount === 3 ? '#ecfdf5' : '#fffbeb',
-                              color: openCount === 3 ? '#065f46' : '#92400e',
-                              padding: '2px 6px',
+                              background: '#F1F5F9',
+                              color: '#334155',
+                              padding: '2px 7px',
                               borderRadius: '10px',
-                              border: openCount === 3 ? '1px solid #a7f3d0' : '1px solid #fde68a',
+                              border: '1px solid #E2E8F0',
                             }}
                           >
                             {openCount}개 가능
@@ -222,11 +222,11 @@ export const SlotTable: React.FC<SlotTableProps> = ({
                             style={{
                               fontSize: '11px',
                               fontWeight: 700,
-                              background: '#f1f5f9',
-                              color: '#94a3b8',
-                              padding: '2px 6px',
+                              background: '#F8FAFC',
+                              color: '#94A3B8',
+                              padding: '2px 7px',
                               borderRadius: '10px',
-                              border: '1px solid #e2e8f0',
+                              border: '1px solid #E2E8F0',
                             }}
                           >
                             전부 마감
@@ -268,9 +268,9 @@ export const SlotTable: React.FC<SlotTableProps> = ({
                                 {isSelected ? (
                                   <strong style={{ color: '#E04B00' }}>★ {priorityIdx + 1}순위 선택</strong>
                                 ) : isConfirmed ? (
-                                  <span style={{ color: '#dc2626', textDecoration: 'line-through' }}>마감</span>
+                                  <span style={{ color: '#94a3b8', textDecoration: 'line-through' }}>마감</span>
                                 ) : (
-                                  <span style={{ color: '#059669' }}>가능</span>
+                                  <span style={{ color: '#475569', fontWeight: 600 }}>가능</span>
                                 )}
                               </div>
                             </div>
@@ -346,10 +346,10 @@ export const SlotTable: React.FC<SlotTableProps> = ({
                                   marginTop: '3px',
                                   fontSize: '11px',
                                   fontWeight: 600,
-                                  color: '#059669',
+                                  color: '#475569',
                                 }}
                               >
-                                ● 가능
+                                가능
                               </span>
                             )}
 
@@ -428,10 +428,10 @@ export const SlotTable: React.FC<SlotTableProps> = ({
                               />
                               <span
                                 style={{
-                                  fontSize: '12px',
-                                  fontWeight: isSelected ? 800 : 500,
-                                  color: isSelected ? '#FF5E10' : isConfirmed ? '#dc3545' : '#28a745',
-                                }}
+                                   fontSize: '12px',
+                                   fontWeight: isSelected ? 800 : 500,
+                                   color: isSelected ? '#FF5E10' : isConfirmed ? '#94a3b8' : '#475569',
+                                 }}
                               >
                                 {isSelected ? `★ ${priorityIdx + 1}순위` : isConfirmed ? '마감' : '가능'}
                               </span>

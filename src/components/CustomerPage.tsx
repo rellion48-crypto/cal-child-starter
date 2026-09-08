@@ -700,8 +700,8 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                       </span>
                     )}
                     {status === 'confirmed' && (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '5px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 800 }}>
-                        <span>예약 확정</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: '#1A1A1C', color: '#ffffff', border: '1px solid #1A1A1C', padding: '5px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 800 }}>
+                        <span>✓ 예약 확정</span>
                       </span>
                     )}
                     {status === 'needs_reselection' && (
@@ -722,12 +722,12 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                     {/* 1단계: 접수 */}
                     <div style={{
                       background: 'white',
-                      border: '1.5px solid #10b981',
+                      border: '1.5px solid #CBD5E1',
                       borderRadius: '6px',
                       padding: '12px',
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                        <span style={{ fontSize: '12px', fontWeight: 800, color: '#065f46' }}>1. 신청 접수</span>
+                        <span style={{ fontSize: '12px', fontWeight: 800, color: '#1E293B' }}>✓ 1. 신청 접수</span>
                       </div>
                       <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>
                         접수 완료 ({item.candidates.length}개 희망)
@@ -736,12 +736,12 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
 
                     {/* 2단계: 관리자 검토 */}
                     <div style={{
-                      background: 'white',
+                      background: status === 'received' ? '#FFF5EF' : 'white',
                       border: status === 'received'
                         ? '2px solid #FF5E10'
                         : status === 'confirmed'
-                          ? '1.5px solid #10b981'
-                          : '1.5px solid #f59e0b',
+                          ? '1.5px solid #CBD5E1'
+                          : '1.5px solid #F59E0B',
                       borderRadius: '6px',
                       padding: '12px',
                     }}>
@@ -749,9 +749,9 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                         <span style={{
                           fontSize: '12px',
                           fontWeight: 800,
-                          color: status === 'received' ? '#E04B00' : status === 'confirmed' ? '#065f46' : '#92400e'
+                          color: status === 'received' ? '#E04B00' : status === 'confirmed' ? '#1E293B' : '#92400E'
                         }}>
-                          2. 관리자 검토
+                          {status === 'confirmed' ? '✓ 2. 관리자 검토' : '2. 관리자 검토'}
                         </span>
                       </div>
                       <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>
@@ -767,12 +767,12 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
 
                     {/* 3단계: 일정 확정 */}
                     <div style={{
-                      background: 'white',
+                      background: status === 'confirmed' ? '#1A1A1C' : 'white',
                       border: status === 'confirmed'
-                        ? '2px solid #059669'
+                        ? '2px solid #1A1A1C'
                         : status === 'needs_reselection'
-                          ? '1.5px solid #f59e0b'
-                          : '1px dashed #cbd5e1',
+                          ? '1.5px solid #F59E0B'
+                          : '1px dashed #CBD5E1',
                       borderRadius: '6px',
                       padding: '12px',
                     }}>
@@ -780,14 +780,14 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                         <span style={{
                           fontSize: '12px',
                           fontWeight: 800,
-                          color: status === 'confirmed' ? '#065f46' : status === 'needs_reselection' ? '#92400e' : '#94a3b8'
+                          color: status === 'confirmed' ? '#FFFFFF' : status === 'needs_reselection' ? '#92400E' : '#94A3B8'
                         }}>
-                          3. 일정 확정
+                          {status === 'confirmed' ? '★ 3. 일정 확정' : '3. 일정 확정'}
                         </span>
                       </div>
-                      <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>
+                      <p style={{ margin: 0, fontSize: '12px', color: status === 'confirmed' ? '#CBD2D9' : '#64748B' }}>
                         {status === 'confirmed' && (
-                          <strong style={{ color: '#059669' }}>
+                          <strong style={{ color: '#FF5E10' }}>
                             {confirmedSlot?.date} {TIME_SLOTS.find(t => t.label === confirmedSlot?.timeLabel)?.displayLabel}
                           </strong>
                         )}
@@ -813,8 +813,8 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                         <li
                           key={c.id}
                           style={{
-                            background: isConfirmedForThis ? '#f0fdf4' : 'white',
-                            border: isConfirmedForThis ? '1.5px solid #86efac' : '1px solid #e2e8f0',
+                            background: isConfirmedForThis ? '#FFF5EF' : 'white',
+                            border: isConfirmedForThis ? '1.5px solid #FF5E10' : '1px solid #E2E8F0',
                             padding: '9px 12px',
                             borderRadius: '6px',
                             marginBottom: '6px',
@@ -826,7 +826,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                         >
                           <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <span style={{
-                              background: isConfirmedForThis ? '#16a34a' : '#FF5E10',
+                              background: isConfirmedForThis ? '#1A1A1C' : '#FF5E10',
                               color: 'white',
                               fontSize: '11px',
                               fontWeight: 800,
@@ -835,17 +835,17 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                             }}>
                               {cidx + 1}순위
                             </span>
-                            <span style={{ fontWeight: isConfirmedForThis ? 700 : 500, color: '#1e293b' }}>
+                            <span style={{ fontWeight: isConfirmedForThis ? 800 : 500, color: '#1e293b' }}>
                               {slot?.date} {TIME_SLOTS.find(t => t.label === slot?.timeLabel)?.displayLabel}
                             </span>
                             {isConfirmedForThis && (
-                              <span style={{ background: '#dcfce7', color: '#15803d', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', fontWeight: 700 }}>
+                              <span style={{ background: '#1A1A1C', color: '#ffffff', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', fontWeight: 800 }}>
                                 확정
                               </span>
                             )}
                           </span>
 
-                          <span style={{ fontSize: '12px', fontWeight: 700, color: isConfirmedForThis ? '#16a34a' : isAvailable ? '#FF5E10' : '#94a3b8' }}>
+                          <span style={{ fontSize: '12px', fontWeight: 700, color: isConfirmedForThis ? '#E04B00' : isAvailable ? '#475569' : '#94a3b8' }}>
                             {isConfirmedForThis ? '확정' : isAvailable ? '가능' : '마감'}
                           </span>
                         </li>
@@ -856,8 +856,14 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
 
                 {/* 확정 안내 */}
                 {item.request.status === 'confirmed' && confirmedSlot && (
-                  <div className="alert alert-success alert-animated" style={{ margin: '14px 0 0 0', padding: '12px 14px' }}>
-                    <strong>확정 일정:</strong> {confirmedSlot.date} {TIME_SLOTS.find(t => t.label === confirmedSlot.timeLabel)?.displayLabel}
+                  <div style={{ margin: '14px 0 0 0', padding: '14px 18px', background: '#1A1A1C', color: '#ffffff', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ fontSize: '18px' }}>✓</span>
+                    <div style={{ fontSize: '13.5px' }}>
+                      <strong style={{ color: '#ffffff' }}>확정 일정:</strong>{' '}
+                      <span style={{ color: '#FF5E10', fontWeight: 800 }}>
+                        {confirmedSlot.date} {TIME_SLOTS.find(t => t.label === confirmedSlot.timeLabel)?.displayLabel}
+                      </span>
+                    </div>
                   </div>
                 )}
 

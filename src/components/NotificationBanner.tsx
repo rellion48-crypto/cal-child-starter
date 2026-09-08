@@ -39,7 +39,7 @@ export const NotificationBanner: React.FC<NotificationBannerProps> = ({ notifica
   const getBackgroundColor = (type: string): string => {
     switch (type) {
       case 'success':
-        return '#d4edda';
+        return '#1A1A1C';
       case 'error':
         return '#f8d7da';
       case 'warning':
@@ -53,7 +53,7 @@ export const NotificationBanner: React.FC<NotificationBannerProps> = ({ notifica
   const getBorderColor = (type: string): string => {
     switch (type) {
       case 'success':
-        return '#c3e6cb';
+        return '#1A1A1C';
       case 'error':
         return '#f5c6cb';
       case 'warning':
@@ -67,7 +67,7 @@ export const NotificationBanner: React.FC<NotificationBannerProps> = ({ notifica
   const getTextColor = (type: string): string => {
     switch (type) {
       case 'success':
-        return '#155724';
+        return '#FFFFFF';
       case 'error':
         return '#721c24';
       case 'warning':

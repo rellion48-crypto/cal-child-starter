@@ -187,7 +187,28 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
                       {new Date(item.request.createdAt).toLocaleString()}
                     </span>
                     <br />
-                    <span className={`slot-status ${item.request.status === 'confirmed' ? 'confirmed' : 'available'}`}>
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        marginTop: '4px',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                        fontSize: '11px',
+                        fontWeight: 800,
+                        background:
+                          item.request.status === 'confirmed'
+                            ? '#1A1A1C'
+                            : item.request.status === 'needs_reselection'
+                              ? '#FEF3C7'
+                              : '#F1F5F9',
+                        color:
+                          item.request.status === 'confirmed'
+                            ? '#FFFFFF'
+                            : item.request.status === 'needs_reselection'
+                              ? '#B45309'
+                              : '#475569',
+                      }}
+                    >
                       {item.request.status === 'confirmed'
                         ? '확정됨'
                         : item.request.status === 'needs_reselection'
@@ -247,19 +268,19 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
                           cursor: canSelect ? 'pointer' : 'not-allowed',
                           background:
                             selectedSlotForConfirm === c.slotId
-                              ? '#dcfce7'
+                              ? '#FFF5EF'
                               : isAvailable
                                 ? 'white'
-                                : '#fee2e2',
-                          borderColor: selectedSlotForConfirm === c.slotId ? '#16a34a' : '#ddd',
-                          borderLeft: selectedSlotForConfirm === c.slotId ? '4px solid #16a34a' : '1px solid #ddd',
+                                : '#F1F5F9',
+                          borderColor: selectedSlotForConfirm === c.slotId ? '#FF5E10' : '#E2E8F0',
+                          borderLeft: selectedSlotForConfirm === c.slotId ? '4px solid #FF5E10' : '1px solid #E2E8F0',
                           opacity: canSelect ? 1 : 0.6,
                         }}
                       >
                         <span>
                           {idx + 1}. {slot?.date} {TIME_SLOTS.find(t => t.label === slot?.timeLabel)?.displayLabel}
                           {' '}
-                          <span style={{ marginLeft: '10px', fontSize: '12px', fontWeight: 600 }}>
+                          <span style={{ marginLeft: '10px', fontSize: '12px', fontWeight: 600, color: isAvailable ? '#475569' : '#94A3B8' }}>
                             {isAvailable ? '(가능)' : '(마감)'}
                           </span>
                         </span>
@@ -270,22 +291,26 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
               </div>
 
               {currentRequest.request.status === 'confirmed' && currentRequest.request.confirmedSlotId && (
-                <div className="alert alert-success alert-animated">
-                  <strong>확정 완료</strong>
+                <div style={{ marginTop: '14px', padding: '14px 16px', background: '#1A1A1C', color: '#ffffff', borderRadius: '8px' }}>
+                  <strong style={{ color: '#FF5E10' }}>✓ 확정 완료</strong>
                   <br />
-                  {slots[currentRequest.request.confirmedSlotId]?.date}{' '}
-                  {TIME_SLOTS.find(t => t.label === slots[currentRequest.request.confirmedSlotId!]?.timeLabel)?.displayLabel}
+                  <span style={{ fontSize: '13.5px', fontWeight: 700 }}>
+                    {slots[currentRequest.request.confirmedSlotId]?.date}{' '}
+                    {TIME_SLOTS.find(t => t.label === slots[currentRequest.request.confirmedSlotId!]?.timeLabel)?.displayLabel}
+                  </span>
                   <br />
-                  {new Date(currentRequest.request.confirmedAt!).toLocaleString()}
+                  <span style={{ fontSize: '12px', color: '#9AA5B1' }}>
+                    {new Date(currentRequest.request.confirmedAt!).toLocaleString()}
+                  </span>
                 </div>
               )}
 
               {currentRequest.request.status !== 'confirmed' && (
                 <button
-                  className="btn btn-success btn-submit-booking"
+                  className="btn btn-primary btn-submit-booking"
                   onClick={handleConfirm}
                   disabled={!selectedSlotForConfirm || loading}
-                  style={{ marginTop: '10px', width: '100%', padding: '12px', fontWeight: 800, borderRadius: '8px' }}
+                  style={{ marginTop: '14px', width: '100%', padding: '12px', fontWeight: 800, borderRadius: '8px', background: selectedSlotForConfirm ? '#FF5E10' : '#CBD5E1', border: 'none', color: 'white', cursor: selectedSlotForConfirm ? 'pointer' : 'not-allowed' }}
                 >
                   {loading ? '처리 중...' : '확정'}
                 </button>

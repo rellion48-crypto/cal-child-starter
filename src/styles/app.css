@@ -105,7 +105,7 @@ body {
 }
 
 .mode-badge.supabase {
-  background: #10B981;
+  background: #1A1A1C;
 }
 
 .role-selector {
@@ -178,13 +178,13 @@ body {
 }
 
 .slot-status.available {
-  background: #DCFCE7;
-  color: #15803D;
+  background: #F1F5F9;
+  color: #475569;
 }
 
 .slot-status.confirmed {
-  background: #FEE2E2;
-  color: #B91C1C;
+  background: #1A1A1C;
+  color: #FFFFFF;
 }
 
 /* 버튼 */
@@ -218,12 +218,12 @@ body {
 }
 
 .btn-success {
-  background: #10B981;
+  background: var(--point01);
   color: white;
 }
 
 .btn-success:hover:not(:disabled) {
-  background: #059669;
+  background: var(--point01-hover);
 }
 
 .btn-warning {
@@ -295,9 +295,9 @@ body {
 }
 
 .alert-success {
-  background: #ECFDF5;
-  color: #065F46;
-  border-left-color: #10B981;
+  background: #F8FAFC;
+  color: #1E293B;
+  border-left-color: #1A1A1C;
 }
 
 .alert-error {
@@ -307,9 +307,9 @@ body {
 }
 
 .alert-info {
-  background: #F0F9FF;
-  color: #075985;
-  border-left-color: #0284C7;
+  background: #FFF5EF;
+  color: #E04B00;
+  border-left-color: #FF5E10;
 }
 
 .alert-warning {
