@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Slot } from '../types';
 import { TIME_SLOTS, getAllDates } from '../utils/constants';
+import { sound } from '../utils/sound';
 
 interface SlotTableProps {
   slots: Record<string, Slot>;
@@ -79,7 +80,10 @@ export const SlotTable: React.FC<SlotTableProps> = ({
           <button
             type="button"
             className="interactive-tab-btn"
-            onClick={() => setRangeFilter('week1')}
+            onClick={() => {
+              sound.playClick();
+              setRangeFilter('week1');
+            }}
             style={{
               padding: '6px 14px',
               border: rangeFilter === 'week1' ? '1.5px solid #2563eb' : '1px solid #cbd5e1',
@@ -96,7 +100,10 @@ export const SlotTable: React.FC<SlotTableProps> = ({
           <button
             type="button"
             className="interactive-tab-btn"
-            onClick={() => setRangeFilter('week2')}
+            onClick={() => {
+              sound.playClick();
+              setRangeFilter('week2');
+            }}
             style={{
               padding: '6px 14px',
               border: rangeFilter === 'week2' ? '1.5px solid #2563eb' : '1px solid #cbd5e1',
@@ -113,7 +120,10 @@ export const SlotTable: React.FC<SlotTableProps> = ({
           <button
             type="button"
             className="interactive-tab-btn"
-            onClick={() => setRangeFilter('all')}
+            onClick={() => {
+              sound.playClick();
+              setRangeFilter('all');
+            }}
             style={{
               padding: '6px 12px',
               border: rangeFilter === 'all' ? '1.5px solid #2563eb' : '1px solid #e2e8f0',

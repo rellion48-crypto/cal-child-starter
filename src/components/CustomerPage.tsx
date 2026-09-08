@@ -7,6 +7,7 @@ import { SupabaseManager } from '../utils/supabaseManager';
 import { decideRequestStatus } from '../utils/decide';
 import { TIME_SLOTS } from '../utils/constants';
 import { formatErrorMessage } from '../utils/formatError';
+import { sound } from '../utils/sound';
 
 interface CustomerPageProps {
   db: DatabaseManager | SupabaseManager;
@@ -75,10 +76,13 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
   const handleSlotToggle = (slotId: string) => {
     setSelectedSlots(prev => {
       if (prev.includes(slotId)) {
+        sound.playDeselect();
         return prev.filter(s => s !== slotId);
       } else if (prev.length < 3) {
+        sound.playSelect();
         return [...prev, slotId];
       }
+      sound.playNotice();
       return prev;
     });
     setError('');
@@ -117,6 +121,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
   const handleApplySmartRecommendation = () => {
     const recommended = getSmartRecommendations();
     if (recommended.length > 0) {
+      sound.playSelect();
       setSelectedSlots(recommended);
       onNotify?.(`스마트 추천 슬롯 ${recommended.length}개가 자동 선택되었습니다!`, 'success');
     }
@@ -129,6 +134,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
     }
 
     if (selectedSlots.length === 0) {
+      sound.playNotice();
       setError('예약 희망 슬롯을 최소 1개 이상 선택해주세요.');
       return;
     }
@@ -148,17 +154,20 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
       }
 
       if (result.success) {
+        sound.playSuccess();
         setSuccess('신청이 완료되었습니다!');
         setSelectedSlots([]);
         setStage('view');
         onNotify?.('신청이 완료되었습니다!', 'success');
         setTimeout(() => loadData(), 500);
       } else {
+        sound.playNotice();
         const friendlyError = formatErrorMessage(result.error || '신청 처리 중 문제가 발생했습니다.');
         setError(friendlyError);
         onNotify?.(friendlyError, 'error');
       }
     } catch (err) {
+      sound.playNotice();
       const friendlyError = formatErrorMessage(err);
       setError(friendlyError);
       onNotify?.(friendlyError, 'error');
@@ -169,6 +178,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
 
   const handleReselect = async () => {
     if (selectedSlots.length === 0) {
+      sound.playNotice();
       setError('새로 신청할 희망 슬롯을 최소 1개 이상 선택해주세요.');
       return;
     }
@@ -204,17 +214,20 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
       }
 
       if (result.success) {
+        sound.playSuccess();
         setSuccess('재선택 신청이 완료되었습니다!');
         setSelectedSlots([]);
         setStage('view');
         onNotify?.('재선택 신청이 완료되었습니다!', 'success');
         setTimeout(() => loadData(), 500);
       } else {
+        sound.playNotice();
         const friendlyError = formatErrorMessage(result.error || '재선택 처리 중 문제가 발생했습니다.');
         setError(friendlyError);
         onNotify?.(friendlyError, 'error');
       }
     } catch (err) {
+      sound.playNotice();
       const friendlyError = formatErrorMessage(err);
       setError(friendlyError);
       onNotify?.(friendlyError, 'error');
@@ -298,6 +311,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
             type="button"
             className="interactive-tab-btn"
             onClick={() => {
+              sound.playClick();
               setStage('select');
               setError('');
             }}
@@ -320,6 +334,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
             type="button"
             className="interactive-tab-btn"
             onClick={() => {
+              sound.playClick();
               setStage('view');
               setError('');
             }}
@@ -360,6 +375,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
               type="button"
               className="interactive-tab-btn"
               onClick={() => {
+                sound.playClick();
                 setStage('reselect');
                 setSelectedSlots([]);
                 setError('');
@@ -614,6 +630,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
               type="button"
               className="interactive-tab-btn"
               onClick={() => {
+                sound.playClick();
                 setLoading(true);
                 loadData().finally(() => setLoading(false));
               }}

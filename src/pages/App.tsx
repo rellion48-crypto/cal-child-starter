@@ -8,6 +8,7 @@ import { SupabaseManager } from '../utils/supabaseManager';
 import { REFERENCE_TIME, getCurrentTime, setTestTime } from '../utils/constants';
 import { isSupabaseConfigured, getAuthUser, signOut, isAdmin } from '../utils/supabase';
 import { formatErrorMessage } from '../utils/formatError';
+import { sound } from '../utils/sound';
 
 type Mode = 'local' | 'supabase';
 type Role = 'customer' | 'admin';
@@ -29,6 +30,7 @@ const App: React.FC = () => {
   const [currentTime, setCurrentTime] = useState<Date>(getCurrentTime());
   const [testTimeInput, setTestTimeInput] = useState<string>('');
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isMuted, setIsMuted] = useState<boolean>(sound.isMuted());
 
   const initUserSession = async (user: any) => {
     setAuthUser(user);
@@ -74,6 +76,7 @@ const App: React.FC = () => {
   }, []);
 
   const handleRoleChange = (newRole: Role) => {
+    sound.playClick();
     setRole(newRole);
     const roleText = newRole === 'admin' ? '어드민' : '고객';
     addNotification(`${roleText} 모드로 전환되었습니다`, 'info', 2000);
@@ -295,6 +298,29 @@ const App: React.FC = () => {
 
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginLeft: '20px', flexWrap: 'wrap' }}>
             <span className={`mode-badge ${mode}`}>{mode === 'local' ? '로컬 모드' : 'Supabase 모드'}</span>
+            <button
+              type="button"
+              className="interactive-tab-btn"
+              onClick={() => {
+                const nextMuted = sound.toggleMute();
+                setIsMuted(nextMuted);
+              }}
+              title={isMuted ? '소리 켜기' : '소리 끄기'}
+              style={{
+                padding: '5px 10px',
+                fontSize: '13px',
+                background: isMuted ? '#f1f5f9' : '#ffffff',
+                border: '1.5px solid #cbd5e1',
+                color: '#334155',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              <span>{isMuted ? '🔇' : '🔊'}</span>
+            </button>
             {mode === 'supabase' && (
               <button
                 className="btn btn-secondary interactive-tab-btn"

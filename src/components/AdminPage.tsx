@@ -6,6 +6,7 @@ import { DatabaseManager } from '../utils/database';
 import { SupabaseManager } from '../utils/supabaseManager';
 import { TIME_SLOTS } from '../utils/constants';
 import { formatErrorMessage } from '../utils/formatError';
+import { sound } from '../utils/sound';
 
 interface AdminPageProps {
   db: DatabaseManager | SupabaseManager;
@@ -81,6 +82,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
 
   const handleConfirm = async () => {
     if (!selectedRequest || !selectedSlotForConfirm) {
+      sound.playNotice();
       setError('확정 처리할 고객 신청 건과 배정할 슬롯을 모두 선택해주세요.');
       return;
     }
@@ -110,6 +112,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
       }
 
       if (result.success) {
+        sound.playSuccess();
         const message = `예약이 성공적으로 확정되었습니다! (마감 영향 건수: ${result.affectedRequests?.length || 0}건)`;
         setSuccess(message);
         setSelectedRequest(null);
@@ -117,11 +120,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
         onNotify?.(message, 'success');
         setTimeout(() => loadData(), 500);
       } else {
+        sound.playNotice();
         const friendlyError = formatErrorMessage(result.error || '확정 처리에 실패했습니다.');
         setError(friendlyError);
         onNotify?.(friendlyError, 'error');
       }
     } catch (err) {
+      sound.playNotice();
       const friendlyError = formatErrorMessage(err);
       setError(friendlyError);
       onNotify?.(friendlyError, 'error');
@@ -160,6 +165,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
                   key={item.request.id}
                   className={`admin-req-item ${selectedRequest === item.request.id ? 'selected' : ''}`}
                   onClick={() => {
+                    sound.playClick();
                     setSelectedRequest(item.request.id);
                     setSelectedSlotForConfirm(null);
                   }}
@@ -233,6 +239,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
                         className="admin-candidate-item"
                         onClick={() => {
                           if (canSelect) {
+                            sound.playSelect();
                             setSelectedSlotForConfirm(c.slotId);
                           }
                         }}
