@@ -78,6 +78,7 @@ export const SlotTable: React.FC<SlotTableProps> = ({
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <button
             type="button"
+            className="interactive-tab-btn"
             onClick={() => setRangeFilter('week1')}
             style={{
               padding: '6px 14px',
@@ -94,6 +95,7 @@ export const SlotTable: React.FC<SlotTableProps> = ({
           </button>
           <button
             type="button"
+            className="interactive-tab-btn"
             onClick={() => setRangeFilter('week2')}
             style={{
               padding: '6px 14px',
@@ -110,6 +112,7 @@ export const SlotTable: React.FC<SlotTableProps> = ({
           </button>
           <button
             type="button"
+            className="interactive-tab-btn"
             onClick={() => setRangeFilter('all')}
             style={{
               padding: '6px 12px',
@@ -145,7 +148,7 @@ export const SlotTable: React.FC<SlotTableProps> = ({
 
       {/* 3. Google Calendar / Calendly 스타일 인근 날짜 달력 그리드 */}
       {viewMode === 'calendar' ? (
-        <div>
+        <div key={rangeFilter} className="calendar-grid-wrapper">
           {/* 수평 스크롤 및 그리드 컨테이너 (인근 날짜별 열 배치) */}
           <div style={{ overflowX: 'auto', paddingBottom: '4px' }}>
             <div
@@ -269,6 +272,7 @@ export const SlotTable: React.FC<SlotTableProps> = ({
                           <button
                             key={slotId}
                             type="button"
+                            className={`time-slot-btn ${isSelected ? 'is-selected' : ''}`}
                             onClick={() => onToggle(slotId)}
                             disabled={isConfirmed || (!isSelected && selectedSlots.length >= maxSelect)}
                             style={{

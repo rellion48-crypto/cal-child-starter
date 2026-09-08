@@ -296,6 +296,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
           <button
             type="button"
+            className="interactive-tab-btn"
             onClick={() => {
               setStage('select');
               setError('');
@@ -310,7 +311,6 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
               background: stage === 'select' ? '#2563eb' : '#f1f5f9',
               color: stage === 'select' ? 'white' : '#475569',
               boxShadow: stage === 'select' ? '0 1px 3px rgba(37,99,235,0.2)' : 'none',
-              transition: 'all 0.15s',
             }}
           >
             📅 예약 신청
@@ -318,6 +318,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
 
           <button
             type="button"
+            className="interactive-tab-btn"
             onClick={() => {
               setStage('view');
               setError('');
@@ -332,7 +333,6 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
               background: stage === 'view' ? '#2563eb' : '#f1f5f9',
               color: stage === 'view' ? 'white' : '#475569',
               boxShadow: stage === 'view' ? '0 1px 3px rgba(37,99,235,0.2)' : 'none',
-              transition: 'all 0.15s',
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
@@ -358,6 +358,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
           {customerRequests.some(s => s.request.status === 'needs_reselection') && (
             <button
               type="button"
+              className="interactive-tab-btn"
               onClick={() => {
                 setStage('reselect');
                 setSelectedSlots([]);
@@ -372,7 +373,6 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                 cursor: 'pointer',
                 background: stage === 'reselect' ? '#d97706' : '#fffbeb',
                 color: stage === 'reselect' ? 'white' : '#b45309',
-                transition: 'all 0.15s',
               }}
             >
               ⚠️ 대체 슬롯 재선택
@@ -382,13 +382,13 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
       </div>
 
       {error && (
-        <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+        <div className="alert alert-error alert-animated" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
           <span style={{ fontSize: '18px' }}>⚠️</span>
           <span>{error}</span>
         </div>
       )}
       {success && (
-        <div className="alert alert-success" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+        <div className="alert alert-success alert-animated" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
           <span style={{ fontSize: '18px' }}>✅</span>
           <span>{success}</span>
         </div>
@@ -455,6 +455,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                       return (
                         <div
                           key={slotId}
+                          className="selected-slot-item"
                           style={{
                             background: '#ffffff',
                             border: '1.5px solid #bfdbfe',
@@ -485,6 +486,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                           </div>
                           <button
                             type="button"
+                            className="slot-remove-btn"
                             onClick={() => handleSlotToggle(slotId)}
                             style={{
                               background: 'transparent',
@@ -511,7 +513,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
             <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', marginTop: '16px' }}>
               <button
                 type="button"
-                className="btn btn-primary"
+                className="btn btn-primary btn-submit-booking"
                 onClick={handleSubmit}
                 disabled={selectedSlots.length === 0 || loading}
                 style={{
@@ -525,7 +527,6 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                   border: 'none',
                   cursor: selectedSlots.length > 0 ? 'pointer' : 'not-allowed',
                   boxShadow: selectedSlots.length > 0 ? '0 2px 6px rgba(37,99,235,0.3)' : 'none',
-                  transition: 'all 0.15s',
                 }}
               >
                 {loading ? '신청 중...' : selectedSlots.length === 0 ? '일정을 선택하세요' : `예약 신청하기 (${selectedSlots.length}개)`}
@@ -616,6 +617,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
             </div>
             <button
               type="button"
+              className="interactive-tab-btn"
               onClick={() => {
                 setLoading(true);
                 loadData().finally(() => setLoading(false));
@@ -677,8 +679,8 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                   {/* 현재 상태 뱃지 */}
                   <div>
                     {status === 'received' && (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '5px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 800 }}>
-                        <span>⏳</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '5px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 800 }}>
+                        <span className="status-pulse-dot" style={{ background: '#2563eb' }} />
                         <span>서버 전송 완료 · 관리자 확인 대기 중</span>
                       </span>
                     )}
@@ -976,6 +978,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
               {getSmartRecommendations().length > 0 && (
                 <button
                   type="button"
+                  className="interactive-tab-btn"
                   onClick={handleApplySmartRecommendation}
                   style={{
                     width: '100%',
@@ -1021,6 +1024,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                       return (
                         <div
                           key={slotId}
+                          className="selected-slot-item"
                           style={{
                             background: '#ffffff',
                             border: '1.5px solid #bfdbfe',
@@ -1051,6 +1055,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                           </div>
                           <button
                             type="button"
+                            className="slot-remove-btn"
                             onClick={() => handleSlotToggle(slotId)}
                             style={{
                               background: 'transparent',
@@ -1076,7 +1081,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
             <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', marginTop: '16px' }}>
               <button
                 type="button"
-                className="btn btn-primary"
+                className="btn btn-primary btn-submit-booking"
                 onClick={handleReselect}
                 disabled={selectedSlots.length === 0 || loading}
                 style={{
@@ -1090,7 +1095,6 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                   border: 'none',
                   cursor: selectedSlots.length > 0 ? 'pointer' : 'not-allowed',
                   boxShadow: selectedSlots.length > 0 ? '0 2px 6px rgba(37,99,235,0.3)' : 'none',
-                  transition: 'all 0.15s',
                   marginBottom: '8px',
                 }}
               >
