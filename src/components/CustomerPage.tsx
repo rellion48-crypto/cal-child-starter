@@ -652,10 +652,12 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
             </button>
           </div>
 
-          {customerRequests.map((item, idx) => {
-            const isLatest = idx === customerRequests.length - 1;
-            const status = item.request.status;
-            const confirmedSlot = item.request.confirmedSlotId ? slots[item.request.confirmedSlotId] : null;
+          {[...customerRequests]
+            .sort((a, b) => new Date(b.request.createdAt).getTime() - new Date(a.request.createdAt).getTime() || b.request.version - a.request.version)
+            .map((item, idx) => {
+              const isLatest = idx === 0;
+              const status = item.request.status;
+              const confirmedSlot = item.request.confirmedSlotId ? slots[item.request.confirmedSlotId] : null;
 
             return (
               <div
