@@ -292,7 +292,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
           )}
         </div>
 
-        {/* 우측: 탭 네비게이션 (새 예약 신청 vs 내 예약 진행 상황) */}
+        {/* 우측: 탭 네비게이션 */}
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
           <button
             type="button"
@@ -313,7 +313,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
               boxShadow: stage === 'select' ? '0 1px 3px rgba(37,99,235,0.2)' : 'none',
             }}
           >
-            📅 예약 신청
+            예약 신청
           </button>
 
           <button
@@ -338,7 +338,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
               gap: '6px',
             }}
           >
-            <span>📊 진행 상황 추적</span>
+            <span>진행 상황</span>
             {customerRequests.length > 0 && (
               <span
                 style={{
@@ -375,7 +375,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                 color: stage === 'reselect' ? 'white' : '#b45309',
               }}
             >
-              ⚠️ 대체 슬롯 재선택
+              재선택 필요
             </button>
           )}
         </div>
@@ -609,12 +609,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
       {stage === 'view' && customerRequests.length > 0 && (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
-            <div>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800 }}>내 예약 진행 상황</h3>
-              <p style={{ margin: '4px 0 0 0', color: '#64748b', fontSize: '13px' }}>
-                신청서의 실시간 서버 전송 상태 및 관리자 검토·확정 단계를 투명하게 추적합니다.
-              </p>
-            </div>
+            <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 800, color: '#0f172a' }}>예약 진행 상황</h3>
             <button
               type="button"
               className="interactive-tab-btn"
@@ -636,7 +631,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                 gap: '6px'
               }}
             >
-              🔄 새로고침
+              새로고침
             </button>
           </div>
 
@@ -668,12 +663,12 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                       </span>
                       {isLatest && (
                         <span style={{ background: '#dbeafe', color: '#1e40af', fontSize: '11px', fontWeight: 800, padding: '2px 8px', borderRadius: '12px' }}>
-                          최신 신청
+                          최신
                         </span>
                       )}
                     </div>
                     <div style={{ fontSize: '12.5px', color: '#64748b', marginTop: '4px' }}>
-                      접수 일시: <strong>{new Date(item.request.createdAt).toLocaleString('ko-KR')}</strong>
+                      신청 일시: {new Date(item.request.createdAt).toLocaleString('ko-KR')}
                     </div>
                   </div>
 
@@ -682,55 +677,45 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                     {status === 'received' && (
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '5px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 800 }}>
                         <span className="status-pulse-dot" style={{ background: '#2563eb' }} />
-                        <span>서버 전송 완료 · 관리자 확인 대기 중</span>
+                        <span>검토 대기 중</span>
                       </span>
                     )}
                     {status === 'confirmed' && (
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '5px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 800 }}>
-                        <span>🎉</span>
-                        <span>최종 예약 확정 완료</span>
+                        <span>예약 확정</span>
                       </span>
                     )}
                     {status === 'needs_reselection' && (
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: '#fffbeb', color: '#b45309', border: '1px solid #fde68a', padding: '5px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 800 }}>
-                        <span>⚠️</span>
-                        <span>관리자 검토 완료 · 대체 슬롯 재선택 필요</span>
+                        <span>재선택 필요</span>
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* [실시간 3단계 예약 진행 트래커 (Progress Stepper)] */}
-                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '20px', marginBottom: '22px' }}>
-                  <div style={{ fontSize: '13.5px', fontWeight: 800, color: '#334155', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span>📍</span>
-                    <span>예약 진행 단계 트래커 (실시간 추적)</span>
+                {/* 진행 단계 */}
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 800, color: '#334155', marginBottom: '12px' }}>
+                    진행 단계
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', position: 'relative' }}>
-                    {/* 1단계: 서버 전송 완료 */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
+                    {/* 1단계: 접수 */}
                     <div style={{
                       background: 'white',
                       border: '1.5px solid #10b981',
-                      borderRadius: '8px',
-                      padding: '14px',
-                      boxShadow: '0 1px 3px rgba(16,185,129,0.08)'
+                      borderRadius: '6px',
+                      padding: '12px',
                     }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                        <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 800 }}>
-                          ✓
-                        </div>
-                        <span style={{ fontSize: '13.5px', fontWeight: 800, color: '#065f46' }}>
-                          1단계. 서버 전송 완료
-                        </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                        <span style={{ fontSize: '12px', fontWeight: 800, color: '#065f46' }}>1. 신청 접수</span>
                       </div>
-                      <p style={{ margin: 0, fontSize: '12px', color: '#475569', lineHeight: 1.5 }}>
-                        ✅ 신청서가 DB에 안전하게 등록되었습니다.<br />
-                        <span style={{ color: '#64748b' }}>희망 후보: {item.candidates.length}건 안전 보존</span>
+                      <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>
+                        접수 완료 ({item.candidates.length}개 희망)
                       </p>
                     </div>
 
-                    {/* 2단계: 관리자 심사 및 확인 */}
+                    {/* 2단계: 관리자 검토 */}
                     <div style={{
                       background: 'white',
                       border: status === 'received'
@@ -738,58 +723,30 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                         : status === 'confirmed'
                           ? '1.5px solid #10b981'
                           : '1.5px solid #f59e0b',
-                      borderRadius: '8px',
-                      padding: '14px',
-                      boxShadow: status === 'received' ? '0 2px 8px rgba(37,99,235,0.15)' : 'none'
+                      borderRadius: '6px',
+                      padding: '12px',
                     }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                        <div style={{
-                          width: '24px',
-                          height: '24px',
-                          borderRadius: '50%',
-                          background: status === 'received' ? '#2563eb' : status === 'confirmed' ? '#10b981' : '#f59e0b',
-                          color: 'white',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '13px',
-                          fontWeight: 800
-                        }}>
-                          {status === 'received' ? '⏳' : status === 'confirmed' ? '✓' : '!'}
-                        </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
                         <span style={{
-                          fontSize: '13.5px',
+                          fontSize: '12px',
                           fontWeight: 800,
                           color: status === 'received' ? '#1d4ed8' : status === 'confirmed' ? '#065f46' : '#92400e'
                         }}>
-                          2단계. {status === 'received' ? '관리자 미확인 (대기열)' : status === 'confirmed' ? '관리자 확인 및 승인' : '관리자 확인 (마감)'}
+                          2. 관리자 검토
                         </span>
                       </div>
-                      <p style={{ margin: 0, fontSize: '12px', color: '#475569', lineHeight: 1.5 }}>
-                        {status === 'received' && (
-                          <>
-                            <strong style={{ color: '#1e40af' }}>관리자 심사 대기열에서 검토 대기 중</strong>입니다.<br />
-                            관리자가 접수 순서에 따라 순차 확인합니다.
-                          </>
-                        )}
+                      <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>
+                        {status === 'received' && '검토 대기 중'}
                         {status === 'confirmed' && (
-                          <>
-                            <strong style={{ color: '#065f46' }}>관리자가 희망 일정을 확인하고 승인</strong>했습니다.<br />
-                            {item.request.confirmedAt && (
-                              <span style={{ color: '#64748b' }}>확인: {new Date(item.request.confirmedAt).toLocaleTimeString('ko-KR')}</span>
-                            )}
-                          </>
+                          item.request.confirmedAt
+                            ? `승인 완료 (${new Date(item.request.confirmedAt).toLocaleTimeString('ko-KR')})`
+                            : '승인 완료'
                         )}
-                        {status === 'needs_reselection' && (
-                          <>
-                            <strong style={{ color: '#b45309' }}>관리자 검토 완료</strong><br />
-                            신청 후보가 모두 선착순 마감되었습니다.
-                          </>
-                        )}
+                        {status === 'needs_reselection' && '희망 일정 마감'}
                       </p>
                     </div>
 
-                    {/* 3단계: 최종 일정 결과 */}
+                    {/* 3단계: 일정 확정 */}
                     <div style={{
                       background: 'white',
                       border: status === 'confirmed'
@@ -797,67 +754,35 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                         : status === 'needs_reselection'
                           ? '1.5px solid #f59e0b'
                           : '1px dashed #cbd5e1',
-                      borderRadius: '8px',
-                      padding: '14px'
+                      borderRadius: '6px',
+                      padding: '12px',
                     }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                        <div style={{
-                          width: '24px',
-                          height: '24px',
-                          borderRadius: '50%',
-                          background: status === 'confirmed' ? '#059669' : status === 'needs_reselection' ? '#f59e0b' : '#94a3b8',
-                          color: 'white',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '13px',
-                          fontWeight: 800
-                        }}>
-                          {status === 'confirmed' ? '★' : status === 'needs_reselection' ? '🔄' : '3'}
-                        </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
                         <span style={{
-                          fontSize: '13.5px',
+                          fontSize: '12px',
                           fontWeight: 800,
-                          color: status === 'confirmed' ? '#065f46' : status === 'needs_reselection' ? '#92400e' : '#64748b'
+                          color: status === 'confirmed' ? '#065f46' : status === 'needs_reselection' ? '#92400e' : '#94a3b8'
                         }}>
-                          3단계. {status === 'confirmed' ? '최종 일정 확정' : status === 'needs_reselection' ? '대체 슬롯 재선택' : '최종 확정 대기'}
+                          3. 일정 확정
                         </span>
                       </div>
-                      <p style={{ margin: 0, fontSize: '12px', color: '#475569', lineHeight: 1.5 }}>
+                      <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>
                         {status === 'confirmed' && (
                           <strong style={{ color: '#059669' }}>
-                            {confirmedSlot?.date} {TIME_SLOTS.find(t => t.label === confirmedSlot?.timeLabel)?.displayLabel} 확정!
+                            {confirmedSlot?.date} {TIME_SLOTS.find(t => t.label === confirmedSlot?.timeLabel)?.displayLabel}
                           </strong>
                         )}
-                        {status === 'received' && (
-                          <span style={{ color: '#64748b' }}>
-                            관리자가 승인하면 즉시 확정 일정이 이곳에 표출됩니다.
-                          </span>
-                        )}
-                        {status === 'needs_reselection' && (
-                          <span style={{ color: '#b45309' }}>
-                            스마트 원클릭 추천으로 즉시 대체 슬롯을 신청하세요.
-                          </span>
-                        )}
+                        {status === 'received' && '대기 중'}
+                        {status === 'needs_reselection' && '재선택 필요'}
                       </p>
                     </div>
                   </div>
-
-                  {/* 비점유 대기 안심 가이드 안내 문구 */}
-                  {status === 'received' && (
-                    <div style={{ marginTop: '14px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', padding: '10px 14px', fontSize: '12.5px', color: '#1e40af', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span>💡</span>
-                      <span>
-                        <strong>안심 대기 안내:</strong> 고객님의 신청은 안전하게 접수되었으며, 관리자가 확인하기 전까지는 슬롯을 사전 점유하지 않는 <em>비점유 대기</em> 상태로 공정하게 유지됩니다.
-                      </span>
-                    </div>
-                  )}
                 </div>
 
-                {/* 선택한 후보 슬롯 목록 */}
-                <div className="form-group" style={{ marginBottom: '16px' }}>
-                  <label style={{ fontWeight: 700, fontSize: '13.5px', color: '#334155', display: 'block', marginBottom: '8px' }}>
-                    신청한 희망 슬롯 목록 (우선순위 순)
+                {/* 희망 슬롯 목록 */}
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ fontWeight: 700, fontSize: '13px', color: '#334155', display: 'block', marginBottom: '8px' }}>
+                    희망 일정 (우선순위)
                   </label>
                   <ul className="list" style={{ margin: 0 }}>
                     {item.candidates.map((c, cidx) => {
@@ -871,28 +796,38 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                           style={{
                             background: isConfirmedForThis ? '#f0fdf4' : 'white',
                             border: isConfirmedForThis ? '1.5px solid #86efac' : '1px solid #e2e8f0',
-                            padding: '10px 14px',
+                            padding: '9px 12px',
                             borderRadius: '6px',
                             marginBottom: '6px',
                             display: 'flex',
                             justifyContent: 'space-between',
-                            alignItems: 'center'
+                            alignItems: 'center',
+                            fontSize: '13px',
                           }}
                         >
                           <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <strong style={{ color: '#2563eb' }}>{cidx + 1}순위</strong>
-                            <span style={{ fontWeight: isConfirmedForThis ? 800 : 500 }}>
+                            <span style={{
+                              background: isConfirmedForThis ? '#16a34a' : '#2563eb',
+                              color: 'white',
+                              fontSize: '11px',
+                              fontWeight: 800,
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                            }}>
+                              {cidx + 1}순위
+                            </span>
+                            <span style={{ fontWeight: isConfirmedForThis ? 700 : 500, color: '#1e293b' }}>
                               {slot?.date} {TIME_SLOTS.find(t => t.label === slot?.timeLabel)?.displayLabel}
                             </span>
                             {isConfirmedForThis && (
-                              <span style={{ background: '#059669', color: 'white', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 800 }}>
-                                ★ 최종 확정된 슬롯
+                              <span style={{ background: '#dcfce7', color: '#15803d', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', fontWeight: 700 }}>
+                                확정
                               </span>
                             )}
                           </span>
 
-                          <span style={{ fontSize: '12px', fontWeight: 700, color: isConfirmedForThis ? '#059669' : isAvailable ? '#2563eb' : '#dc2626' }}>
-                            {isConfirmedForThis ? '확정 완료' : isAvailable ? '신청 접수 중 (열림)' : '다른 고객 확정 (마감)'}
+                          <span style={{ fontSize: '12px', fontWeight: 700, color: isConfirmedForThis ? '#16a34a' : isAvailable ? '#2563eb' : '#94a3b8' }}>
+                            {isConfirmedForThis ? '확정' : isAvailable ? '가능' : '마감'}
                           </span>
                         </li>
                       );
@@ -900,26 +835,18 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                   </ul>
                 </div>
 
-                {/* 확정 완료 시 축하 메시지 */}
+                {/* 확정 안내 */}
                 {item.request.status === 'confirmed' && confirmedSlot && (
-                  <div className="alert alert-success" style={{ margin: '14px 0 0 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ fontSize: '20px' }}>🎉</span>
-                    <div>
-                      <strong>최종 예약이 확정되었습니다!</strong><br />
-                      일시: <strong>{confirmedSlot.date} {TIME_SLOTS.find(t => t.label === confirmedSlot.timeLabel)?.displayLabel}</strong>
-                    </div>
+                  <div className="alert alert-success alert-animated" style={{ margin: '14px 0 0 0', padding: '12px 14px' }}>
+                    <strong>확정 일정:</strong> {confirmedSlot.date} {TIME_SLOTS.find(t => t.label === confirmedSlot.timeLabel)?.displayLabel}
                   </div>
                 )}
 
-                {/* 재선택 필요 시 스마트 대체 슬롯 추천 버튼 */}
+                {/* 재선택 필요 안내 */}
                 {item.request.status === 'needs_reselection' && isLatest && (
-                  <div style={{ marginTop: '16px', background: '#fffbeb', border: '1.5px solid #fde68a', borderRadius: '8px', padding: '16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#92400e', marginBottom: '8px', fontWeight: 800 }}>
-                      <span>✨</span>
-                      <span>스마트 대체 슬롯 추천 가능</span>
-                    </div>
-                    <p style={{ margin: '0 0 12px 0', fontSize: '13px', color: '#78350f', lineHeight: 1.5 }}>
-                      이전 희망 시간대를 분석하여 최적의 빈자리를 자동 선별해 두었습니다. 버튼 1클릭으로 간편하게 재선택을 완료할 수 있습니다.
+                  <div style={{ marginTop: '14px', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '6px', padding: '14px' }}>
+                    <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#92400e' }}>
+                      선택하신 일정이 모두 마감되었습니다. 대체 일정을 선택해주세요.
                     </p>
                     <button
                       type="button"
@@ -928,9 +855,9 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                         setStage('reselect');
                         setSelectedSlots([]);
                       }}
-                      style={{ background: '#f59e0b', color: 'white', fontWeight: 'bold', padding: '9px 16px', borderRadius: '6px', fontSize: '13.5px', cursor: 'pointer', border: 'none' }}
+                      style={{ background: '#f59e0b', color: 'white', fontWeight: 700, padding: '8px 16px', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', border: 'none' }}
                     >
-                      ✨ 스마트 추천 확인 및 재선택하기 →
+                      대체 일정 선택
                     </button>
                   </div>
                 )}
@@ -998,7 +925,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                     gap: '6px',
                   }}
                 >
-                  <span>✨ 추천 일정 자동 채우기</span>
+                  <span>추천 일정 자동 선택</span>
                 </button>
               )}
 
