@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cal.dudu Day 2 서비스 블루프린트 & As-Is / To-Be 비교 분석</title>
+  
+  <!-- Pretendard 웹폰트 로드 -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Mermaid.js 로드 -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <style>
+    :root {
+      --font-main: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      --bg-page: #F5F7FA;
+      --bg-card: #FFFFFF;
+      --border-color: #E2E8F0;
+      
+      /* 소이정 디자인 토큰 */
+      --point-orange: #FF5E10;
+      --point-orange-hover: #E04B00;
+      --point-orange-tint: #FFF5EF;
+      --point-orange-border: #FFD9C6;
+      --point-orange-glow: rgba(255, 94, 16, 0.25);
+      
+      --charcoal-black: #1A1A1C;
+      --charcoal-dark: #121214;
+      --charcoal-sub: #222226;
+      
+      --slate-dark: #1E293B;
+      --slate-main: #334155;
+      --slate-muted: #64748B;
+      --slate-light: #94A3B8;
+      --slate-bg: #F8FAFC;
+      
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+      --shadow-lg: 0 10px 24px rgba(0,0,0,0.08);
+      --shadow-orange: 0 4px 16px var(--point-orange-glow);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg-page);
+      color: var(--charcoal-black);
+      line-height: 1.7;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+      padding: 40px 20px 80px 20px;
+    }
+
+    .container {
+      max-width: 1420px;
+      margin: 0 auto;
+    }
+
+    /* 문서 상단 헤더 (소이정 다크 & 오렌지 무드) */
+    header {
+      background: var(--charcoal-black);
+      color: #ffffff;
+      padding: 38px 44px;
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, #FF5E10, #FF8A4C, #FFAA7A);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .badge-wrap {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: -0.01em;
+    }
+
+    .badge-orange { background: var(--point-orange); color: #ffffff; box-shadow: 0 2px 8px var(--point-orange-glow); }
+    .badge-charcoal { background: rgba(255, 255, 255, 0.12); color: #CBD5E1; border: 1px solid rgba(255, 255, 255, 0.2); }
+    .badge-tint { background: var(--point-orange-tint); color: var(--point-orange-hover); border: 1px solid var(--point-orange-border); }
+
+    h1 {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    h1 span.accent {
+      color: var(--point-orange);
+    }
+
+    .subtitle {
+      font-size: 15.5px;
+      color: #9AA5B1;
+      max-width: 1100px;
+      line-height: 1.6;
+    }
+
+    /* 메타 데이터 바 */
+    .meta-bar {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12.5px;
+      color: #CBD2D9;
+    }
+
+    .meta-item strong {
+      color: #ffffff;
+      font-weight: 700;
+      margin-right: 4px;
+    }
+
+    /* 섹션 레이아웃 */
+    .section {
+      background: var(--bg-card);
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      padding: 32px 36px;
+      margin-bottom: 28px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 22px;
+      padding-bottom: 14px;
+      border-bottom: 1.5px solid #F1F5F9;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--slate-dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 20px;
+      background: var(--point-orange);
+      border-radius: 2px;
+    }
+
+    /* As-Is vs To-Be 2단 비교 카드 그리드 */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .compare-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .compare-card {
+      border-radius: 12px;
+      padding: 22px 24px;
+      position: relative;
+    }
+
+    .compare-card.asis {
+      background: #F8FAFC;
+      border: 1.5px solid #CBD5E1;
+    }
+
+    .compare-card.tobe {
+      background: #FFFFFF;
+      border: 2px solid var(--point-orange);
+      box-shadow: var(--shadow-orange);
+    }
+
+    .card-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    .card-label.asis-label {
+      background: #E2E8F0;
+      color: var(--slate-main);
+    }
+
+    .card-label.tobe-label {
+      background: var(--point-orange);
+      color: #ffffff;
+      box-shadow: 0 2px 6px var(--point-orange-glow);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--slate-dark);
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--slate-main);
+      line-height: 1.65;
+    }
+
+    .card-desc ul {
+      margin: 8px 0 0 18px;
+    }
+
+    .card-desc li {
+      margin-bottom: 4px;
+    }
+
+    /* 테이블 스타일 */
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 12px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .styled-table th,
+    .styled-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      vertical-align: top;
+    }
+
+    .styled-table th:last-child,
+    .styled-table td:last-child {
+      border-right: none;
+    }
+
+    .styled-table thead th {
+      background: #F1F5F9;
+      color: var(--slate-dark);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .styled-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .styled-table tbody tr:hover {
+      background: #FAFBFD;
+    }
+
+    /* 하이라이트 박스 */
+    .callout {
+      background: var(--slate-bg);
+      border: 1px solid #CBD5E1;
+      border-left: 4px solid var(--charcoal-black);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: 13.5px;
+    }
+
+    .callout.orange {
+      background: var(--point-orange-tint);
+      border: 1px solid var(--point-orange-border);
+      border-left: 4px solid var(--point-orange);
+    }
+
+    .callout-title {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: var(--slate-dark);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* 벤치마크 카드 그리드 */
+    .bench-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .bench-card {
+      background: #ffffff;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 18px;
+      transition: all 0.2s ease;
+    }
+
+    .bench-card:hover {
+      border-color: var(--point-orange);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .bench-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #F1F5F9;
+      padding-bottom: 8px;
+    }
+
+    .bench-name {
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--slate-dark);
+    }
+
+    .bench-tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #F1F5F9;
+      color: #475569;
+    }
+
+    /* 다이어그램 줌 툴바 & 박스 (소이정 다크 & 오렌지 무드) */
+    .diagram-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      background: #F8FAFC;
+      padding: 12px 20px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .toolbar-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--slate-dark);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .zoom-btn {
+      padding: 7px 16px;
+      border-radius: 8px;
+      border: 1.5px solid #CBD5E1;
+      background: white;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--slate-main);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .zoom-btn:hover {
+      background: var(--point-orange-tint);
+      border-color: var(--point-orange);
+      color: var(--point-orange-hover);
+      transform: translateY(-1px);
+    }
+
+    .zoom-btn.active {
+      background: var(--point-orange);
+      border-color: var(--point-orange);
+      color: white;
+      box-shadow: 0 2px 6px var(--point-orange-glow);
+    }
+
+    .mermaid-box {
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
+      padding: 28px 20px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    /* 가로 맞춤 모드: 불필요한 축소 없이 화면폭에 맞춰 넉넉하게 확장 */
+    .mermaid-box.fit-width {
+      overflow-x: auto;
+    }
+
+    .mermaid-scale-wrapper {
+      width: 100%;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .mermaid {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* 가로 맞춤 상태일 때 SVG: 넉넉한 최소폭 확보 및 폰트 시원하게 유지 */
+    .mermaid-box.fit-width .mermaid svg {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 1000px;
+      height: auto !important;
+      display: block !important;
+      margin: 0 auto !important;
+    }
+
+    /* 일반 배율 상태일 때 SVG */
+    .mermaid svg {
+      height: auto !important;
+      display: block;
+      margin: 0 auto;
+      transition: width 0.15s ease-out;
+    }
+
+    /* 노드 및 텍스트 강제 크기 확대 (시원하고 또렷한 가독성 보장) */
+    .mermaid .node rect,
+    .mermaid .node circle,
+    .mermaid .node polygon {
+      stroke-width: 2.5px !important;
+      rx: 12px !important;
+      ry: 12px !important;
+      filter: drop-shadow(0 2px 5px rgba(0,0,0,0.04));
+    }
+
+    .mermaid .nodeLabel,
+    .mermaid .node b,
+    .mermaid .node span,
+    .mermaid .node text {
+      font-size: 16.5px !important;
+      line-height: 1.55 !important;
+      font-weight: 700 !important;
+      color: var(--charcoal-black) !important;
+    }
+
+    .mermaid .node small {
+      font-size: 13.5px !important;
+      font-weight: 600 !important;
+      color: #475569 !important;
+      display: block;
+      margin-top: 5px;
+    }
+
+    .mermaid .cluster-label span,
+    .mermaid .cluster-label text,
+    .mermaid .cluster-label {
+      font-size: 19px !important;
+      font-weight: 800 !important;
+      color: var(--charcoal-black) !important;
+      letter-spacing: -0.02em;
+    }
+
+    .mermaid .cluster rect {
+      stroke-width: 2px !important;
+      rx: 14px !important;
+      ry: 14px !important;
+      fill-opacity: 0.5 !important;
+    }
+
+    .mermaid .edgeLabel {
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      background-color: #ffffff !important;
+      padding: 4px 10px !important;
+      border-radius: 6px;
+      border: 1px solid #CBD5E1 !important;
+      color: var(--slate-main) !important;
+    }
+
+    .mermaid .edgePath path {
+      stroke-width: 2.5px !important;
+      stroke: #64748B !important;
+    }
+
+    /* 감정 점수 뱃지 */
+    .emotion-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11.5px;
+      font-weight: 800;
+    }
+
+    .emotion-neg { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
+    .emotion-pos { background: var(--point-orange-tint); color: var(--point-orange-hover); border: 1px solid var(--point-orange-border); }
+
+    /* 풋터 */
+    footer {
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--slate-muted);
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- [상단 헤더] -->
+    <header>
+      <div class="header-top">
+        <div class="badge-wrap">
+          <span class="badge badge-orange">Day 2 최종 성과</span>
+          <span class="badge badge-charcoal">대기확인 경험 완성</span>
+          <span class="badge badge-charcoal">4대 벤치마킹 반영</span>
+          <span class="badge badge-charcoal">소이정 톤앤매너 & 60-30-10 규칙</span>
+        </div>
+        <div style="font-size: 12px; color: #CBD2D9;">
+          기준일: <strong>2026.09.08 (화)</strong>
+        </div>
+      </div>
+
+      <h1>cal.dudu Day 2 서비스 블루프린트<span class="accent">.</span></h1>
+      <p class="subtitle">
+        User Journey의 핵심 감정 구간인 <strong>"2. 대기확인 단계"</strong>를 완벽히 고도화하고, 
+        국내외 4대 예약 서비스 벤치마킹(네이버·구글·Calendly·SuperSaaS)과 GDWEB 수상작 '소이정' 톤앤매너를 결합하여 완성한 As-Is vs To-Be 심층 비교 분석 보고서입니다.
+      </p>
+
+      <div class="meta-bar">
+        <div class="meta-item"><strong>프로젝트:</strong> cal.dudu (1:1 일정 조율 서비스)</div>
+        <div class="meta-item"><strong>불변 규칙:</strong> 14일 42슬롯 · 1~3순위 비점유 대기 · 어드민 수동 확정</div>
+        <div class="meta-item"><strong>스택:</strong> React, Vite, TypeScript, Supabase, Vercel</div>
+        <div class="meta-item"><strong>검증:</strong> Vitest 19/19 테스트 100% 통과</div>
+      </div>
+    </header>
+
+    <!-- [섹션 1: 5대 핵심 변화 대시보드] -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-title">1. Day 2 핵심 혁신 요약 (Executive Summary)</div>
+        <span class="badge badge-tint">As-Is (Day 1) &rarr; To-Be (Day 2)</span>
+      </div>
+
+      <div class="compare-grid">
+        <!-- 1. 정보 표출 방식 -->
+        <div class="compare-card asis">
+          <span class="card-label asis-label">As-Is (Day 1 상태)</span>
+          <div class="card-title">14행 텍스트 나열형 표 (가독성 저하)</div>
+          <div class="card-desc">
+            - 날짜별 14개 행이 세로로 길게 늘어서 있어 <strong>스크롤 압박이 심하고 빈 슬롯 탐색이 불편</strong>함.<br>
+            - 요일 구분과 오늘 날짜 기준 인근 날짜 가시성이 부족하여 비즈니스 미팅 일정 조율 시 인지 부하 발생.
+          </div>
+        </div>
+        <div class="compare-card tobe">
+          <span class="card-label tobe-label">To-Be (Day 2 완성)</span>
+          <div class="card-title">인근 날짜 기준 주간 캘린더 그리드 (Google Calendar 벤치마크)</div>
+          <div class="card-desc">
+            - <strong>1주차(9/9~9/15), 2주차(9/16~9/22) 탭 분할 및 수평 주간 캘린더 그리드</strong> 전면 도입.<br>
+            - 요일별 카드 상단에 '잔여 가능 슬롯 수 뱃지'를 제공하여 한눈에 일정을 파악하도록 개선.
+          </div>
+        </div>
+
+        <!-- 2. 대기확인 경험 -->
+        <div class="compare-card asis">
+          <span class="card-label asis-label">As-Is (Day 1 상태)</span>
+          <div class="card-title">신청 완료 후 처리 상태 파악 불가 (불확실성)</div>
+          <div class="card-desc">
+            - 예약 신청을 완료해도 관리자가 확인했는지, 대기 중인지 고객 화면에서 알 길이 없음.<br>
+            - 신청 상태를 재확인할 수 있는 전용 뷰가 부재하여 고객이 막연하게 기다려야 하는 부정 감정 초래.
+          </div>
+        </div>
+        <div class="compare-card tobe">
+          <span class="card-label tobe-label">To-Be (Day 2 완성)</span>
+          <div class="card-title">실시간 3단계 진행 상황 추적 탭 (네이버 예약 벤치마크)</div>
+          <div class="card-desc">
+            - 고객 화면에 <strong>'진행 상황' 전용 탭</strong>을 신설하여 내 신청 목록을 최신순으로 정렬 표출.<br>
+            - <strong>[1.신청접수 &rarr; 2.관리자검토 &rarr; 3.일정확정]</strong>의 3단계 스텝 인디케이터와 브리딩 펄스 닷으로 실시간 가시성 제공.
+          </div>
+        </div>
+
+        <!-- 3. 정보 밀도 & 문구 -->
+        <div class="compare-card asis">
+          <span class="card-label asis-label">As-Is (Day 1 상태)</span>
+          <div class="card-title">장황한 미사여구와 플랫폼 자기자랑 도배</div>
+          <div class="card-desc">
+            - 헤더 및 카드 곳곳에 "14일 42슬롯, KST 기준, 1~3순위 비점유 대기 -> 어드민 수동 확정" 등 <strong>사용자 목적과 무관한 문구 도배</strong>.<br>
+            - 사용자가 원하는 '예약하기' 작업에 집중하지 못하고 주의가 분산됨.
+          </div>
+        </div>
+        <div class="compare-card tobe">
+          <span class="card-label tobe-label">To-Be (Day 2 완성)</span>
+          <div class="card-title">불필요 문구 전면 제거 & 2분할 뷰 (Calendly 벤치마크)</div>
+          <div class="card-desc">
+            - 예약 흐름에 관여하지 않는 <strong>모든 미사여구를 전면 삭제</strong>하고 텍스트 다이어트 단행.<br>
+            - <strong>좌측 1~3순위 신청 요약 패널 + 우측 주간 캘린더 그리드</strong>의 2분할 뷰로 한 화면에 필요한 정보만 압축.
+          </div>
+        </div>
+
+        <!-- 4. 마이크로 인터랙션 -->
+        <div class="compare-card asis">
+          <span class="card-label asis-label">As-Is (Day 1 상태)</span>
+          <div class="card-title">밋밋한 정적 클릭 반응</div>
+          <div class="card-desc">
+            - 슬롯을 클릭하거나 삭제해도 별도의 시각적·청각적 피동이 없어 버튼이 눌렸는지 확인이 둔탁함.
+          </div>
+        </div>
+        <div class="compare-card tobe">
+          <span class="card-label tobe-label">To-Be (Day 2 완성)</span>
+          <div class="card-title">슬라이드인 모션 & Web Audio 사운드 피드백</div>
+          <div class="card-desc">
+            - 슬롯 선택 시 좌측 목록에 부드럽게 미끄러져 들어오는 <strong>Slide-in 애니메이션</strong> 탑재.<br>
+            - 삭제 버튼 호버 회전 효과 및 <strong>Web Audio API 기반의 세련된 클릭 사운드(무음 토글 지원)</strong> 적용.
+          </div>
+        </div>
+
+        <!-- 5. 시각 디자인 시스템 -->
+        <div class="compare-card asis">
+          <span class="card-label asis-label">As-Is (Day 1 상태)</span>
+          <div class="card-title">다색 혼합(주황-초록-파랑) 시각적 노이즈</div>
+          <div class="card-desc">
+            - 42개 슬롯 전역에 형광 초록 `● 가능` 뱃지가 도배되고, 주황색 버튼과 섞여 <strong>산만하고 조잡한 느낌</strong> 유발.<br>
+            - 색상 위계가 무너져 사용자의 시선이 머물러야 할 곳을 찾기 어려움.
+          </div>
+        </div>
+        <div class="compare-card tobe">
+          <span class="card-label tobe-label">To-Be (Day 2 완성)</span>
+          <div class="card-title">소이정 톤앤매너 & 60-30-10 단일 악센트 규칙 확립</div>
+          <div class="card-desc">
+            - GDWEB 수상작 '소이정'의 <strong>매트 차콜 블랙(#1A1A1C) & 네온 오렌지(#FF5E10)</strong> 채택.<br>
+            - <strong>초록색 전면 제거:</strong> 가능 슬롯을 차분한 슬레이트 그레이로 수렴하고, 오직 선택된 슬롯과 활성 단계에만 오렌지 Accent를 부여해 극도의 가독성 확보.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- [섹션 2: 4대 벤치마킹 서비스 상세 매핑] -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-title">2. 4대 예약 서비스 벤치마킹 및 실구현 매핑</div>
+        <span class="badge badge-charcoal">BENCHMARK MATRIX</span>
+      </div>
+
+      <p style="color: var(--slate-main); margin-bottom: 14px;">
+        17개 글로벌 예약 서비스 조사 데이터(D36 Benchmark) 중, 사용자 여정 <strong>'2. 대기확인'</strong>의 가시성과 편의성을 비약적으로 향상시키기 위해 가장 탁월한 4개 레퍼런스를 선별하여 유기적으로 통합했습니다.
+      </p>
+
+      <div class="bench-grid">
+        <!-- 네이버 예약 -->
+        <div class="bench-card">
+          <div class="bench-header">
+            <span class="bench-name">네이버 예약</span>
+            <span class="bench-tag">진행 상황 표출</span>
+          </div>
+          <div style="font-size: 13px; color: var(--slate-main); line-height: 1.6;">
+            <strong>벤치마크 핵심:</strong> 고객 예약 관리 화면에서 [신청 접수 &rarr; 관리자 확인 &rarr; 확정] 상태를 단계별로 명확히 보여주어 불확실성 해소.<br>
+            <strong>cal.dudu 구현:</strong> '진행 상황' 탭에 3단계 스텝 카드와 실시간 브리딩 펄스 인디케이터 구축.
+          </div>
+        </div>
+
+        <!-- Google Calendar -->
+        <div class="bench-card">
+          <div class="bench-header">
+            <span class="bench-name">Google Calendar</span>
+            <span class="bench-tag">인근 날짜 기준 표출</span>
+          </div>
+          <div style="font-size: 13px; color: var(--slate-main); line-height: 1.6;">
+            <strong>벤치마크 핵심:</strong> Appointment Schedules 기능에서 오늘 날짜를 기준으로 인접한 주간 슬롯을 수평 그리드로 표출.<br>
+            <strong>cal.dudu 구현:</strong> 1주차(9/9~15) / 2주차(9/16~22) 탭 분할 및 일자별 수직 시간 스택 배치.
+          </div>
+        </div>
+
+        <!-- SuperSaaS -->
+        <div class="bench-card">
+          <div class="bench-header">
+            <span class="bench-name">SuperSaaS</span>
+            <span class="bench-tag">달력형 정보 구조</span>
+          </div>
+          <div style="font-size: 13px; color: var(--slate-main); line-height: 1.6;">
+            <strong>벤치마크 핵심:</strong> 단순 표 형태를 탈피하여 요일별 열과 시간별 행이 유기적으로 연결된 캘린더 그리드 구성.<br>
+            <strong>cal.dudu 구현:</strong> 요일별 헤더, 오픈 슬롯 개수 뱃지, 상태별 버튼 인터랙션 일체화.
+          </div>
+        </div>
+
+        <!-- Calendly -->
+        <div class="bench-card">
+          <div class="bench-header">
+            <span class="bench-name">Calendly</span>
+            <span class="bench-tag">한 화면 압축 2분할 뷰</span>
+          </div>
+          <div style="font-size: 13px; color: var(--slate-main); line-height: 1.6;">
+            <strong>벤치마크 핵심:</strong> 군더더기 없는 미니멀 구성, 좌측 신청 요약 패널 + 우측 시간 선택기의 완벽한 2분할 레이아웃.<br>
+            <strong>cal.dudu 구현:</strong> 헤더 미사여구 제거, 좌측 실시간 선택 목록(1~3순위) + 우측 캘린더 일체화.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- [섹션 3: 5계층 서비스 블루프린트 상세 비교 매트릭스] -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-title">3. Day 2 서비스 블루프린트 5계층 상세 매트릭스</div>
+        <span class="badge badge-orange">SERVICE BLUEPRINT</span>
+      </div>
+
+      <p style="color: var(--slate-main); margin-bottom: 16px;">
+        고객의 예약 여정 중 가장 큰 변화가 일어난 <strong>[1. 일정 탐색 및 선택]</strong> 단계와 <strong>[2. 대기확인 및 상태 추적]</strong> 단계를 5대 서비스 계층별로 As-Is와 To-Be로 정밀 대조합니다.
+      </p>
+
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th style="width: 14%;">서비스 계층</th>
+            <th style="width: 43%;">Day 1 현행 구현 (As-Is)</th>
+            <th style="width: 43%;">Day 2 완성 모델 (To-Be)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 감정 점수 -->
+          <tr>
+            <td style="font-weight: 800; background: #F8FAFC;">고객 감정 점수<br/>(Emotional Score)</td>
+            <td>
+              • 일정 선택: <span class="emotion-pill emotion-neg">0 (보통)</span> 14행 표 스크롤 피로<br/>
+              • 대기 확인: <span class="emotion-pill emotion-neg">-2 (답답함)</span> 접수 후 진행 여부 불투명
+            </td>
+            <td>
+              • 일정 선택: <span class="emotion-pill emotion-pos">+4 (쾌적함)</span> 주간 달력 & 사운드 피드백<br/>
+              • 대기 확인: <span class="emotion-pill emotion-pos">+5 (안도감)</span> 실시간 3단계 추적 가시성
+            </td>
+          </tr>
+
+          <!-- 1. 물리적 증거 -->
+          <tr>
+            <td style="font-weight: 800; background: #F8FAFC;">1. 물리적 증거<br/>(Physical Evidence)</td>
+            <td>
+              - 14행 세로 텍스트 테이블<br/>
+              - 헤더의 장황한 안내 문구 및 플랫폼 자기자랑 텍스트<br/>
+              - 초록-주황-파랑이 섞인 기본 버튼 및 범례<br/>
+              - 신청 후 단순 "접수 완료" 팝업/텍스트
+            </td>
+            <td>
+              - <strong>Google Calendar 스타일 주간 캘린더 그리드 (1주/2주 탭)</strong><br/>
+              - Calendly 스타일 미니멀 2분할 뷰 (좌: 신청요약, 우: 캘린더)<br/>
+              - <strong>소이정 톤앤매너 (매트 차콜 #1A1A1C & 단일 오렌지 #FF5E10)</strong><br/>
+              - <strong>'진행 상황' 추적 탭 (실시간 3단계 스텝 카드 & 오렌지 펄스 닷)</strong>
+            </td>
+          </tr>
+
+          <!-- 2. 고객 행동 -->
+          <tr>
+            <td style="font-weight: 800; background: #F8FAFC;">2. 고객 행동<br/>(Customer Actions)</td>
+            <td>
+              - 긴 표를 아래로 스크롤하며 원하는 일시를 육안 탐색<br/>
+              - 1~3순위 체크박스를 누른 뒤 상하를 오가며 확인<br/>
+              - 신청 후 처리 여부를 몰라 무작정 대기하거나 새로고침 반복
+            </td>
+            <td>
+              - <strong>인근 날짜(1주차/2주차) 탭을 눌러 한 화면에서 슬롯 즉시 탐색</strong><br/>
+              - 슬롯 버튼 클릭 시 오디오 틱음 및 좌측 슬라이드인 확인<br/>
+              - <strong>'진행 상황' 탭에서 관리자의 검토 상태(대기 중 &rarr; 확정)를 실시간 모니터링</strong>
+            </td>
+          </tr>
+
+          <!-- 3. 프론트스테이지 상호작용 -->
+          <tr>
+            <td style="font-weight: 800; background: #F8FAFC;">3. 프론트스테이지<br/>(Onstage Contact)</td>
+            <td>
+              - 체크박스 클릭 시 단순 상태 반영 (모션 없음)<br/>
+              - 신청 제출 시 로컬 스토리지 또는 DB 기록 후 알림 팝업<br/>
+              - 신청 후 이전 화면에 머물러 변경 상태 확인 곤란
+            </td>
+            <td>
+              - <strong>선택 시 즉각적인 오렌지 글로우 섀도우 및 Slide-in 카드 렌더링</strong><br/>
+              - 삭제 버튼 호버 시 90도 회전 애니메이션 피드백<br/>
+              - <strong>Web Audio API 사운드 재생 (음소거 토글 버튼 제공)</strong><br/>
+              - 상태 변경 시 '최신' 뱃지와 함께 스텝 카드가 하이라이트
+            </td>
+          </tr>
+
+          <!-- 4. 백스테이지 지원 프로세스 -->
+          <tr>
+            <td style="font-weight: 800; background: #F8FAFC;">4. 백스테이지 프로세스<br/>(Backstage Actions)</td>
+            <td>
+              - 관리자 페이지에서 신청 목록 조회<br/>
+              - 관리자가 수동으로 확정 처리 시 DB 상태 갱신<br/>
+              - 고객에게 상태 변경 통지가 미약함
+            </td>
+            <td>
+              - <strong>관리자 페이지 신청 목록에 소이정 오렌지 인디케이터 적용</strong><br/>
+              - 수동 확정 즉시 고객의 '진행 상황' 탭에 3단계 확정 카드로 실시간 반영<br/>
+              - 타 유저 채택으로 전 후보 소진 시 <strong>'스마트 원클릭 추천' 버튼 활성화</strong>
+            </td>
+          </tr>
+
+          <!-- 5. 지원 프로세스 및 시스템 -->
+          <tr>
+            <td style="font-weight: 800; background: #F8FAFC;">5. 지원 시스템<br/>(Support Processes)</td>
+            <td>
+              - 로컬 Storage / Supabase RPC (`submit_booking`, `confirm_booking`)<br/>
+              - 14일 42슬롯 고정 데이터 로딩
+            </td>
+            <td>
+              - <strong>오늘 날짜(REFERENCE_TIME) 기준 주간 범위 자동 분할 엔진</strong><br/>
+              - operationId 기반 멱등성 보장 및 <strong>Vitest 19개 자동화 테스트 100% 무결성</strong><br/>
+              - <strong>Vercel 프로덕션 자동 CI/CD 배포 시스템</strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- [섹션 4: Mermaid.js 플로우차트] -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-title">4. Day 2 To-Be 고객 서비스 인터랙션 플로우</div>
+        <span class="badge badge-charcoal">INTERACTION FLOW</span>
+      </div>
+
+      <!-- 확대/축소 툴바 -->
+      <div class="diagram-toolbar">
+        <span class="toolbar-title">🔍 다이어그램 크기 제어:</span>
+        <button type="button" id="btnFitWidth" class="zoom-btn active" onclick="fitToWidth()">↔️ 가로 맞춤 (화면폭 100% 최적화)</button>
+        <button type="button" class="zoom-btn" onclick="setDiagramZoom(1.0)">100% (기본)</button>
+        <button type="button" class="zoom-btn" onclick="setDiagramZoom(1.25)">125% (확대)</button>
+        <button type="button" class="zoom-btn" onclick="setDiagramZoom(1.5)">150% (상세 보기 - 권장)</button>
+        <button type="button" class="zoom-btn" onclick="setDiagramZoom(1.8)">180% (특대)</button>
+        <button type="button" class="zoom-btn" onclick="setDiagramZoom(2.2)">220% (초대형)</button>
+      </div>
+
+      <div class="mermaid-box fit-width">
+        <div id="mermaidWrapper" class="mermaid-scale-wrapper">
+          <div class="mermaid">
+flowchart TB
+    Start(["<b>🚀 고객 서비스 접속</b><br/><small>cal.dudu 1:1 일정 조율 링크 진입</small>"])
+    
+    subgraph S0 ["📅 1. 일정 탐색 및 비교 (Google Calendar 벤치마크)"]
+        WeekView["<b>Google Calendar 스타일 주간 그리드 뷰</b><br/><small>1주차 / 2주차 탭 전환으로 불필요한 스크롤 및 탐색 피로도 해소</small>"]
+    end
+
+    subgraph S1 ["🎯 2. 희망 슬롯 선택 (Calendly 2분할 뷰 & 마이크로 인터랙션)"]
+        SlotClick["<b>희망 슬롯 클릭 (1~3순위 선택)</b><br/><small>네온 오렌지(#FF5E10) 테두리 + Web Audio 틱 사운드 피드백</small>"]
+        SlideCard["<b>좌측 신청 패널 카드 슬라이드인</b><br/><small>선택 순서대로 1순위, 2순위, 3순위 희망 칩 즉시 동적 생성</small>"]
+        SubmitBooking["<b>'예약 신청하기' 버튼 클릭</b><br/><small>오렌지 글로우 호버 & 비점유 대기열 등록 (슬롯 미마감 상태 유지)</small>"]
+    end
+
+    subgraph S2 ["⏳ 3. 실시간 대기확인 (네이버 예약 벤치마크 - 핵심 감정 구간)"]
+        MoveTab["<b>'진행 상황' 탭으로 실시간 자동 이동</b><br/><small>신청 내역 최신순 상단 정렬 및 불필요 미사여구 100% 제거</small>"]
+        StepView["<b>실시간 3단계 추적 인디케이터</b><br/><small>① 신청 접수(완료) ➔ ② 관리자 검토(오렌지 펄스 대기) ➔ ③ 일정 확정(대기)</small>"]
+    end
+
+    subgraph S3 ["👨‍💼 4. 백스테이지 관리자 수동 확정 (Supabase RPC 트랜잭션)"]
+        AdminReview["<b>관리자 전용 대시보드 수동 검토</b><br/><small>비점유 대기열 중 고객 희망 슬롯(1~3순위 내) 1건 수동 확정</small>"]
+        AdminDecision{"<b>어드민 확정 여부</b>"}
+        
+        ConfirmedState["<b>★ 3단계: 일정 확정 (배타적 점유 완료)</b><br/><small>매트 차콜 카드 & 확정 일시 안내 (고객 화면 실시간 동기화)</small>"]
+        ReselectState["<b>경합 탈락 (전 후보 소진)</b><br/><small>'재선택 필요' 배지 활성화 + [스마트 원클릭 대체 슬롯 추천] 제공</small>"]
+    end
+
+    Start --> WeekView
+    WeekView --> SlotClick
+    SlotClick --> SlideCard
+    SlideCard --> SubmitBooking
+    SubmitBooking --> MoveTab
+    MoveTab --> StepView
+    StepView -.-> AdminReview
+    AdminReview --> AdminDecision
+    
+    AdminDecision -- "슬롯 확정" --> ConfirmedState
+    AdminDecision -- "타 고객 선점으로 전 후보 마감" --> ReselectState
+    ReselectState ==> |"스마트 원클릭 재신청"| SlotClick
+
+    style Start fill:#1A1A1C,stroke:#1A1A1C,color:#fff,stroke-width:2.5px
+    style WeekView fill:#FFF5EF,stroke:#FF5E10,stroke-width:2.5px,color:#1A1A1C
+    style SlotClick fill:#FFF5EF,stroke:#FF5E10,stroke-width:2.5px,color:#1A1A1C
+    style SlideCard fill:#FFFFFF,stroke:#CBD5E1,stroke-width:2px,color:#1A1A1C
+    style SubmitBooking fill:#FF5E10,stroke:#FF5E10,color:#fff,stroke-width:2.5px
+    style MoveTab fill:#FFFFFF,stroke:#FFD9C6,stroke-width:2px,color:#1A1A1C
+    style StepView fill:#FFF5EF,stroke:#FF5E10,stroke-width:2.5px,color:#1A1A1C
+    style AdminReview fill:#F8FAFC,stroke:#64748B,stroke-width:2px,color:#1A1A1C
+    style AdminDecision fill:#1A1A1C,stroke:#FF5E10,stroke-width:2px,color:#fff
+    style ConfirmedState fill:#1A1A1C,stroke:#1A1A1C,color:#fff,stroke-width:2.5px
+    style ReselectState fill:#FFFBEB,stroke:#F59E0B,stroke-width:2.5px,color:#92400E
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- [섹션 5: 소이정 톤앤매너 & 60-30-10 디자인 규칙] -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-title">5. 60-30-10 색상 기반 UI 설계 규칙 체계</div>
+        <span class="badge badge-orange">DESIGN SYSTEM</span>
+      </div>
+
+      <div class="callout orange">
+        <div class="callout-title">
+          <span>🎨 왜 형광 녹색을 전면 제거하고 단일 오렌지 Accent를 정립했는가?</span>
+        </div>
+        <p style="margin: 0; color: var(--slate-main);">
+          이전 화면에서는 성공/가능의 초록색(`green`)과 포인트 주황색(`orange`)이 42개 슬롯 전역에 산만하게 뒤섞여 극심한 시각적 피로도를 유발했습니다.
+          이에 <strong>60-30-10 색상 설계 규칙</strong>에 입각하여 '가능' 상태는 자극 없는 슬레이트 그레이로 수렴시키고, 
+          <strong>오직 사용자가 선택한 슬롯과 현재 진행 단계에만 소이정 네온 오렌지(#FF5E10) Accent를 집중</strong>시켜 시각적 위계를 완벽히 정립했습니다.
+        </p>
+      </div>
+
+      <table class="styled-table" style="margin-top: 14px;">
+        <thead>
+          <tr>
+            <th style="width: 18%;">비율</th>
+            <th style="width: 26%;">시스템 역할</th>
+            <th style="width: 26%;">적용 컬러 토큰</th>
+            <th style="width: 30%;">적용 컴포넌트</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>60% Dominant</strong></td>
+            <td>베이스 배경 및 정갈한 여백</td>
+            <td><code>#FFFFFF</code>, <code>#F5F7FA</code>, <code>#F8FAFC</code></td>
+            <td>전체 페이지 캔버스, 캘린더 카드 배경, 기본 여백</td>
+          </tr>
+          <tr>
+            <td><strong>30% Structure</strong></td>
+            <td>타이포그래피 및 안정적 골격</td>
+            <td><code>#1A1A1C</code> (매트 차콜 블랙)<br/><code>#334155</code>, <code>#475569</code>, <code>#E2E8F0</code></td>
+            <td>상단 다크 헤더, 1~3순위 확정 뱃지, 가능 슬롯 텍스트, 완료 단계</td>
+          </tr>
+          <tr>
+            <td><strong>10% Single Accent</strong></td>
+            <td>단 하나의 인터랙션 집중점</td>
+            <td><code>#FF5E10</code> (네온 오렌지)<br/><code>#FFF5EF</code> (소프트 틴트)</td>
+            <td><strong>선택된 슬롯, 예약 신청 버튼, 현재 검토 중인 단계</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- [섹션 6: 종합 성과 및 교훈] -->
+    <section class="section">
+      <div class="section-header">
+        <div class="section-title">6. 종합 성과 지표 및 프로젝트 결론</div>
+        <span class="badge badge-charcoal">CONCLUSION</span>
+      </div>
+
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th style="width: 25%;">검증 영역</th>
+            <th style="width: 35%;">목표 기준</th>
+            <th style="width: 40%;">달성 결과</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>대기확인 경험 완성</strong></td>
+            <td>실시간 검토 상태 추적 및 인근 날짜 뷰</td>
+            <td><strong>3단계 스텝 추적 탭 신설 & 주간 캘린더 그리드 완성</strong></td>
+          </tr>
+          <tr>
+            <td><strong>정보 인지 효율</strong></td>
+            <td>불필요 미사여구 배제 & 2분할 뷰</td>
+            <td><strong>Calendly 스타일 텍스트 다이어트 및 한 화면 압축 달성</strong></td>
+          </tr>
+          <tr>
+            <td><strong>시각 디자인 품격</strong></td>
+            <td>GDWEB 수상작 수준 톤앤매너 구축</td>
+            <td><strong>소이정 블랙/오렌지 & 60-30-10 규칙 전면 정돈 완료</strong></td>
+          </tr>
+          <tr>
+            <td><strong>시스템 무결성</strong></td>
+            <td>8대 업무 불변 규칙 100% 준수</td>
+            <td><strong>Vitest 19/19 테스트 통과, Supabase RPC 무결성 보장</strong></td>
+          </tr>
+          <tr>
+            <td><strong>배포 안정성</strong></td>
+            <td>Vercel 클라우드 프로덕션 서비스</td>
+            <td><strong>GitHub master 브랜치 푸시 및 Vercel 자동 배포 반영</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout" style="margin-top: 18px;">
+        <div class="callout-title">💡 Day 2 프로젝트 총평</div>
+        <p style="margin: 0; color: var(--slate-main);">
+          Day 1에서 Supabase 클라우드 연동과 비점유 대기 핵심 알고리즘을 탄탄히 다졌다면, 
+          <strong>Day 2는 4대 글로벌 서비스 벤치마킹을 통해 고객이 가장 불안을 느끼는 '대기확인 구간'을 완벽한 가시성과 신뢰의 경험으로 승화</strong>시킨 뜻깊은 스프린트였습니다. 
+          디자인 측면에서도 단순한 시각적 치장을 넘어 60-30-10 단일 악센트 규칙을 통해 인지 부하를 획기적으로 줄인 완성도 높은 비즈니스 웹 애플리케이션을 완성했습니다.
+        </p>
+      </div>
+    </section>
+
+    <!-- [풋터] -->
+    <footer>
+      cal.dudu 미니프로젝트 Day 2 서비스 블루프린트 | 2026.09.08 작성 완료 | React · TypeScript · Supabase · Vercel
+    </footer>
+
+  </div>
+
+  <script>
+    // Mermaid 초기화 (글꼴 및 노드 간격 확대 설정)
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'neutral',
+      themeVariables: {
+        fontFamily: 'Pretendard, -apple-system, sans-serif',
+        fontSize: '17px',
+        subGraphTitleFontSize: '21px',
+        primaryColor: '#FFF5EF',
+        primaryBorderColor: '#FF5E10',
+        primaryTextColor: '#1A1A1C',
+        lineColor: '#64748B'
+      },
+      flowchart: {
+        curve: 'basis',
+        htmlLabels: true,
+        nodeSpacing: 70,
+        rankSpacing: 80,
+        padding: 24
+      }
+    });
+
+    // 다이어그램 배율 및 가로 맞춤 제어
+    let currentScale = 1.0;
+    let isFitWidth = true;
+
+    function getSvgNaturalWidth(svg) {
+      if (!svg) return 1200;
+      if (svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width > 0) {
+        return svg.viewBox.baseVal.width;
+      }
+      const bbox = svg.getBBox ? svg.getBBox() : null;
+      if (bbox && bbox.width > 0) {
+        return bbox.width;
+      }
+      return 1200;
+    }
+
+    // 1. 가로 맞춤 (화면 가로폭에 100% 꽉 채우고 글자 크기 큼직하게 유지)
+    function fitToWidth() {
+      const box = document.querySelector('.mermaid-box');
+      const wrapper = document.getElementById('mermaidWrapper');
+      const svg = document.querySelector('.mermaid svg');
+      if (!box || !wrapper) return;
+
+      isFitWidth = true;
+      box.classList.add('fit-width');
+      
+      wrapper.style.transform = 'none';
+      wrapper.style.width = '100%';
+      wrapper.style.height = 'auto';
+
+      if (svg) {
+        svg.style.width = '100%';
+        svg.style.maxWidth = '100%';
+        svg.style.minWidth = '1000px';
+        svg.style.height = 'auto';
+      }
+
+      updateZoomBtnState('↔️');
+    }
+
+    // 2. 고정 배율 확대/축소 (100%, 125%, 150%, 180%, 220%)
+    function setDiagramZoom(scale) {
+      const box = document.querySelector('.mermaid-box');
+      const wrapper = document.getElementById('mermaidWrapper');
+      const svg = document.querySelector('.mermaid svg');
+      if (!box || !wrapper || !svg) return;
+
+      isFitWidth = false;
+      box.classList.remove('fit-width');
+      currentScale = scale;
+
+      const baseWidth = Math.max(getSvgNaturalWidth(svg), 1000);
+      const targetWidth = Math.round(baseWidth * scale);
+
+      wrapper.style.transform = 'none';
+      wrapper.style.width = 'max-content';
+      wrapper.style.height = 'auto';
+
+      svg.style.width = targetWidth + 'px';
+      svg.style.minWidth = targetWidth + 'px';
+      svg.style.maxWidth = 'none';
+      svg.style.height = 'auto';
+
+      const percent = Math.round(scale * 100) + '%';
+      updateZoomBtnState(percent);
+    }
+
+    function updateZoomBtnState(keyword) {
+      document.querySelectorAll('.zoom-btn').forEach(btn => {
+        if (btn.textContent.includes(keyword)) {
+          btn.classList.add('active');
+          btn.style.background = 'var(--point-orange)';
+          btn.style.color = 'white';
+          btn.style.borderColor = 'var(--point-orange)';
+        } else {
+          btn.classList.remove('active');
+          btn.style.background = '';
+          btn.style.color = '';
+          btn.style.borderColor = '';
+        }
+      });
+    }
+
+    // 초기 렌더링 완료 후 기본으로 '가로 맞춤' 실행
+    window.addEventListener('DOMContentLoaded', () => {
+      const checkAndInit = () => {
+        const svg = document.querySelector('.mermaid svg');
+        if (svg) {
+          fitToWidth();
+        } else {
+          setTimeout(checkAndInit, 100);
+        }
+      };
+      setTimeout(checkAndInit, 250);
+    });
+  </script>
+</body>
+</html>
