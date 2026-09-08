@@ -83,21 +83,21 @@ export const NotificationBanner: React.FC<NotificationBannerProps> = ({ notifica
       {visibleNotifications.map((notif) => (
         <div
           key={notif.id}
+          className="toast-item"
           style={{
             backgroundColor: getBackgroundColor(notif.type),
             color: getTextColor(notif.type),
             padding: '12px 16px',
-            borderRadius: '4px',
+            borderRadius: '8px',
             border: `1px solid ${getBorderColor(notif.type)}`,
             marginBottom: '10px',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-            animation: 'slideIn 0.3s ease-in-out',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
           }}
         >
-          <span style={{ fontSize: '14px' }}>{notif.message}</span>
+          <span style={{ fontSize: '13.5px', fontWeight: 500, lineHeight: 1.4 }}>{notif.message}</span>
           <button
             onClick={() => onClose(notif.id)}
             style={{
@@ -105,26 +105,25 @@ export const NotificationBanner: React.FC<NotificationBannerProps> = ({ notifica
               border: 'none',
               cursor: 'pointer',
               fontSize: '18px',
-              marginLeft: '10px',
+              marginLeft: '12px',
               color: getTextColor(notif.type),
+              opacity: 0.7,
+              transition: 'opacity 0.15s ease, transform 0.15s ease',
+              padding: '0 4px',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = '1';
+              e.currentTarget.style.transform = 'scale(1.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = '0.7';
+              e.currentTarget.style.transform = 'scale(1)';
             }}
           >
             ×
           </button>
         </div>
       ))}
-      <style>{`
-        @keyframes slideIn {
-          from {
-            transform: translateX(400px);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-      `}</style>
     </div>
   );
 };

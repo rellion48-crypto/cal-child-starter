@@ -540,3 +540,63 @@ body {
   }
 }
 
+/* 9. 부드러운 토스트 알림 (NotificationBanner) */
+.toast-item {
+  animation: toastSlideIn 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.2s ease;
+}
+
+.toast-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* 10. 관리자 및 고객 상태 카드 부드러운 진입 */
+.interactive-card {
+  animation: subtleFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.interactive-card:hover {
+  border-color: #cbd5e1;
+}
+
+/* 11. 관리자 요청 목록 항목 호버 & 선택 트랜지션 */
+.admin-req-item {
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+  cursor: pointer;
+}
+
+.admin-req-item:hover:not(.selected) {
+  background-color: #f8fafc !important;
+}
+
+.admin-req-item:active {
+  transform: scale(0.995);
+}
+
+/* 12. 관리자 슬롯 후보 선택 항목 */
+.admin-candidate-item {
+  transition: transform 0.14s ease, border-color 0.14s ease, background-color 0.14s ease, box-shadow 0.14s ease;
+}
+
+.admin-candidate-item:hover:not(:disabled) {
+  transform: translateX(2px);
+}
+
+.admin-candidate-item:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+

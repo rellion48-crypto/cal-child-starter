@@ -137,13 +137,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
       <h2>어드민 패널</h2>
 
       {error && (
-        <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div className="alert alert-error alert-animated" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '18px' }}>⚠️</span>
           <span>{error}</span>
         </div>
       )}
       {success && (
-        <div className="alert alert-success" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div className="alert alert-success alert-animated" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '18px' }}>✅</span>
           <span>{success}</span>
         </div>
@@ -158,16 +158,19 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
               {requests.map((item, idx) => (
                 <li
                   key={item.request.id}
+                  className={`admin-req-item ${selectedRequest === item.request.id ? 'selected' : ''}`}
                   onClick={() => {
                     setSelectedRequest(item.request.id);
                     setSelectedSlotForConfirm(null);
                   }}
                   style={{
                     cursor: 'pointer',
-                    background: selectedRequest === item.request.id ? '#e7f3ff' : 'white',
+                    background: selectedRequest === item.request.id ? '#eff6ff' : 'white',
                     marginBottom: '0',
                     borderRadius: '0',
-                    border: `1px solid ${selectedRequest === item.request.id ? '#007bff' : '#ddd'}`,
+                    border: `1px solid ${selectedRequest === item.request.id ? '#3b82f6' : '#e2e8f0'}`,
+                    borderLeft: selectedRequest === item.request.id ? '4px solid #2563eb' : '1px solid #e2e8f0',
+                    padding: '12px',
                   }}
                 >
                   <div>
@@ -196,7 +199,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
         <div>
           <h3>요청 상세</h3>
           {currentRequest ? (
-            <div style={{ padding: '16px', background: 'white', border: '1px solid #ddd', borderRadius: '4px' }}>
+            <div className="interactive-card" style={{ padding: '16px', background: 'white', border: '1px solid #ddd', borderRadius: '4px' }}>
               <div className="form-group">
                 <label>고객 코드</label>
                 <input type="text" value={currentRequest.request.customerId} disabled />
@@ -227,6 +230,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
                     return (
                       <li
                         key={c.id}
+                        className="admin-candidate-item"
                         onClick={() => {
                           if (canSelect) {
                             setSelectedSlotForConfirm(c.slotId);
@@ -236,18 +240,19 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
                           cursor: canSelect ? 'pointer' : 'not-allowed',
                           background:
                             selectedSlotForConfirm === c.slotId
-                              ? '#d4edda'
+                              ? '#dcfce7'
                               : isAvailable
                                 ? 'white'
-                                : '#f8d7da',
-                          borderColor: selectedSlotForConfirm === c.slotId ? '#28a745' : '#ddd',
+                                : '#fee2e2',
+                          borderColor: selectedSlotForConfirm === c.slotId ? '#16a34a' : '#ddd',
+                          borderLeft: selectedSlotForConfirm === c.slotId ? '4px solid #16a34a' : '1px solid #ddd',
                           opacity: canSelect ? 1 : 0.6,
                         }}
                       >
                         <span>
                           {idx + 1}. {slot?.date} {TIME_SLOTS.find(t => t.label === slot?.timeLabel)?.displayLabel}
                           {' '}
-                          <span style={{ marginLeft: '10px', fontSize: '12px' }}>
+                          <span style={{ marginLeft: '10px', fontSize: '12px', fontWeight: 600 }}>
                             {isAvailable ? '(가능)' : '(마감)'}
                           </span>
                         </span>
@@ -258,7 +263,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
               </div>
 
               {currentRequest.request.status === 'confirmed' && currentRequest.request.confirmedSlotId && (
-                <div className="alert alert-success">
+                <div className="alert alert-success alert-animated">
                   <strong>확정 완료</strong>
                   <br />
                   {slots[currentRequest.request.confirmedSlotId]?.date}{' '}
@@ -270,10 +275,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
 
               {currentRequest.request.status !== 'confirmed' && (
                 <button
-                  className="btn btn-success"
+                  className="btn btn-success btn-submit-booking"
                   onClick={handleConfirm}
                   disabled={!selectedSlotForConfirm || loading}
-                  style={{ marginTop: '10px', width: '100%' }}
+                  style={{ marginTop: '10px', width: '100%', padding: '12px', fontWeight: 800, borderRadius: '8px' }}
                 >
                   {loading ? '처리 중...' : '확정'}
                 </button>

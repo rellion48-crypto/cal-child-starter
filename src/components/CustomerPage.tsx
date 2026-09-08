@@ -648,6 +648,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
             return (
               <div
                 key={item.request.id}
+                className="interactive-card"
                 style={{
                   marginBottom: '28px',
                   padding: '24px',
@@ -922,7 +923,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                     </p>
                     <button
                       type="button"
-                      className="btn btn-warning"
+                      className="btn btn-warning btn-submit-booking"
                       onClick={() => {
                         setStage('reselect');
                         setSelectedSlots([]);

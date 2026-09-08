@@ -256,7 +256,7 @@ const App: React.FC = () => {
               <>
                 <span style={{ fontWeight: 'bold', fontSize: '14px', whiteSpace: 'nowrap' }}>역할</span>
                 <button
-                  className={`btn ${role === 'customer' ? 'active' : ''}`}
+                  className={`btn interactive-tab-btn ${role === 'customer' ? 'active' : ''}`}
                   onClick={() => handleRoleChange('customer')}
                   style={{
                     padding: '8px 18px',
@@ -273,7 +273,7 @@ const App: React.FC = () => {
                   고객
                 </button>
                 <button
-                  className={`btn ${role === 'admin' ? 'active' : ''}`}
+                  className={`btn interactive-tab-btn ${role === 'admin' ? 'active' : ''}`}
                   onClick={() => handleRoleChange('admin')}
                   style={{
                     padding: '8px 18px',
@@ -297,7 +297,7 @@ const App: React.FC = () => {
             <span className={`mode-badge ${mode}`}>{mode === 'local' ? '로컬 모드' : 'Supabase 모드'}</span>
             {mode === 'supabase' && (
               <button
-                className="btn btn-secondary"
+                className="btn btn-secondary interactive-tab-btn"
                 onClick={handleSwitchToLocal}
                 style={{ padding: '6px 12px', fontSize: '12px', color: 'white', background: '#475569', whiteSpace: 'nowrap' }}
               >
@@ -306,7 +306,7 @@ const App: React.FC = () => {
             )}
             {mode === 'local' && isSupabaseConfigured() && (
               <button
-                className="btn btn-secondary"
+                className="btn btn-secondary interactive-tab-btn"
                 onClick={handleSwitchToSupabase}
                 style={{ padding: '6px 12px', fontSize: '12px', color: 'white', background: '#0284c7', whiteSpace: 'nowrap' }}
               >
@@ -315,7 +315,7 @@ const App: React.FC = () => {
             )}
             {mode === 'local' && (
               <button
-                className="btn btn-secondary"
+                className="btn btn-secondary interactive-tab-btn"
                 onClick={handleResetData}
                 style={{ padding: '6px 12px', fontSize: '12px', color: 'white', background: '#6c757d', whiteSpace: 'nowrap' }}
               >
@@ -327,21 +327,21 @@ const App: React.FC = () => {
       </div>
 
       {mode === 'local' && (
-        <div className="alert alert-info">
+        <div className="alert alert-info alert-animated">
           <strong>로컬 모드:</strong> 브라우저 로컬 스토리지에 데이터를 저장합니다. 진짜 인증이 아닌 수업용 데모입니다.
           역할 전환은 이 모드에만 있습니다.
         </div>
       )}
 
       {mode === 'supabase' && (
-        <div className={`alert ${authUser ? 'alert-success' : 'alert-warning'}`}>
+        <div className={`alert alert-animated ${authUser ? 'alert-success' : 'alert-warning'}`}>
           <strong>Supabase 모드:</strong> 실제 데이터베이스와 인증이 적용됩니다.
           {authUser ? ' 인증됨.' : ' 로그인이 필요합니다.'}
         </div>
       )}
 
       {authError && (
-        <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div className="alert alert-error alert-animated" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '18px' }}>⚠️</span>
           <span>{authError}</span>
         </div>
