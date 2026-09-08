@@ -41,14 +41,11 @@ export const SlotTable: React.FC<SlotTableProps> = ({
   const week1Dates = allDates.slice(0, 7); // 2026-09-09(수) ~ 2026-09-15(화)
   const week2Dates = allDates.slice(7, 14); // 2026-09-16(수) ~ 2026-09-22(화)
 
-  // 뷰 모드: 달력 형태 (Google Calendar 스타일) vs 기존 전체 표 형태
-  const [viewMode, setViewMode] = useState<'calendar' | 'table'>('calendar');
+  // 뷰 모드: 달력 형태 (Google Calendar / Calendly 스타일)
+  const viewMode: 'calendar' | 'table' = 'calendar';
 
   // 인근 날짜 범위 필터: 1주차(기본) vs 2주차 vs 전체 14일
   const [rangeFilter, setRangeFilter] = useState<'week1' | 'week2' | 'all'>('week1');
-
-  // 미니 월간 달력 펼침 상태
-  const [showMiniCalendar, setShowMiniCalendar] = useState<boolean>(false);
 
   // 현재 활성 날짜 목록
   const displayedDates =
@@ -63,8 +60,8 @@ export const SlotTable: React.FC<SlotTableProps> = ({
   };
 
   return (
-    <div style={{ marginBottom: '12px' }}>
-      {/* 1. 상단 컨트롤러: 주간 네비게이션 & 뷰 모드 토글 (컴팩트 바) */}
+    <div>
+      {/* 주간 탭 & 범례 */}
       <div
         style={{
           display: 'flex',
@@ -72,241 +69,83 @@ export const SlotTable: React.FC<SlotTableProps> = ({
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '10px',
-          marginBottom: '12px',
-          paddingBottom: '10px',
+          marginBottom: '14px',
+          paddingBottom: '8px',
           borderBottom: '1px solid #f1f5f9',
         }}
       >
-        {/* 주간 탭 (1주차 / 2주차 / 전체) */}
-        {viewMode === 'calendar' ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <button
-              type="button"
-              onClick={() => setRangeFilter('week1')}
-              style={{
-                padding: '6px 12px',
-                border: rangeFilter === 'week1' ? '1.5px solid #2563eb' : '1px solid #cbd5e1',
-                borderRadius: '6px',
-                background: rangeFilter === 'week1' ? '#eff6ff' : '#ffffff',
-                color: rangeFilter === 'week1' ? '#1d4ed8' : '#475569',
-                fontSize: '12.5px',
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
-              1주차 (9/9~9/15)
-            </button>
-            <button
-              type="button"
-              onClick={() => setRangeFilter('week2')}
-              style={{
-                padding: '6px 12px',
-                border: rangeFilter === 'week2' ? '1.5px solid #2563eb' : '1px solid #cbd5e1',
-                borderRadius: '6px',
-                background: rangeFilter === 'week2' ? '#eff6ff' : '#ffffff',
-                color: rangeFilter === 'week2' ? '#1d4ed8' : '#475569',
-                fontSize: '12.5px',
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
-              2주차 (9/16~9/22)
-            </button>
-            <button
-              type="button"
-              onClick={() => setRangeFilter('all')}
-              style={{
-                padding: '6px 10px',
-                border: rangeFilter === 'all' ? '1.5px solid #2563eb' : '1px solid #e2e8f0',
-                borderRadius: '6px',
-                background: rangeFilter === 'all' ? '#eff6ff' : '#f8fafc',
-                color: rangeFilter === 'all' ? '#1d4ed8' : '#64748b',
-                fontSize: '12px',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              전체 14일
-            </button>
-          </div>
-        ) : (
-          <span style={{ fontSize: '13px', fontWeight: 800, color: '#334155' }}>전체 14일 42슬롯 목록</span>
-        )}
+        {/* 주간 탭 */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <button
+            type="button"
+            onClick={() => setRangeFilter('week1')}
+            style={{
+              padding: '6px 14px',
+              border: rangeFilter === 'week1' ? '1.5px solid #2563eb' : '1px solid #cbd5e1',
+              borderRadius: '6px',
+              background: rangeFilter === 'week1' ? '#eff6ff' : '#ffffff',
+              color: rangeFilter === 'week1' ? '#1d4ed8' : '#475569',
+              fontSize: '13px',
+              fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            1주차 (9/9~9/15)
+          </button>
+          <button
+            type="button"
+            onClick={() => setRangeFilter('week2')}
+            style={{
+              padding: '6px 14px',
+              border: rangeFilter === 'week2' ? '1.5px solid #2563eb' : '1px solid #cbd5e1',
+              borderRadius: '6px',
+              background: rangeFilter === 'week2' ? '#eff6ff' : '#ffffff',
+              color: rangeFilter === 'week2' ? '#1d4ed8' : '#475569',
+              fontSize: '13px',
+              fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            2주차 (9/16~9/22)
+          </button>
+          <button
+            type="button"
+            onClick={() => setRangeFilter('all')}
+            style={{
+              padding: '6px 12px',
+              border: rangeFilter === 'all' ? '1.5px solid #2563eb' : '1px solid #e2e8f0',
+              borderRadius: '6px',
+              background: rangeFilter === 'all' ? '#eff6ff' : '#f8fafc',
+              color: rangeFilter === 'all' ? '#1d4ed8' : '#64748b',
+              fontSize: '12px',
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            전체 14일
+          </button>
+        </div>
 
-        {/* 우측 보조 컨트롤: 표/달력 전환 & 미니달력 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <button
-            type="button"
-            onClick={() => setShowMiniCalendar(!showMiniCalendar)}
-            style={{
-              background: showMiniCalendar ? '#dbeafe' : '#f8fafc',
-              border: '1px solid #cbd5e1',
-              color: showMiniCalendar ? '#1e40af' : '#64748b',
-              borderRadius: '6px',
-              padding: '5px 8px',
-              fontSize: '11.5px',
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
-          >
-            🗓️ 9월달력 {showMiniCalendar ? '접기' : '열기'}
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode(viewMode === 'calendar' ? 'table' : 'calendar')}
-            style={{
-              background: '#f8fafc',
-              border: '1px solid #cbd5e1',
-              color: '#475569',
-              borderRadius: '6px',
-              padding: '5px 8px',
-              fontSize: '11.5px',
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
-          >
-            {viewMode === 'calendar' ? '📋 목록 표' : '📅 주간 달력'}
-          </button>
+        {/* 범례 */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#64748b', fontSize: '12px' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2563eb' }} />
+            선택
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} />
+            가능
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#cbd5e1' }} />
+            마감
+          </span>
         </div>
       </div>
-
-      {/* 2. 2026년 9월 미니 월간 달력 (펼쳐보기 클릭 시) */}
-      {showMiniCalendar && (
-        <div
-          style={{
-            background: '#ffffff',
-            border: '1px solid #bfdbfe',
-            borderRadius: '8px',
-            padding: '12px 16px',
-            marginBottom: '12px',
-            boxShadow: '0 2px 6px rgba(37,99,235,0.06)',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <div style={{ fontSize: '13px', fontWeight: 800, color: '#1e3a8a', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span>🗓️</span>
-              <span>2026년 9월 일정 (운영: 9/9 ~ 9/22)</span>
-            </div>
-            <span style={{ fontSize: '11px', color: '#64748b' }}>
-              날짜 클릭 시 해당 주간으로 이동
-            </span>
-          </div>
-
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(7, 1fr)',
-              textAlign: 'center',
-              gap: '4px',
-              maxWidth: '480px',
-              margin: '0 auto',
-            }}
-          >
-            {['일', '월', '화', '수', '목', '금', '토'].map((day, dIdx) => (
-              <div
-                key={day}
-                style={{
-                  fontSize: '11px',
-                  fontWeight: 800,
-                  padding: '4px 0',
-                  color: dIdx === 6 ? '#2563eb' : dIdx === 0 ? '#dc2626' : '#475569',
-                }}
-              >
-                {day}
-              </div>
-            ))}
-
-            {/* 2026년 9월 1일은 화요일(index 2) -> 일, 월 2칸 빈칸 */}
-            <div />
-            <div />
-
-            {/* 9월 1일부터 30일까지 */}
-            {Array.from({ length: 30 }, (_, i) => i + 1).map(dayNum => {
-              const dateStr = `2026-09-${String(dayNum).padStart(2, '0')}`;
-              const isInRange = dateStr >= '2026-09-09' && dateStr <= '2026-09-22';
-              const isSelectedDay = selectedSlots.some(s => s.startsWith(dateStr));
-              const isCurrentWeek =
-                (rangeFilter === 'week1' && dateStr >= '2026-09-09' && dateStr <= '2026-09-15') ||
-                (rangeFilter === 'week2' && dateStr >= '2026-09-16' && dateStr <= '2026-09-22');
-
-              return (
-                <button
-                  key={dayNum}
-                  type="button"
-                  onClick={() => {
-                    if (isInRange) {
-                      setRangeFilter(dateStr <= '2026-09-15' ? 'week1' : 'week2');
-                    }
-                  }}
-                  disabled={!isInRange}
-                  style={{
-                    padding: '6px 2px',
-                    borderRadius: '4px',
-                    border: isSelectedDay ? '2px solid #2563eb' : isCurrentWeek ? '1px solid #93c5fd' : '1px solid transparent',
-                    background: isSelectedDay ? '#2563eb' : isCurrentWeek ? '#eff6ff' : isInRange ? '#f8fafc' : '#ffffff',
-                    color: isSelectedDay ? '#ffffff' : isInRange ? '#0f172a' : '#cbd5e1',
-                    fontWeight: isInRange ? 700 : 400,
-                    fontSize: '11.5px',
-                    cursor: isInRange ? 'pointer' : 'default',
-                    position: 'relative',
-                  }}
-                >
-                  {dayNum}
-                  {isInRange && (
-                    <span
-                      style={{
-                        position: 'absolute',
-                        bottom: '2px',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        width: '3px',
-                        height: '3px',
-                        borderRadius: '50%',
-                        background: isSelectedDay ? '#fef08a' : '#10b981',
-                      }}
-                    />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
       {/* 3. Google Calendar / Calendly 스타일 인근 날짜 달력 그리드 */}
       {viewMode === 'calendar' ? (
         <div>
-          {/* 미니멀 범례 바 */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '10px',
-              fontSize: '12px',
-            }}
-          >
-            <span style={{ fontWeight: 700, color: '#334155' }}>
-              {rangeFilter === 'week1' && '9/9(수) ~ 9/15(화) 1주차'}
-              {rangeFilter === 'week2' && '9/16(수) ~ 9/22(화) 2주차'}
-              {rangeFilter === 'all' && '9/9(수) ~ 9/22(화) 전체 14일'}
-            </span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#64748b', fontSize: '11.5px' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2563eb' }} />
-                선택됨
-              </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} />
-                가능
-              </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#cbd5e1' }} />
-                마감
-              </span>
-            </div>
-          </div>
-
           {/* 수평 스크롤 및 그리드 컨테이너 (인근 날짜별 열 배치) */}
           <div style={{ overflowX: 'auto', paddingBottom: '4px' }}>
             <div
