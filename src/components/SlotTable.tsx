@@ -21,7 +21,7 @@ function getDayOfWeek(dateStr: string): string {
 }
 
 function getDayOfWeekColor(day: string): string {
-  if (day === '토') return '#2563eb';
+  if (day === '토') return '#4338ca';
   if (day === '일') return '#dc2626';
   return '#334155';
 }
@@ -86,10 +86,10 @@ export const SlotTable: React.FC<SlotTableProps> = ({
             }}
             style={{
               padding: '6px 14px',
-              border: rangeFilter === 'week1' ? '1.5px solid #2563eb' : '1px solid #cbd5e1',
+              border: rangeFilter === 'week1' ? '1.5px solid #FF5E10' : '1px solid #E4E7EB',
               borderRadius: '6px',
-              background: rangeFilter === 'week1' ? '#eff6ff' : '#ffffff',
-              color: rangeFilter === 'week1' ? '#1d4ed8' : '#475569',
+              background: rangeFilter === 'week1' ? '#FFF5EF' : '#ffffff',
+              color: rangeFilter === 'week1' ? '#E04B00' : '#475569',
               fontSize: '13px',
               fontWeight: 700,
               cursor: 'pointer',
@@ -106,10 +106,10 @@ export const SlotTable: React.FC<SlotTableProps> = ({
             }}
             style={{
               padding: '6px 14px',
-              border: rangeFilter === 'week2' ? '1.5px solid #2563eb' : '1px solid #cbd5e1',
+              border: rangeFilter === 'week2' ? '1.5px solid #FF5E10' : '1px solid #E4E7EB',
               borderRadius: '6px',
-              background: rangeFilter === 'week2' ? '#eff6ff' : '#ffffff',
-              color: rangeFilter === 'week2' ? '#1d4ed8' : '#475569',
+              background: rangeFilter === 'week2' ? '#FFF5EF' : '#ffffff',
+              color: rangeFilter === 'week2' ? '#E04B00' : '#475569',
               fontSize: '13px',
               fontWeight: 700,
               cursor: 'pointer',
@@ -126,10 +126,10 @@ export const SlotTable: React.FC<SlotTableProps> = ({
             }}
             style={{
               padding: '6px 12px',
-              border: rangeFilter === 'all' ? '1.5px solid #2563eb' : '1px solid #e2e8f0',
+              border: rangeFilter === 'all' ? '1.5px solid #FF5E10' : '1px solid #E4E7EB',
               borderRadius: '6px',
-              background: rangeFilter === 'all' ? '#eff6ff' : '#f8fafc',
-              color: rangeFilter === 'all' ? '#1d4ed8' : '#64748b',
+              background: rangeFilter === 'all' ? '#FFF5EF' : '#f8fafc',
+              color: rangeFilter === 'all' ? '#E04B00' : '#64748b',
               fontSize: '12px',
               fontWeight: 600,
               cursor: 'pointer',
@@ -142,7 +142,7 @@ export const SlotTable: React.FC<SlotTableProps> = ({
         {/* 범례 */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#64748b', fontSize: '12px' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2563eb' }} />
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FF5E10' }} />
             선택
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -253,12 +253,12 @@ export const SlotTable: React.FC<SlotTableProps> = ({
                                 borderRadius: '6px',
                                 textAlign: 'center',
                                 border: isSelected
-                                  ? '2px solid #2563eb'
+                                  ? '2px solid #FF5E10'
                                   : isConfirmed
                                     ? '1px dashed #cbd5e1'
                                     : '1px solid #cbd5e1',
-                                background: isSelected ? '#eff6ff' : isConfirmed ? '#f8fafc' : '#ffffff',
-                                color: isSelected ? '#1e40af' : isConfirmed ? '#94a3b8' : '#0f172a',
+                                background: isSelected ? '#FFF5EF' : isConfirmed ? '#f8fafc' : '#ffffff',
+                                color: isSelected ? '#E04B00' : isConfirmed ? '#94a3b8' : '#0f172a',
                               }}
                             >
                               <div style={{ fontSize: '12px', fontWeight: 800 }}>
@@ -266,7 +266,7 @@ export const SlotTable: React.FC<SlotTableProps> = ({
                               </div>
                               <div style={{ fontSize: '11px', marginTop: '3px' }}>
                                 {isSelected ? (
-                                  <strong style={{ color: '#2563eb' }}>★ {priorityIdx + 1}순위 선택</strong>
+                                  <strong style={{ color: '#E04B00' }}>★ {priorityIdx + 1}순위 선택</strong>
                                 ) : isConfirmed ? (
                                   <span style={{ color: '#dc2626', textDecoration: 'line-through' }}>마감</span>
                                 ) : (
@@ -291,12 +291,12 @@ export const SlotTable: React.FC<SlotTableProps> = ({
                               textAlign: 'center',
                               cursor: isConfirmed ? 'not-allowed' : (!isSelected && selectedSlots.length >= maxSelect) ? 'not-allowed' : 'pointer',
                               border: isSelected
-                                ? '2px solid #1d4ed8'
+                                ? '2px solid #E04B00'
                                 : isConfirmed
                                   ? '1px dashed #cbd5e1'
                                   : '1.5px solid #cbd5e1',
                               background: isSelected
-                                ? '#2563eb'
+                                ? '#FF5E10'
                                 : isConfirmed
                                   ? '#f1f5f9'
                                   : '#ffffff',
@@ -305,7 +305,7 @@ export const SlotTable: React.FC<SlotTableProps> = ({
                                 : isConfirmed
                                   ? '#94a3b8'
                                   : '#0f172a',
-                              boxShadow: isSelected ? '0 3px 8px rgba(37,99,235,0.25)' : '0 1px 2px rgba(0,0,0,0.03)',
+                              boxShadow: isSelected ? '0 4px 14px rgba(255, 94, 16, 0.35)' : '0 1px 2px rgba(0,0,0,0.03)',
                               transition: 'all 0.15s ease',
                               display: 'flex',
                               flexDirection: 'column',
@@ -328,8 +328,8 @@ export const SlotTable: React.FC<SlotTableProps> = ({
                               <span
                                 style={{
                                   marginTop: '4px',
-                                  background: '#fef08a',
-                                  color: '#854d0e',
+                                  background: '#1A1A1C',
+                                  color: '#ffffff',
                                   fontSize: '11px',
                                   fontWeight: 900,
                                   padding: '1px 6px',
@@ -430,7 +430,7 @@ export const SlotTable: React.FC<SlotTableProps> = ({
                                 style={{
                                   fontSize: '12px',
                                   fontWeight: isSelected ? 800 : 500,
-                                  color: isSelected ? '#2563eb' : isConfirmed ? '#dc3545' : '#28a745',
+                                  color: isSelected ? '#FF5E10' : isConfirmed ? '#dc3545' : '#28a745',
                                 }}
                               >
                                 {isSelected ? `★ ${priorityIdx + 1}순위` : isConfirmed ? '마감' : '가능'}

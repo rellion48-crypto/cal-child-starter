@@ -287,10 +287,10 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                 padding: '5px 10px',
                 fontSize: '13px',
                 borderRadius: '6px',
-                border: '1.5px solid #2563eb',
+                border: '1.5px solid #FF5E10',
                 fontWeight: 'bold',
-                background: '#eff6ff',
-                color: '#1e40af',
+                background: '#FFF5EF',
+                color: '#E04B00',
                 cursor: 'pointer',
               }}
             >
@@ -299,7 +299,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
               <option value="C03">고객 C03</option>
             </select>
           ) : (
-            <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e40af', background: '#eff6ff', padding: '4px 8px', borderRadius: '4px' }}>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: '#E04B00', background: '#FFF5EF', padding: '4px 8px', borderRadius: '4px' }}>
               {activeCustomerId}
             </span>
           )}
@@ -322,9 +322,9 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
               fontWeight: 700,
               fontSize: '13px',
               cursor: 'pointer',
-              background: stage === 'select' ? '#2563eb' : '#f1f5f9',
+              background: stage === 'select' ? '#FF5E10' : '#f1f5f9',
               color: stage === 'select' ? 'white' : '#475569',
-              boxShadow: stage === 'select' ? '0 1px 3px rgba(37,99,235,0.2)' : 'none',
+              boxShadow: stage === 'select' ? '0 2px 8px rgba(255, 94, 16, 0.3)' : 'none',
             }}
           >
             예약 신청
@@ -345,9 +345,9 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
               fontWeight: 700,
               fontSize: '13px',
               cursor: 'pointer',
-              background: stage === 'view' ? '#2563eb' : '#f1f5f9',
+              background: stage === 'view' ? '#FF5E10' : '#f1f5f9',
               color: stage === 'view' ? 'white' : '#475569',
-              boxShadow: stage === 'view' ? '0 1px 3px rgba(37,99,235,0.2)' : 'none',
+              boxShadow: stage === 'view' ? '0 2px 8px rgba(255, 94, 16, 0.3)' : 'none',
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
@@ -357,8 +357,8 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
             {customerRequests.length > 0 && (
               <span
                 style={{
-                  background: stage === 'view' ? 'white' : '#2563eb',
-                  color: stage === 'view' ? '#2563eb' : 'white',
+                  background: stage === 'view' ? 'white' : '#FF5E10',
+                  color: stage === 'view' ? '#FF5E10' : 'white',
                   borderRadius: '10px',
                   padding: '1px 6px',
                   fontSize: '11px',
@@ -451,7 +451,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                   <span style={{ fontSize: '13px', fontWeight: 700, color: '#334155' }}>
                     선택한 일정
                   </span>
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: selectedSlots.length > 0 ? '#2563eb' : '#94a3b8' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: selectedSlots.length > 0 ? '#FF5E10' : '#94a3b8' }}>
                     {selectedSlots.length} / 3
                   </span>
                 </div>
@@ -474,7 +474,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                           className="selected-slot-item"
                           style={{
                             background: '#ffffff',
-                            border: '1.5px solid #bfdbfe',
+                            border: '1.5px solid #FFD9C6',
                             borderRadius: '8px',
                             padding: '8px 12px',
                             display: 'flex',
@@ -486,7 +486,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <span
                               style={{
-                                background: '#2563eb',
+                                background: '#FF5E10',
                                 color: 'white',
                                 fontSize: '11px',
                                 fontWeight: 800,
@@ -538,11 +538,11 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                   fontSize: '14px',
                   fontWeight: 800,
                   borderRadius: '8px',
-                  background: selectedSlots.length > 0 ? '#2563eb' : '#cbd5e1',
+                  background: selectedSlots.length > 0 ? '#FF5E10' : '#cbd5e1',
                   color: 'white',
                   border: 'none',
                   cursor: selectedSlots.length > 0 ? 'pointer' : 'not-allowed',
-                  boxShadow: selectedSlots.length > 0 ? '0 2px 6px rgba(37,99,235,0.3)' : 'none',
+                  boxShadow: selectedSlots.length > 0 ? '0 4px 14px rgba(255, 94, 16, 0.35)' : 'none',
                 }}
               >
                 {loading ? '신청 중...' : selectedSlots.length === 0 ? '일정을 선택하세요' : `예약 신청하기 (${selectedSlots.length}개)`}
@@ -668,8 +668,8 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                   padding: '24px',
                   background: 'white',
                   borderRadius: '10px',
-                  border: isLatest ? '2px solid #2563eb' : '1px solid #e2e8f0',
-                  boxShadow: isLatest ? '0 4px 12px rgba(37, 99, 235, 0.08)' : '0 1px 3px rgba(0,0,0,0.05)',
+                  border: isLatest ? '2px solid #FF5E10' : '1px solid #e2e8f0',
+                  boxShadow: isLatest ? '0 4px 16px rgba(255, 94, 16, 0.12)' : '0 1px 3px rgba(0,0,0,0.05)',
                   position: 'relative'
                 }}
               >
@@ -681,7 +681,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                         신청 #{item.request.version}
                       </span>
                       {isLatest && (
-                        <span style={{ background: '#dbeafe', color: '#1e40af', fontSize: '11px', fontWeight: 800, padding: '2px 8px', borderRadius: '12px' }}>
+                        <span style={{ background: '#FFF5EF', color: '#E04B00', fontSize: '11px', fontWeight: 800, padding: '2px 8px', borderRadius: '12px', border: '1px solid #FFD9C6' }}>
                           최신
                         </span>
                       )}
@@ -694,8 +694,8 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                   {/* 현재 상태 뱃지 */}
                   <div>
                     {status === 'received' && (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '5px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 800 }}>
-                        <span className="status-pulse-dot" style={{ background: '#2563eb' }} />
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#FFF5EF', color: '#E04B00', border: '1px solid #FFD9C6', padding: '5px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 800 }}>
+                        <span className="status-pulse-dot" style={{ background: '#FF5E10' }} />
                         <span>검토 대기 중</span>
                       </span>
                     )}
@@ -738,7 +738,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                     <div style={{
                       background: 'white',
                       border: status === 'received'
-                        ? '2px solid #2563eb'
+                        ? '2px solid #FF5E10'
                         : status === 'confirmed'
                           ? '1.5px solid #10b981'
                           : '1.5px solid #f59e0b',
@@ -749,7 +749,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                         <span style={{
                           fontSize: '12px',
                           fontWeight: 800,
-                          color: status === 'received' ? '#1d4ed8' : status === 'confirmed' ? '#065f46' : '#92400e'
+                          color: status === 'received' ? '#E04B00' : status === 'confirmed' ? '#065f46' : '#92400e'
                         }}>
                           2. 관리자 검토
                         </span>
@@ -826,7 +826,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                         >
                           <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <span style={{
-                              background: isConfirmedForThis ? '#16a34a' : '#2563eb',
+                              background: isConfirmedForThis ? '#16a34a' : '#FF5E10',
                               color: 'white',
                               fontSize: '11px',
                               fontWeight: 800,
@@ -845,7 +845,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                             )}
                           </span>
 
-                          <span style={{ fontSize: '12px', fontWeight: 700, color: isConfirmedForThis ? '#16a34a' : isAvailable ? '#2563eb' : '#94a3b8' }}>
+                          <span style={{ fontSize: '12px', fontWeight: 700, color: isConfirmedForThis ? '#16a34a' : isAvailable ? '#FF5E10' : '#94a3b8' }}>
                             {isConfirmedForThis ? '확정' : isAvailable ? '가능' : '마감'}
                           </span>
                         </li>
@@ -929,9 +929,9 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                   onClick={handleApplySmartRecommendation}
                   style={{
                     width: '100%',
-                    background: '#eff6ff',
-                    border: '1px solid #bfdbfe',
-                    color: '#1e40af',
+                    background: '#FFF5EF',
+                    border: '1px solid #FFD9C6',
+                    color: '#E04B00',
                     padding: '8px 12px',
                     borderRadius: '6px',
                     fontSize: '12.5px',
@@ -953,7 +953,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                   <span style={{ fontSize: '13px', fontWeight: 700, color: '#334155' }}>
                     선택한 일정
                   </span>
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: selectedSlots.length > 0 ? '#2563eb' : '#94a3b8' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: selectedSlots.length > 0 ? '#FF5E10' : '#94a3b8' }}>
                     {selectedSlots.length} / 3
                   </span>
                 </div>
@@ -974,7 +974,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                           className="selected-slot-item"
                           style={{
                             background: '#ffffff',
-                            border: '1.5px solid #bfdbfe',
+                            border: '1.5px solid #FFD9C6',
                             borderRadius: '8px',
                             padding: '8px 12px',
                             display: 'flex',
@@ -986,7 +986,7 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <span
                               style={{
-                                background: '#2563eb',
+                                background: '#FF5E10',
                                 color: 'white',
                                 fontSize: '11px',
                                 fontWeight: 800,
@@ -1037,11 +1037,11 @@ export const CustomerPage: React.FC<CustomerPageProps> = ({ db, mode, userId, on
                   fontSize: '14px',
                   fontWeight: 800,
                   borderRadius: '8px',
-                  background: selectedSlots.length > 0 ? '#2563eb' : '#cbd5e1',
+                  background: selectedSlots.length > 0 ? '#FF5E10' : '#cbd5e1',
                   color: 'white',
                   border: 'none',
                   cursor: selectedSlots.length > 0 ? 'pointer' : 'not-allowed',
-                  boxShadow: selectedSlots.length > 0 ? '0 2px 6px rgba(37,99,235,0.3)' : 'none',
+                  boxShadow: selectedSlots.length > 0 ? '0 4px 14px rgba(255, 94, 16, 0.35)' : 'none',
                   marginBottom: '8px',
                 }}
               >

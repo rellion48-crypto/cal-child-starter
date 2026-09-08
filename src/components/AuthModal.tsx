@@ -252,10 +252,10 @@ const styles: Record<string, React.CSSProperties> = {
   },
   submitButton: {
     padding: '10px 16px',
-    backgroundColor: '#007bff',
+    backgroundColor: '#FF5E10',
     color: 'white',
     border: 'none',
-    borderRadius: '4px',
+    borderRadius: '6px',
     fontSize: '14px',
     fontWeight: 'bold',
     cursor: 'pointer',
@@ -269,7 +269,7 @@ const styles: Record<string, React.CSSProperties> = {
   linkButton: {
     background: 'none',
     border: 'none',
-    color: '#007bff',
+    color: '#FF5E10',
     cursor: 'pointer',
     fontWeight: 'bold',
     textDecoration: 'underline',

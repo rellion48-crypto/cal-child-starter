@@ -46,7 +46,7 @@ export const NotificationBanner: React.FC<NotificationBannerProps> = ({ notifica
         return '#fff3cd';
       case 'info':
       default:
-        return '#d1ecf1';
+        return '#FFF5EF';
     }
   };
 
@@ -60,7 +60,7 @@ export const NotificationBanner: React.FC<NotificationBannerProps> = ({ notifica
         return '#ffeeba';
       case 'info':
       default:
-        return '#bee5eb';
+        return '#FFD9C6';
     }
   };
 
@@ -74,7 +74,7 @@ export const NotificationBanner: React.FC<NotificationBannerProps> = ({ notifica
         return '#856404';
       case 'info':
       default:
-        return '#0c5460';
+        return '#B23E00';
     }
   };
 

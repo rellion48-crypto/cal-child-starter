@@ -171,11 +171,11 @@ export const AdminPage: React.FC<AdminPageProps> = ({ db, mode: _mode, userId: _
                   }}
                   style={{
                     cursor: 'pointer',
-                    background: selectedRequest === item.request.id ? '#eff6ff' : 'white',
+                    background: selectedRequest === item.request.id ? '#FFF5EF' : 'white',
                     marginBottom: '0',
                     borderRadius: '0',
-                    border: `1px solid ${selectedRequest === item.request.id ? '#3b82f6' : '#e2e8f0'}`,
-                    borderLeft: selectedRequest === item.request.id ? '4px solid #2563eb' : '1px solid #e2e8f0',
+                    border: `1px solid ${selectedRequest === item.request.id ? '#FF5E10' : '#e2e8f0'}`,
+                    borderLeft: selectedRequest === item.request.id ? '4px solid #FF5E10' : '1px solid #e2e8f0',
                     padding: '12px',
                   }}
                 >

@@ -216,27 +216,27 @@ const App: React.FC = () => {
 
       <div className="header">
         <div>
-          <h1>cal.dudu-works.com</h1>
+          <h1>cal<span className="accent">.</span>dudu<span className="accent">-works</span>.com</h1>
           <div className="reference-time">
             기준 시각: {REFERENCE_TIME.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })} (고정)
             <br />
             현재 시각: {currentTime.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}
           </div>
           {mode === 'local' && (
-            <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f0f0f0', borderRadius: '4px' }}>
-              <label style={{ fontSize: '12px', fontWeight: 'bold' }}>테스트 시간 고정:</label>
-              <div style={{ display: 'flex', gap: '5px', marginTop: '5px' }}>
+            <div style={{ marginTop: '12px', padding: '10px 12px', backgroundColor: 'rgba(255, 255, 255, 0.07)', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.12)' }}>
+              <label style={{ fontSize: '11.5px', fontWeight: 700, color: '#CBD2D9', display: 'block', marginBottom: '6px' }}>테스트 시간 고정:</label>
+              <div style={{ display: 'flex', gap: '6px' }}>
                 <input
                   type="datetime-local"
                   value={testTimeInput}
                   onChange={(e) => setTestTimeInput(e.target.value)}
-                  style={{ padding: '6px', fontSize: '12px', flex: 1 }}
+                  style={{ padding: '6px 8px', fontSize: '12px', flex: 1, borderRadius: '6px', border: '1px solid rgba(255,255,255,0.2)', background: '#121214', color: '#ffffff' }}
                   placeholder="2026-09-09T09:00"
                 />
-                <button onClick={handleSetTestTime} style={{ padding: '6px 12px', fontSize: '12px', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                <button onClick={handleSetTestTime} style={{ padding: '6px 14px', fontSize: '12px', fontWeight: 800, background: '#FF5E10', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(255, 94, 16, 0.3)' }}>
                   설정
                 </button>
-                <button onClick={handleClearTestTime} style={{ padding: '6px 12px', fontSize: '12px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                <button onClick={handleClearTestTime} style={{ padding: '6px 12px', fontSize: '12px', fontWeight: 700, background: '#3E4C59', color: '#CBD2D9', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
                   해제
                 </button>
               </div>
@@ -248,7 +248,7 @@ const App: React.FC = () => {
           {mode === 'supabase' && authUser ? (
             <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '14px' }}>
               <span>로그인: {authUser.email}</span>
-              <button className="btn btn-secondary" onClick={handleSignOut} style={{ padding: '6px 12px', fontSize: '12px', color: 'white', background: '#6c757d' }}>
+              <button className="btn btn-secondary" onClick={handleSignOut} style={{ padding: '6px 12px', fontSize: '12px', color: 'white', background: '#3E4C59' }}>
                 로그아웃
               </button>
             </div>
@@ -257,20 +257,20 @@ const App: React.FC = () => {
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
             {mode === 'local' && (
               <>
-                <span style={{ fontWeight: 'bold', fontSize: '14px', whiteSpace: 'nowrap' }}>역할</span>
+                <span style={{ fontWeight: 800, fontSize: '13px', color: '#9AA5B1', whiteSpace: 'nowrap' }}>역할</span>
                 <button
                   className={`btn interactive-tab-btn ${role === 'customer' ? 'active' : ''}`}
                   onClick={() => handleRoleChange('customer')}
                   style={{
                     padding: '8px 18px',
-                    fontSize: '14px',
-                    fontWeight: 'bold',
-                    background: role === 'customer' ? '#2563eb' : '#f8fafc',
-                    color: role === 'customer' ? '#ffffff' : '#334155',
-                    border: role === 'customer' ? '2px solid #2563eb' : '2px solid #cbd5e1',
-                    borderRadius: '6px',
+                    fontSize: '13.5px',
+                    fontWeight: 800,
+                    background: role === 'customer' ? '#FF5E10' : 'rgba(255, 255, 255, 0.08)',
+                    color: role === 'customer' ? '#ffffff' : '#CBD2D9',
+                    border: role === 'customer' ? '2px solid #FF5E10' : '2px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '8px',
                     cursor: 'pointer',
-                    boxShadow: role === 'customer' ? '0 2px 4px rgba(37, 99, 235, 0.25)' : 'none',
+                    boxShadow: role === 'customer' ? '0 4px 14px rgba(255, 94, 16, 0.35)' : 'none',
                   }}
                 >
                   고객
@@ -280,14 +280,14 @@ const App: React.FC = () => {
                   onClick={() => handleRoleChange('admin')}
                   style={{
                     padding: '8px 18px',
-                    fontSize: '14px',
-                    fontWeight: 'bold',
-                    background: role === 'admin' ? '#2563eb' : '#f8fafc',
-                    color: role === 'admin' ? '#ffffff' : '#334155',
-                    border: role === 'admin' ? '2px solid #2563eb' : '2px solid #cbd5e1',
-                    borderRadius: '6px',
+                    fontSize: '13.5px',
+                    fontWeight: 800,
+                    background: role === 'admin' ? '#FF5E10' : 'rgba(255, 255, 255, 0.08)',
+                    color: role === 'admin' ? '#ffffff' : '#CBD2D9',
+                    border: role === 'admin' ? '2px solid #FF5E10' : '2px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '8px',
                     cursor: 'pointer',
-                    boxShadow: role === 'admin' ? '0 2px 4px rgba(37, 99, 235, 0.25)' : 'none',
+                    boxShadow: role === 'admin' ? '0 4px 14px rgba(255, 94, 16, 0.35)' : 'none',
                   }}
                 >
                   어드민
@@ -307,12 +307,12 @@ const App: React.FC = () => {
               }}
               title={isMuted ? '소리 켜기' : '소리 끄기'}
               style={{
-                padding: '5px 10px',
+                padding: '6px 10px',
                 fontSize: '13px',
-                background: isMuted ? '#f1f5f9' : '#ffffff',
-                border: '1.5px solid #cbd5e1',
-                color: '#334155',
-                borderRadius: '6px',
+                background: isMuted ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.15)',
+                border: '1.5px solid rgba(255, 255, 255, 0.25)',
+                color: '#ffffff',
+                borderRadius: '8px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -325,7 +325,7 @@ const App: React.FC = () => {
               <button
                 className="btn btn-secondary interactive-tab-btn"
                 onClick={handleSwitchToLocal}
-                style={{ padding: '6px 12px', fontSize: '12px', color: 'white', background: '#475569', whiteSpace: 'nowrap' }}
+                style={{ padding: '6px 12px', fontSize: '12px', fontWeight: 700, color: 'white', background: '#3E4C59', whiteSpace: 'nowrap' }}
               >
                 로컬 모드로 전환
               </button>
@@ -334,7 +334,7 @@ const App: React.FC = () => {
               <button
                 className="btn btn-secondary interactive-tab-btn"
                 onClick={handleSwitchToSupabase}
-                style={{ padding: '6px 12px', fontSize: '12px', color: 'white', background: '#0284c7', whiteSpace: 'nowrap' }}
+                style={{ padding: '6px 12px', fontSize: '12px', fontWeight: 700, color: 'white', background: '#FF5E10', whiteSpace: 'nowrap', boxShadow: '0 2px 8px rgba(255, 94, 16, 0.3)' }}
               >
                 Supabase 모드로 전환
               </button>
@@ -343,7 +343,7 @@ const App: React.FC = () => {
               <button
                 className="btn btn-secondary interactive-tab-btn"
                 onClick={handleResetData}
-                style={{ padding: '6px 12px', fontSize: '12px', color: 'white', background: '#6c757d', whiteSpace: 'nowrap' }}
+                style={{ padding: '6px 12px', fontSize: '12px', fontWeight: 700, color: '#CBD2D9', background: 'rgba(255, 255, 255, 0.1)', border: '1px solid rgba(255, 255, 255, 0.2)', whiteSpace: 'nowrap' }}
               >
                 데이터 초기화
               </button>
